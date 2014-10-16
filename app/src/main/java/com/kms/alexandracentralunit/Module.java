@@ -1,37 +1,36 @@
 package com.kms.alexandracentralunit;
 
+
 /**
  * Created by Mateusz Zasoński on 2014-10-14.
  */
 public class Module {
-    private int id;
-    private String name;
-    private String address;
-    private int room;
-    private int type;
 
     //database repository
     public ModuleRepository repository;
+    private long id;
+    private String name;
+    private String address;
+    private long roomId;
+    private int type;
 
-
-    public int getId() {
-        return this.id;
+    public long getId() {
+        return id;
     }
 
     public String getName() {
-        return this.name;
+        return name;
     }
 
     public String getAddress() {
-        return this.address;
+        return address;
     }
 
-    public int getRoom() {
-        return this.room;
+    public long getRoom() {
+        return roomId;
     }
 
     public int getType() {
-        return this.type;
+        return type;
     }
-
 }
