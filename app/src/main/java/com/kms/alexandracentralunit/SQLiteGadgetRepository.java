@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Created by Mateusz Zasoński on 2014-10-14.
  */
-public class SQLiteModuleRepository implements ModuleRepository {
+public class SQLiteGadgetRepository implements GadgetRepository {
 
     private static final String TAG = "SQLiteModuleRepository";
     // Devices table name
@@ -45,17 +45,17 @@ public class SQLiteModuleRepository implements ModuleRepository {
             KEY_MODULE_SYNCSTATUS+" "+KEY_MODULE_SYNCSTATUS_TYPE+")";
     private ConfigurationDatabaseHelper databaseHelper;
 
-    public SQLiteModuleRepository(Context context) {
+    public SQLiteGadgetRepository(Context context) {
         databaseHelper = ConfigurationDatabaseHelper.getInstance(context);
     }
 
     @Override
-    public boolean add(Module module) {
-        Log.d("Module.add", module.toString());
+    public boolean add(Gadget gadget) {
+        Log.d("Module.add", gadget.toString());
         SQLiteDatabase sqLiteDatabase = databaseHelper.openDatabase();
 
-        ContentValues values = moduleToContentValues(module);
-        long moduleId = sqLiteDatabase.insert(SQLiteModuleRepository.TABLE_NAME, "null", values);
+        ContentValues values = moduleToContentValues(gadget);
+        long moduleId = sqLiteDatabase.insert(SQLiteGadgetRepository.TABLE_NAME, "null", values);
         Log.i(TAG, "Inserted new Module with ID: "+moduleId);
 
         databaseHelper.closeDatabase();
@@ -63,12 +63,12 @@ public class SQLiteModuleRepository implements ModuleRepository {
     }
 
     @Override
-    public boolean delete(Module module) {
-        Log.d("Module.remove", module.toString());
+    public boolean delete(Gadget gadget) {
+        Log.d("Module.remove", gadget.toString());
         SQLiteDatabase sqLiteDatabase = databaseHelper.openDatabase();
 
-        long moduleId = sqLiteDatabase.delete(SQLiteModuleRepository.TABLE_NAME, KEY_MODULE_ID+" = ?", new String[] {
-                String.valueOf(module.getId())});
+        long moduleId = sqLiteDatabase.delete(SQLiteGadgetRepository.TABLE_NAME, KEY_MODULE_ID+" = ?", new String[] {
+                String.valueOf(gadget.getId())});
         Log.i(TAG, "Deleted Module with ID: "+moduleId);
         databaseHelper.closeDatabase();
 
@@ -76,44 +76,44 @@ public class SQLiteModuleRepository implements ModuleRepository {
     }
 
     @Override
-    public boolean update(Module module) {
-        Log.d("Module.update", module.toString());
+    public boolean update(Gadget gadget) {
+        Log.d("Module.update", gadget.toString());
         SQLiteDatabase sqLiteDatabase = databaseHelper.getWritableDatabase();
 
-        ContentValues values = moduleToContentValues(module);
-        long moduleId = sqLiteDatabase.update(SQLiteModuleRepository.TABLE_NAME, values, KEY_MODULE_ID+" = ?", new String[] {
-                String.valueOf(module.getId())});
+        ContentValues values = moduleToContentValues(gadget);
+        long moduleId = sqLiteDatabase.update(SQLiteGadgetRepository.TABLE_NAME, values, KEY_MODULE_ID+" = ?", new String[] {
+                String.valueOf(gadget.getId())});
         Log.i(TAG, "Updated Module with ID: "+moduleId);
         sqLiteDatabase.close();
 
         return true;
     }
 
-    public Module find(long id) {
+    public Gadget find(long id) {
         ContentValues values = new ContentValues();
-        return ModuleFactory.create(values);
+        return GadgetFactory.create(values);
     }
 
-    public List<Module> getAll() {
-        return new ArrayList<Module>();
+    public List<Gadget> getAll() {
+        return new ArrayList<Gadget>();
     }
 
-    public List<Module> getAllByRoom(long roomID) {
-        return new ArrayList<Module>();
+    public List<Gadget> getAllByRoom(long roomID) {
+        return new ArrayList<Gadget>();
     }
 
-    public List<Module> getAllByType(int type) {
-        return new ArrayList<Module>();
+    public List<Gadget> getAllByType(int type) {
+        return new ArrayList<Gadget>();
     }
 
-    private ContentValues moduleToContentValues(Module module) {
+    private ContentValues moduleToContentValues(Gadget gadget) {
         ContentValues values = new ContentValues();
-        values.put(SQLiteModuleRepository.KEY_MODULE_ID, module.getId());
-        values.put(SQLiteModuleRepository.KEY_MODULE_NAME, module.getName());
-        values.put(SQLiteModuleRepository.KEY_MODULE_MAC_ADDRESS, module.getAddress());
-        values.put(SQLiteModuleRepository.KEY_MODULE_ROOM, module.getRoom());
-        values.put(SQLiteModuleRepository.KEY_MODULE_TYPE, module.getType());
-        values.put(SQLiteModuleRepository.KEY_MODULE_SYNCSTATUS, 0);
+        values.put(SQLiteGadgetRepository.KEY_MODULE_ID, gadget.getId());
+        values.put(SQLiteGadgetRepository.KEY_MODULE_NAME, gadget.getName());
+        values.put(SQLiteGadgetRepository.KEY_MODULE_MAC_ADDRESS, gadget.getAddress());
+        values.put(SQLiteGadgetRepository.KEY_MODULE_ROOM, gadget.getRoom());
+        values.put(SQLiteGadgetRepository.KEY_MODULE_TYPE, gadget.getType());
+        values.put(SQLiteGadgetRepository.KEY_MODULE_SYNCSTATUS, 0);
         return values;
     }
 

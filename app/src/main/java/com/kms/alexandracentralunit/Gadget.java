@@ -4,10 +4,10 @@ package com.kms.alexandracentralunit;
 /**
  * Created by Mateusz Zasoński on 2014-10-14.
  */
-public class Module {
+public class Gadget {
 
     //database repository
-    public ModuleRepository repository;
+    public GadgetRepository repository;
     private long id;
     private String name;
     private String address;
