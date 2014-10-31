@@ -1,7 +1,7 @@
 package com.kms.alexandracentralunit;
 
 
-import com.kms.alexandracentralunit.model.Gadget;
+import com.kms.alexandracentralunit.data.model.Gadget;
 
 import java.util.List;
 

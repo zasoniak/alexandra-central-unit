@@ -1,7 +1,7 @@
-package com.kms.alexandracentralunit;
+package com.kms.alexandracentralunit.data;
 
 
-import com.kms.alexandracentralunit.model.Scene;
+import com.kms.alexandracentralunit.data.model.Scene;
 
 import java.util.UUID;
 

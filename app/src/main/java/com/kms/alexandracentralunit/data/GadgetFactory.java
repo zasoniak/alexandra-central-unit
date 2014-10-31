@@ -1,9 +1,9 @@
-package com.kms.alexandracentralunit;
+package com.kms.alexandracentralunit.data;
 
 
 import android.content.ContentValues;
 
-import com.kms.alexandracentralunit.model.Gadget;
+import com.kms.alexandracentralunit.data.model.Gadget;
 
 
 /**

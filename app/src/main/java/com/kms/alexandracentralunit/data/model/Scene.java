@@ -1,4 +1,4 @@
-package com.kms.alexandracentralunit.model;
+package com.kms.alexandracentralunit.data.model;
 
 
 import java.util.ArrayList;
