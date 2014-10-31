@@ -1,5 +1,7 @@
-package com.kms.alexandracentralunit;
+package com.kms.alexandracentralunit.Repositories;
 
+
+import com.kms.alexandracentralunit.Models.Gadget;
 
 import java.util.List;
 

@@ -1,10 +1,17 @@
 package com.kms.alexandracentralunit;
 
 
+import com.kms.alexandracentralunit.Database.ConfigurationDatabaseHelper;
+import com.kms.alexandracentralunit.Models.Room;
+import com.kms.alexandracentralunit.Repositories.RoomRepository;
+
+import java.util.List;
+
+
 /**
  * Created by Mateusz Zasoński on 2014-10-16.
  */
-public class SQLiteRoomRepository {
+public class SQLiteRoomRepository implements RoomRepository {
 
     private static final String TAG = "SQLiteRoomRepository";
     // Devices table name
@@ -29,4 +36,33 @@ public class SQLiteRoomRepository {
             KEY_ROOM_SYNCSTATUS+" "+KEY_ROOM_SYNCSTATUS_TYPE+")";
     private ConfigurationDatabaseHelper databaseHelper;
 
+    @Override
+    public boolean add(Room room) {
+        return false;
+    }
+
+    @Override
+    public boolean delete(Room room) {
+        return false;
+    }
+
+    @Override
+    public boolean update(Room room) {
+        return false;
+    }
+
+    @Override
+    public Room find(long id) {
+        return null;
+    }
+
+    @Override
+    public List<Room> getAll() {
+        return null;
+    }
+
+    @Override
+    public List<Room> getAllByType(int type) {
+        return null;
+    }
 }

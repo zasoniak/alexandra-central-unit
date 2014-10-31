@@ -6,6 +6,10 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.kms.alexandracentralunit.Database.ConfigurationDatabaseHelper;
+import com.kms.alexandracentralunit.Models.Gadget;
+import com.kms.alexandracentralunit.Repositories.GadgetRepository;
+
 import java.util.ArrayList;
 import java.util.List;
 

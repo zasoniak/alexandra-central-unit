@@ -3,6 +3,8 @@ package com.kms.alexandracentralunit;
 
 import android.content.ContentValues;
 
+import com.kms.alexandracentralunit.Models.Gadget;
+
 
 /**
  * Created by Mateusz Zasoński on 2014-10-14.

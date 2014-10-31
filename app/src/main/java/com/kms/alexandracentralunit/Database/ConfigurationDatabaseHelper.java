@@ -1,10 +1,12 @@
-package com.kms.alexandracentralunit;
+package com.kms.alexandracentralunit.Database;
 
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+
+import com.kms.alexandracentralunit.SQLiteGadgetRepository;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
