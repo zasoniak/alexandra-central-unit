@@ -1,6 +1,8 @@
 package com.kms.alexandracentralunit.data.database.sqlite;
 
 
+import android.content.Context;
+
 import com.kms.alexandracentralunit.data.database.RoomRepository;
 import com.kms.alexandracentralunit.data.model.Room;
 
@@ -34,6 +36,10 @@ public class SQLiteRoomRepository implements RoomRepository {
             KEY_ROOM_TYPE+" "+KEY_ROOM_TYPE_TYPE+COMMA_SEP+
             KEY_ROOM_SYNCSTATUS+" "+KEY_ROOM_SYNCSTATUS_TYPE+")";
     private ConfigurationDatabaseHelper databaseHelper;
+
+    public SQLiteRoomRepository(Context context) {
+        databaseHelper = ConfigurationDatabaseHelper.getInstance(context);
+    }
 
     @Override
     public boolean add(Room room) {

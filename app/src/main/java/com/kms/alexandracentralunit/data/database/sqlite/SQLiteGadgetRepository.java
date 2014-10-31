@@ -6,7 +6,7 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.kms.alexandracentralunit.data.GadgetFactory;
+import com.kms.alexandracentralunit.data.GadgetLinker;
 import com.kms.alexandracentralunit.data.database.GadgetRepository;
 import com.kms.alexandracentralunit.data.model.Gadget;
 
@@ -48,9 +48,11 @@ public class SQLiteGadgetRepository implements GadgetRepository {
             KEY_GADGET_TYPE+" "+KEY_GADGET_TYPE_TYPE+COMMA_SEP+
             KEY_GADGET_SYNCSTATUS+" "+KEY_GADGET_SYNCSTATUS_TYPE+")";
     private ConfigurationDatabaseHelper databaseHelper;
+    private GadgetLinker linker;
 
     public SQLiteGadgetRepository(Context context) {
         databaseHelper = ConfigurationDatabaseHelper.getInstance(context);
+        linker = GadgetLinker.getInstance(context);
     }
 
     @Override
@@ -95,7 +97,7 @@ public class SQLiteGadgetRepository implements GadgetRepository {
 
     public Gadget find(long id) {
         ContentValues values = new ContentValues();
-        return GadgetFactory.create(values);
+        return linker.find(values);
     }
 
     public List<Gadget> getAll() {

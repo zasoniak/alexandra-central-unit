@@ -7,10 +7,9 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.kms.alexandracentralunit.data.database.GadgetRepository;
+import com.kms.alexandracentralunit.data.GadgetLinker;
 import com.kms.alexandracentralunit.data.database.RoomRepository;
 import com.kms.alexandracentralunit.data.database.SceneRepository;
-import com.kms.alexandracentralunit.data.database.sqlite.SQLiteGadgetRepository;
 import com.kms.alexandracentralunit.data.model.Gadget;
 import com.kms.alexandracentralunit.data.model.Room;
 import com.kms.alexandracentralunit.data.model.Scene;
@@ -23,7 +22,7 @@ public class CoreService extends Service {
     private static final String TAG = "CoreService";
 
     private List<Gadget> gadgets;
-    private GadgetRepository gadgetRepository;
+    private GadgetLinker gadgetLinker;
     private List<Room> rooms;
     private RoomRepository roomRepository;
     private List<Scene> scenes;
@@ -44,16 +43,16 @@ public class CoreService extends Service {
          * internal system data creation
          * initialization of all required data
          */
-        gadgetRepository = new SQLiteGadgetRepository(getBaseContext());
+        gadgetLinker = GadgetLinker.getInstance(getBaseContext());
         //roomRepository  = new SQLiteRoomRepository(getBaseContext());
         // sceneRepository = new SQLiteSceneRepository(getBaseContext());
 
-        for(Gadget gadget : gadgets = gadgetRepository.getAll())
+        for(Gadget gadget : gadgets = gadgetLinker.getAll())
         {
             //TODO: communication setup
         }
         ;
-        //rooms = roomRepository.getAll();
+        rooms = roomRepository.getAll();
 
         //scenes = sceneRepository.getAll();
 
