@@ -1,7 +1,7 @@
-package com.kms.alexandracentralunit.Models;
+package com.kms.alexandracentralunit.model;
 
 
-import com.kms.alexandracentralunit.Repositories.GadgetRepository;
+import com.kms.alexandracentralunit.repository.GadgetRepository;
 
 
 /**

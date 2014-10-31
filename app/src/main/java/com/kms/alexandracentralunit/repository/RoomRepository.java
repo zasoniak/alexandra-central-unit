@@ -1,7 +1,7 @@
-package com.kms.alexandracentralunit.Repositories;
+package com.kms.alexandracentralunit.repository;
 
 
-import com.kms.alexandracentralunit.Models.Room;
+import com.kms.alexandracentralunit.model.Room;
 
 import java.util.List;
 

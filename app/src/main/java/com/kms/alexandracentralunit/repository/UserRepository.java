@@ -1,4 +1,4 @@
-package com.kms.alexandracentralunit.Repositories;
+package com.kms.alexandracentralunit.repository;
 
 
 /**

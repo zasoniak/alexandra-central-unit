@@ -2,8 +2,8 @@ package com.kms.alexandracentralunit;
 
 
 import com.kms.alexandracentralunit.Database.ConfigurationDatabaseHelper;
-import com.kms.alexandracentralunit.Models.Room;
-import com.kms.alexandracentralunit.Repositories.RoomRepository;
+import com.kms.alexandracentralunit.model.Room;
+import com.kms.alexandracentralunit.repository.RoomRepository;
 
 import java.util.List;
 

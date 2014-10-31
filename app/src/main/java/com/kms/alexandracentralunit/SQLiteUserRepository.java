@@ -1,7 +1,7 @@
 package com.kms.alexandracentralunit;
 
 
-import com.kms.alexandracentralunit.Repositories.UserRepository;
+import com.kms.alexandracentralunit.repository.UserRepository;
 
 
 /**

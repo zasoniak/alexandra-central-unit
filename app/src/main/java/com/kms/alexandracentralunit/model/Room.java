@@ -1,4 +1,4 @@
-package com.kms.alexandracentralunit.Models;
+package com.kms.alexandracentralunit.model;
 
 
 import java.util.List;

@@ -1,8 +1,8 @@
 package com.kms.alexandracentralunit;
 
 
-import com.kms.alexandracentralunit.Models.Scene;
-import com.kms.alexandracentralunit.Repositories.SceneRepository;
+import com.kms.alexandracentralunit.model.Scene;
+import com.kms.alexandracentralunit.repository.SceneRepository;
 
 import java.util.List;
 

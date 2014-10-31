@@ -7,12 +7,12 @@ import android.os.IBinder;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.kms.alexandracentralunit.Models.Gadget;
-import com.kms.alexandracentralunit.Models.Room;
-import com.kms.alexandracentralunit.Models.Scene;
-import com.kms.alexandracentralunit.Repositories.GadgetRepository;
-import com.kms.alexandracentralunit.Repositories.RoomRepository;
-import com.kms.alexandracentralunit.Repositories.SceneRepository;
+import com.kms.alexandracentralunit.model.Gadget;
+import com.kms.alexandracentralunit.model.Room;
+import com.kms.alexandracentralunit.model.Scene;
+import com.kms.alexandracentralunit.repository.GadgetRepository;
+import com.kms.alexandracentralunit.repository.RoomRepository;
+import com.kms.alexandracentralunit.repository.SceneRepository;
 
 import java.util.List;
 

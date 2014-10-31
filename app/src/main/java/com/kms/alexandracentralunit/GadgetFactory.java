@@ -3,7 +3,7 @@ package com.kms.alexandracentralunit;
 
 import android.content.ContentValues;
 
-import com.kms.alexandracentralunit.Models.Gadget;
+import com.kms.alexandracentralunit.model.Gadget;
 
 
 /**
