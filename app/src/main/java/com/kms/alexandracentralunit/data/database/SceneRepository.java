@@ -17,4 +17,5 @@ public interface SceneRepository {
     public Scene find(long id);
     public List<Scene> getAll();
     public List<Scene> getAllByRoom(long roomID);
+    public List<Scene> getAllSubscenes(long id);
 }

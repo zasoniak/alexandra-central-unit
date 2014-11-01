@@ -66,8 +66,4 @@ public class SQLiteRoomRepository implements RoomRepository {
         return null;
     }
 
-    @Override
-    public List<Room> getAllByType(int type) {
-        return null;
-    }
 }

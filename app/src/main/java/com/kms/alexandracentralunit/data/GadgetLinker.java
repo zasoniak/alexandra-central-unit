@@ -3,7 +3,6 @@ package com.kms.alexandracentralunit.data;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
 
 import com.kms.alexandracentralunit.data.database.GadgetRepository;
 import com.kms.alexandracentralunit.data.database.sqlite.SQLiteGadgetRepository;
@@ -16,12 +15,11 @@ import java.util.List;
  * Created by Mateusz Zasoński on 2014-10-31.
  * <p/>
  * class providing gadget objects linkage between main gadget list and other references
- * use it instead of using
  */
 public class GadgetLinker {
 
     /**
-     * singleton pattern
+     * singleton pattern - provides single, unique list of gadgets inside
      */
     private static GadgetLinker instance;
     private List<Gadget> gadgets;
@@ -40,25 +38,36 @@ public class GadgetLinker {
         return instance;
     }
 
-    public List<Gadget> getAll() {
+    public List<Gadget> getAll(List<ContentValues> valuesList) {
+
+        boolean existFlag;
+        for(ContentValues values : valuesList)
+        {
+            existFlag = false;
+            for(Gadget gadget : this.gadgets)
+            {
+                if(gadget.getId() == values.get(SQLiteGadgetRepository.KEY_GADGET_ID))
+                {
+                    existFlag = true;
+                }
+            }
+            if(!existFlag)
+            {
+                this.gadgets.add(GadgetFactory.create(values));
+            }
+        }
         return this.gadgets;
     }
 
     public Gadget find(ContentValues values) {
-        for(Gadget gadget : gadgets)
+        for(Gadget gadget : this.gadgets)
         {
-            if(gadget.getId() == values.get("id"))
+            if(gadget.getId() == values.get(SQLiteGadgetRepository.KEY_GADGET_ID))
             {
-                ;
+                return gadget;
             }
-            return gadget;
         }
-        return GadgetFactory.create(values);
+        this.gadgets.add(GadgetFactory.create(values));
+        return this.gadgets.get(gadgets.size()-1);
     }
-
-    public List<Gadget> findMany(Cursor cursor) {
-
-        return null;
-    }
-
 }

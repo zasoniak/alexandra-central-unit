@@ -2,17 +2,37 @@ package com.kms.alexandracentralunit;
 
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.view.Menu;
 import android.view.MenuItem;
 
 
 public class AdminActivity extends Activity {
 
+    BroadcastReceiver receiver;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin);
+        receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String gadget = intent.getStringExtra(CoreService.GADGET);
+
+            }
+        };
+    }
+
+    @Override
+    protected void onStart() {
+        LocalBroadcastManager.getInstance(this).registerReceiver((receiver), new IntentFilter(CoreService.UPDATE_MESSAGE));
+        super.onStart();
     }
 
     @Override

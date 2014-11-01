@@ -1,6 +1,8 @@
 package com.kms.alexandracentralunit.data.database.sqlite;
 
 
+import android.content.Context;
+
 import com.kms.alexandracentralunit.data.database.SceneRepository;
 import com.kms.alexandracentralunit.data.model.Scene;
 
@@ -11,6 +13,12 @@ import java.util.List;
  * Created by Mateusz Zasoński on 2014-10-31.
  */
 public class SQLiteSceneRepository implements SceneRepository {
+
+    private ConfigurationDatabaseHelper databaseHelper;
+
+    public SQLiteSceneRepository(Context context) {
+        this.databaseHelper = ConfigurationDatabaseHelper.getInstance(context);
+    }
 
     @Override
     public boolean add(Scene scene) {
@@ -39,6 +47,11 @@ public class SQLiteSceneRepository implements SceneRepository {
 
     @Override
     public List<Scene> getAllByRoom(long roomID) {
+        return null;
+    }
+
+    @Override
+    public List<Scene> getAllSubscenes(long id) {
         return null;
     }
 }

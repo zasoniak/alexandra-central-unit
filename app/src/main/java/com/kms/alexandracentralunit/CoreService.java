@@ -4,12 +4,15 @@ package com.kms.alexandracentralunit;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.kms.alexandracentralunit.data.GadgetLinker;
+import com.kms.alexandracentralunit.data.database.GadgetRepository;
 import com.kms.alexandracentralunit.data.database.RoomRepository;
 import com.kms.alexandracentralunit.data.database.SceneRepository;
+import com.kms.alexandracentralunit.data.database.sqlite.SQLiteGadgetRepository;
 import com.kms.alexandracentralunit.data.model.Gadget;
 import com.kms.alexandracentralunit.data.model.Room;
 import com.kms.alexandracentralunit.data.model.Scene;
@@ -19,9 +22,12 @@ import java.util.List;
 
 public class CoreService extends Service {
 
+    public static final String UPDATE_MESSAGE = "com.kms.alexandracentralunit.CoreService.UPDATE_MESSAGE";
+    public static final String GADGET = "gadgetName";
     private static final String TAG = "CoreService";
-
+    public LocalBroadcastManager broadcaster;
     private List<Gadget> gadgets;
+    private GadgetRepository gadgetRepository;
     private GadgetLinker gadgetLinker;
     private List<Room> rooms;
     private RoomRepository roomRepository;
@@ -29,6 +35,12 @@ public class CoreService extends Service {
     private SceneRepository sceneRepository;
 
     public CoreService() {
+    }
+
+    @Override
+    public void onCreate() {
+        broadcaster = LocalBroadcastManager.getInstance(this);
+        super.onCreate();
     }
 
     @Override
@@ -43,16 +55,18 @@ public class CoreService extends Service {
          * internal system data creation
          * initialization of all required data
          */
+        gadgetRepository = new SQLiteGadgetRepository(getBaseContext());
         gadgetLinker = GadgetLinker.getInstance(getBaseContext());
         //roomRepository  = new SQLiteRoomRepository(getBaseContext());
         // sceneRepository = new SQLiteSceneRepository(getBaseContext());
 
-        for(Gadget gadget : gadgets = gadgetLinker.getAll())
+        for(Gadget gadget : gadgets = gadgetRepository.getAll())
         {
             //TODO: communication setup
+            sendResult(gadget.getName());
         }
         ;
-        rooms = roomRepository.getAll();
+        //rooms = roomRepository.getAll();
 
         //scenes = sceneRepository.getAll();
 
@@ -62,6 +76,15 @@ public class CoreService extends Service {
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    public void sendResult(String message) {
+        Intent intent = new Intent(UPDATE_MESSAGE);
+        if(message != null)
+        {
+            intent.putExtra(GADGET, message);
+            broadcaster.sendBroadcast(intent);
+        }
     }
 
     /**

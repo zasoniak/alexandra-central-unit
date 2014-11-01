@@ -16,6 +16,4 @@ public interface RoomRepository {
     public boolean update(Room room);
     public Room find(long id);
     public List<Room> getAll();
-    public List<Room> getAllByType(int type);
-
 }
