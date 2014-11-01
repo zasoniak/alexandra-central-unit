@@ -21,28 +21,30 @@ import java.util.UUID;
  */
 public class SQLiteGadgetRepository implements GadgetRepository {
 
-    // Devices Table Columns names
-    // TODO: change data types
+    // Gadgets table columns names
     public static final String KEY_GADGET_ID = "_id";
     public static final String KEY_GADGET_NAME = "name";
     public static final String KEY_GADGET_MAC_ADDRESS = "address";
     public static final String KEY_GADGET_ROOM = "room_id";
     public static final String KEY_GADGET_TYPE = "type";
     private static final String TAG = "SQLiteGadgetRepository";
-    // Devices table name
+    // Gadgets table name
     private static final String TABLE_NAME = "gadgets";
+    // Predefined SQL statements
     public static final String SQL_DROP_TABLE = "DROP TABLE IF EXISTS "+TABLE_NAME;
+    private static final String KEY_GADGET_UPDATE_TIME = "updated_at";
+    // Gadgets table column array
+    private static final String[] TABLE_COLUMNS = {KEY_GADGET_ID, KEY_GADGET_NAME,
+                                                   KEY_GADGET_MAC_ADDRESS, KEY_GADGET_ROOM,
+                                                   KEY_GADGET_TYPE, KEY_GADGET_UPDATE_TIME};
+    // Gadgets table columns types
     private static final String COMMA_SEP = ", ";
     private static final String KEY_GADGET_ID_TYPE = "TEXT PRIMARY KEY";
     private static final String KEY_GADGET_NAME_TYPE = "TEXT";
     private static final String KEY_GADGET_MAC_ADDRESS_TYPE = "TEXT";
     private static final String KEY_GADGET_ROOM_TYPE = "TEXT";
     private static final String KEY_GADGET_TYPE_TYPE = "INTEGER";
-    private static final String KEY_GADGET_UPDATE_TIME = "syncstatus";
-    private static final String[] TABLE_COLUMNS = {KEY_GADGET_ID, KEY_GADGET_NAME,
-                                                   KEY_GADGET_MAC_ADDRESS, KEY_GADGET_ROOM,
-                                                   KEY_GADGET_TYPE, KEY_GADGET_UPDATE_TIME};
-    private static final String KEY_GADGET_UPDATE_TIME_TYPE = "INTEGER";
+    private static final String KEY_GADGET_UPDATE_TIME_TYPE = "TEXT";
     public static final String SQL_CREATE_TABLE = "CREATE TABLE "+TABLE_NAME+" ("+
             KEY_GADGET_ID+" "+KEY_GADGET_ID_TYPE+COMMA_SEP+
             KEY_GADGET_NAME+" "+KEY_GADGET_NAME_TYPE+COMMA_SEP+
@@ -50,6 +52,8 @@ public class SQLiteGadgetRepository implements GadgetRepository {
             KEY_GADGET_ROOM+" "+KEY_GADGET_ROOM_TYPE+COMMA_SEP+
             KEY_GADGET_TYPE+" "+KEY_GADGET_TYPE_TYPE+COMMA_SEP+
             KEY_GADGET_UPDATE_TIME+" "+KEY_GADGET_UPDATE_TIME_TYPE+")";
+
+    // class implementation
     private ConfigurationDatabaseHelper databaseHelper;
     private GadgetLinker linker;
 
