@@ -4,6 +4,7 @@ package com.kms.alexandracentralunit.data.database;
 import com.kms.alexandracentralunit.data.model.Room;
 
 import java.util.List;
+import java.util.UUID;
 
 
 /**
@@ -14,6 +15,6 @@ public interface RoomRepository {
     public boolean add(Room room);
     public boolean delete(Room room);
     public boolean update(Room room);
-    public Room find(long id);
+    public Room find(UUID id);
     public List<Room> getAll();
 }

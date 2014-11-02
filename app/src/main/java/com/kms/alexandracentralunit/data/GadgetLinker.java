@@ -1,14 +1,15 @@
 package com.kms.alexandracentralunit.data;
 
 
-import android.content.ContentValues;
 import android.content.Context;
 
 import com.kms.alexandracentralunit.data.database.GadgetRepository;
 import com.kms.alexandracentralunit.data.database.sqlite.SQLiteGadgetRepository;
 import com.kms.alexandracentralunit.data.model.Gadget;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 /**
@@ -27,7 +28,11 @@ public class GadgetLinker {
 
     private GadgetLinker(Context context) {
         this.gadgetRepository = new SQLiteGadgetRepository(context);
-        this.gadgets = gadgetRepository.getAll();
+        this.gadgets = new ArrayList<Gadget>();
+    }
+
+    private static GadgetLinker getPrivateInstance() {
+        return instance;
     }
 
     public static GadgetLinker getInstance(Context context) {
@@ -38,36 +43,23 @@ public class GadgetLinker {
         return instance;
     }
 
-    public List<Gadget> getAll(List<ContentValues> valuesList) {
-
-        boolean existFlag;
-        for(ContentValues values : valuesList)
+    public static Gadget find(UUID id) {
+        GadgetLinker linker = getPrivateInstance();
+        for(Gadget gadget : linker.gadgets)
         {
-            existFlag = false;
-            for(Gadget gadget : this.gadgets)
-            {
-                if(gadget.getId() == values.get(SQLiteGadgetRepository.KEY_GADGET_ID))
-                {
-                    existFlag = true;
-                }
-            }
-            if(!existFlag)
-            {
-                this.gadgets.add(GadgetFactory.create(values));
-            }
-        }
-        return this.gadgets;
-    }
-
-    public Gadget find(ContentValues values) {
-        for(Gadget gadget : this.gadgets)
-        {
-            if(gadget.getId() == values.get(SQLiteGadgetRepository.KEY_GADGET_ID))
+            if(gadget.getId().equals(id))
             {
                 return gadget;
             }
         }
-        this.gadgets.add(GadgetFactory.create(values));
-        return this.gadgets.get(gadgets.size()-1);
+        return null;
+    }
+
+    public void loadGadgets() {
+        this.gadgets = this.gadgetRepository.getAll();
+    }
+
+    public List<Gadget> getAll() {
+        return this.gadgets;
     }
 }

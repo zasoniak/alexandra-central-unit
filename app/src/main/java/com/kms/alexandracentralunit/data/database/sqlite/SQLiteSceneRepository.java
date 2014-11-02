@@ -7,6 +7,7 @@ import com.kms.alexandracentralunit.data.database.SceneRepository;
 import com.kms.alexandracentralunit.data.model.Scene;
 
 import java.util.List;
+import java.util.UUID;
 
 
 /**
@@ -15,9 +16,11 @@ import java.util.List;
 public class SQLiteSceneRepository implements SceneRepository {
 
     private ConfigurationDatabaseHelper databaseHelper;
+    private Context context;
 
     public SQLiteSceneRepository(Context context) {
         this.databaseHelper = ConfigurationDatabaseHelper.getInstance(context);
+        this.context = context;
     }
 
     @Override
@@ -36,7 +39,8 @@ public class SQLiteSceneRepository implements SceneRepository {
     }
 
     @Override
-    public Scene find(long id) {
+    public Scene find(UUID id) {
+
         return null;
     }
 
@@ -46,12 +50,12 @@ public class SQLiteSceneRepository implements SceneRepository {
     }
 
     @Override
-    public List<Scene> getAllByRoom(long roomID) {
+    public List<Scene> getAllByRoom(UUID roomID) {
         return null;
     }
 
     @Override
-    public List<Scene> getAllSubscenes(long id) {
+    public List<Scene> getAllSubscenes(UUID id) {
         return null;
     }
 }

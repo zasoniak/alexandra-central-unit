@@ -17,7 +17,9 @@ import com.kms.alexandracentralunit.data.model.Gadget;
 import com.kms.alexandracentralunit.data.model.Room;
 import com.kms.alexandracentralunit.data.model.Scene;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 public class CoreService extends Service {
@@ -45,9 +47,9 @@ public class CoreService extends Service {
 
     @Override
     public void onStart(Intent intent, int startid) {
-        Intent intents = new Intent(getBaseContext(), AdminActivity.class);
-        intents.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intents);
+        //Intent intents = new Intent(getBaseContext(), AdminActivity.class);
+        // intents.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //startActivity(intents);
         Toast.makeText(this, "Core Service Started", Toast.LENGTH_LONG).show();
         Log.d(TAG, "onStart");
 
@@ -55,17 +57,30 @@ public class CoreService extends Service {
          * internal system data creation
          * initialization of all required data
          */
-        gadgetRepository = new SQLiteGadgetRepository(getBaseContext());
-        gadgetLinker = GadgetLinker.getInstance(getBaseContext());
+        gadgetRepository = new SQLiteGadgetRepository(getApplicationContext());
+        gadgetLinker = GadgetLinker.getInstance(getApplicationContext());
+
+        gadgets = new ArrayList<Gadget>();
+        gadgets.add(new Gadget(gadgetRepository, UUID.randomUUID(), "test1", "MAC1", UUID.randomUUID(), 1));
+        gadgets.add(new Gadget(gadgetRepository, UUID.randomUUID(), "test2", "MAC2", UUID.randomUUID(), 2));
+
+        for(Gadget gadget : gadgets)
+        {
+            gadget.save();
+        }
+
+        gadgetLinker.loadGadgets();
         //roomRepository  = new SQLiteRoomRepository(getBaseContext());
         // sceneRepository = new SQLiteSceneRepository(getBaseContext());
-
-        for(Gadget gadget : gadgets = gadgetRepository.getAll())
+        Log.d("ILOSC gadzetow poczatek: ", String.valueOf(gadgets.size()));
+        for(Gadget gadget : gadgets = gadgetLinker.getAll())
         {
             //TODO: communication setup
+            Toast.makeText(this, "Gadget: "+gadget.getId().toString(), Toast.LENGTH_LONG).show();
             sendResult(gadget.getName());
         }
-        ;
+        Log.d("ILOSC gadzetow koniec: ", String.valueOf(gadgets.size()));
+
         //rooms = roomRepository.getAll();
 
         //scenes = sceneRepository.getAll();

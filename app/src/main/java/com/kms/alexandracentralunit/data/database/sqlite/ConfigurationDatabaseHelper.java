@@ -62,7 +62,7 @@ public class ConfigurationDatabaseHelper extends SQLiteOpenHelper {
         Log.i(TAG, "Creating database ["+DATABASE_NAME+" v."+DATABASE_VERSION+"]...");
 
         sqLiteDatabase.execSQL(SQLiteGadgetRepository.SQL_CREATE_TABLE);
-        sqLiteDatabase.close();
+        sqLiteDatabase.execSQL(SQLiteActionRepository.SQL_CREATE_TABLE);
     }
 
     @Override
@@ -70,6 +70,7 @@ public class ConfigurationDatabaseHelper extends SQLiteOpenHelper {
         Log.i(TAG, "Upgrading database ["+DATABASE_NAME+" v."+oldVersion+"] to ["+DATABASE_NAME+" v."+newVersion+"]...");
 
         sqLiteDatabase.execSQL(SQLiteGadgetRepository.SQL_DROP_TABLE);
+        sqLiteDatabase.execSQL(SQLiteActionRepository.SQL_DROP_TABLE);
         onCreate(sqLiteDatabase);
     }
 

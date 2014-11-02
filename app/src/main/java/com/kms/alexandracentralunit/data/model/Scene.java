@@ -15,8 +15,8 @@ public class Scene implements SceneComponent {
     public String name;
     public int offset;
 
-    private List<SceneComponent> children;
-    private List<Trigger> triggers;
+    public List<SceneComponent> children;
+    public List<Trigger> triggers;
 
     public Scene(UUID id, String name, int offset) {
         this.id = id;
@@ -41,4 +41,5 @@ public class Scene implements SceneComponent {
         }
         return new ArrayList<SceneComponent>();
     }
+
 }
