@@ -3,6 +3,8 @@ package com.kms.alexandracentralunit.data.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 
@@ -27,10 +29,19 @@ public class Scene implements SceneComponent {
     @Override
     public void start() {
 
-        for(SceneComponent child : children)
-        {
-            child.start();
-        }
+        //TODO: check if that work
+
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                for(SceneComponent child : children)
+                {
+                    child.start();
+                }
+            }
+        };
+        Timer timer = new Timer();
+        timer.schedule(task, offset);
     }
 
     @Override
@@ -42,4 +53,13 @@ public class Scene implements SceneComponent {
         return new ArrayList<SceneComponent>();
     }
 
+    public void checkTriggers(Gadget gadget, int actionCode) {
+        for(Trigger trigger : triggers)
+        {
+            if(trigger.gadget.equals(gadget) && trigger.actionCode == actionCode)
+            {
+                this.start();
+            }
+        }
+    }
 }

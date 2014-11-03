@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.kms.alexandracentralunit.CoreService;
 import com.kms.alexandracentralunit.data.GadgetFactory;
 import com.kms.alexandracentralunit.data.database.GadgetRepository;
 import com.kms.alexandracentralunit.data.model.Gadget;
@@ -23,33 +24,38 @@ public class SQLiteGadgetRepository implements GadgetRepository {
 
     // Gadgets table columns names
     public static final String KEY_GADGET_ID = "_id";
-    public static final String KEY_GADGET_NAME = "name";
-    public static final String KEY_GADGET_MAC_ADDRESS = "address";
+    public static final String KEY_GADGET_SYSTEM = "system_id";
     public static final String KEY_GADGET_ROOM = "room_id";
+    public static final String KEY_GADGET_NAME = "name";
+    public static final String KEY_GADGET_MAC_ADDRESS = "mac";
     public static final String KEY_GADGET_TYPE = "type";
+    public static final String KEY_GADGET_UPDATED = "updated_at";
+    // Gadgets table column array
+    private static final String[] TABLE_COLUMNS = {KEY_GADGET_ID, KEY_GADGET_SYSTEM,
+                                                   KEY_GADGET_ROOM, KEY_GADGET_NAME,
+                                                   KEY_GADGET_MAC_ADDRESS, KEY_GADGET_TYPE,
+                                                   KEY_GADGET_UPDATED};
     private static final String TAG = "SQLiteGadgetRepository";
     // Gadgets table name
     private static final String TABLE_NAME = "gadgets";
     // Predefined SQL statements
     public static final String SQL_DROP_TABLE = "DROP TABLE IF EXISTS "+TABLE_NAME;
-    private static final String KEY_GADGET_UPDATED = "updated_at";
-    // Gadgets table column array
-    private static final String[] TABLE_COLUMNS = {KEY_GADGET_ID, KEY_GADGET_NAME,
-                                                   KEY_GADGET_MAC_ADDRESS, KEY_GADGET_ROOM,
-                                                   KEY_GADGET_TYPE, KEY_GADGET_UPDATED};
     // Gadgets table columns types
     private static final String COMMA_SEP = ", ";
     private static final String KEY_GADGET_ID_TYPE = "TEXT PRIMARY KEY";
+    private static final String KEY_GADGET_SYSTEM_TYPE = "INTEGER";
+    private static final String KEY_GADGET_ROOM_TYPE = "TEXT";
     private static final String KEY_GADGET_NAME_TYPE = "TEXT";
     private static final String KEY_GADGET_MAC_ADDRESS_TYPE = "TEXT";
-    private static final String KEY_GADGET_ROOM_TYPE = "TEXT";
     private static final String KEY_GADGET_TYPE_TYPE = "INTEGER";
-    private static final String KEY_GADGET_UPDATED_TYPE = "TEXT";
+    private static final String KEY_GADGET_UPDATED_TYPE = "DATETIME DEFAULT CURRENT_TIMESTAMP";
+
     public static final String SQL_CREATE_TABLE = "CREATE TABLE "+TABLE_NAME+" ("+
             KEY_GADGET_ID+" "+KEY_GADGET_ID_TYPE+COMMA_SEP+
+            KEY_GADGET_SYSTEM+" "+KEY_GADGET_SYSTEM_TYPE+COMMA_SEP+
+            KEY_GADGET_ROOM+" "+KEY_GADGET_ROOM_TYPE+COMMA_SEP+
             KEY_GADGET_NAME+" "+KEY_GADGET_NAME_TYPE+COMMA_SEP+
             KEY_GADGET_MAC_ADDRESS+" "+KEY_GADGET_MAC_ADDRESS_TYPE+COMMA_SEP+
-            KEY_GADGET_ROOM+" "+KEY_GADGET_ROOM_TYPE+COMMA_SEP+
             KEY_GADGET_TYPE+" "+KEY_GADGET_TYPE_TYPE+COMMA_SEP+
             KEY_GADGET_UPDATED+" "+KEY_GADGET_UPDATED_TYPE+")";
 
@@ -58,7 +64,7 @@ public class SQLiteGadgetRepository implements GadgetRepository {
     private ConfigurationDatabaseHelper databaseHelper;
 
     public SQLiteGadgetRepository(Context context) {
-        databaseHelper = ConfigurationDatabaseHelper.getInstance(context);
+        databaseHelper = ConfigurationDatabaseHelper.getInstance(CoreService.getContext());
 
     }
 
@@ -67,19 +73,19 @@ public class SQLiteGadgetRepository implements GadgetRepository {
         Log.d("Gadget.add", gadget.toString());
         SQLiteDatabase sqLiteDatabase = databaseHelper.openDatabase();
 
-        ContentValues values = gadgetToContentValues(gadget);
-
         String query = "INSERT INTO "+TABLE_NAME+" ("+
                 KEY_GADGET_ID+COMMA_SEP+
+                KEY_GADGET_SYSTEM+COMMA_SEP+
+                KEY_GADGET_ROOM+COMMA_SEP+
                 KEY_GADGET_NAME+COMMA_SEP+
                 KEY_GADGET_MAC_ADDRESS+COMMA_SEP+
-                KEY_GADGET_ROOM+COMMA_SEP+
                 KEY_GADGET_TYPE+") "+"values"+" ("+
-                "\'"+values.getAsString(KEY_GADGET_ID)+"\'"+COMMA_SEP+
-                "\'"+values.getAsString(KEY_GADGET_NAME)+"\'"+COMMA_SEP+
-                "\'"+values.getAsString(KEY_GADGET_MAC_ADDRESS)+"\'"+COMMA_SEP+
-                "\'"+values.getAsString(KEY_GADGET_ROOM)+"\'"+COMMA_SEP+
-                "\'"+values.getAsString(KEY_GADGET_TYPE)+"\'"+");";
+                "\'"+gadget.getId().toString()+"\'"+COMMA_SEP+
+                "\'"+String.valueOf(gadget.getSystem())+"\'"+COMMA_SEP+
+                "\'"+gadget.getRoom().toString()+"\'"+COMMA_SEP+
+                "\'"+gadget.getName()+"\'"+COMMA_SEP+
+                "\'"+gadget.getAddress()+"\'"+COMMA_SEP+
+                "\'"+String.valueOf(gadget.getType())+"\'"+");";
 
         sqLiteDatabase.execSQL(query);
         Log.i(TAG, "Inserted new Gadget with ID: "+gadget.getId().toString());
@@ -137,11 +143,12 @@ public class SQLiteGadgetRepository implements GadgetRepository {
         if(cursor != null)
         {
             cursor.moveToFirst();
-            values.put(KEY_GADGET_ID, cursor.getLong(0));
-            values.put(KEY_GADGET_NAME, cursor.getString(1));
-            values.put(KEY_GADGET_MAC_ADDRESS, cursor.getString(2));
-            values.put(KEY_GADGET_ROOM, cursor.getLong(3));
-            values.put(KEY_GADGET_TYPE, cursor.getInt(4));
+            values.put(KEY_GADGET_ID, cursor.getString(0));
+            values.put(KEY_GADGET_SYSTEM, cursor.getLong(1));
+            values.put(KEY_GADGET_ROOM, cursor.getString(2));
+            values.put(KEY_GADGET_NAME, cursor.getString(3));
+            values.put(KEY_GADGET_MAC_ADDRESS, cursor.getString(4));
+            values.put(KEY_GADGET_TYPE, cursor.getInt(5));
         }
         // close database connection and release resources
         databaseHelper.closeDatabase();
@@ -163,13 +170,14 @@ public class SQLiteGadgetRepository implements GadgetRepository {
         {
             do
             {
-                ContentValues tempValues = new ContentValues();
-                tempValues.put(KEY_GADGET_ID, cursor.getString(0));
-                tempValues.put(KEY_GADGET_NAME, cursor.getString(1));
-                tempValues.put(KEY_GADGET_MAC_ADDRESS, cursor.getString(2));
-                tempValues.put(KEY_GADGET_ROOM, cursor.getString(3));
-                tempValues.put(KEY_GADGET_TYPE, cursor.getInt(4));
-                gadgets.add(GadgetFactory.create(tempValues));
+                ContentValues values = new ContentValues();
+                values.put(KEY_GADGET_ID, cursor.getString(0));
+                values.put(KEY_GADGET_SYSTEM, cursor.getLong(1));
+                values.put(KEY_GADGET_ROOM, cursor.getString(2));
+                values.put(KEY_GADGET_NAME, cursor.getString(3));
+                values.put(KEY_GADGET_MAC_ADDRESS, cursor.getString(4));
+                values.put(KEY_GADGET_TYPE, cursor.getInt(5));
+                gadgets.add(GadgetFactory.create(values));
             } while(cursor.moveToNext());
         }
         // close database connection and release resources
@@ -200,11 +208,12 @@ public class SQLiteGadgetRepository implements GadgetRepository {
             do
             {
                 ContentValues values = new ContentValues();
-                values.put(KEY_GADGET_ID, cursor.getLong(0));
-                values.put(KEY_GADGET_NAME, cursor.getString(1));
-                values.put(KEY_GADGET_MAC_ADDRESS, cursor.getString(2));
-                values.put(KEY_GADGET_ROOM, cursor.getLong(3));
-                values.put(KEY_GADGET_TYPE, cursor.getInt(4));
+                values.put(KEY_GADGET_ID, cursor.getString(0));
+                values.put(KEY_GADGET_SYSTEM, cursor.getLong(1));
+                values.put(KEY_GADGET_ROOM, cursor.getString(2));
+                values.put(KEY_GADGET_NAME, cursor.getString(3));
+                values.put(KEY_GADGET_MAC_ADDRESS, cursor.getString(4));
+                values.put(KEY_GADGET_TYPE, cursor.getInt(5));
                 gadgets.add(GadgetFactory.create(values));
             } while(cursor.moveToNext());
         }
@@ -236,11 +245,12 @@ public class SQLiteGadgetRepository implements GadgetRepository {
             do
             {
                 ContentValues values = new ContentValues();
-                values.put(KEY_GADGET_ID, cursor.getLong(0));
-                values.put(KEY_GADGET_NAME, cursor.getString(1));
-                values.put(KEY_GADGET_MAC_ADDRESS, cursor.getString(2));
-                values.put(KEY_GADGET_ROOM, cursor.getLong(3));
-                values.put(KEY_GADGET_TYPE, cursor.getInt(4));
+                values.put(KEY_GADGET_ID, cursor.getString(0));
+                values.put(KEY_GADGET_SYSTEM, cursor.getLong(1));
+                values.put(KEY_GADGET_ROOM, cursor.getString(2));
+                values.put(KEY_GADGET_NAME, cursor.getString(3));
+                values.put(KEY_GADGET_MAC_ADDRESS, cursor.getString(4));
+                values.put(KEY_GADGET_TYPE, cursor.getInt(5));
                 gadgets.add(GadgetFactory.create(values));
             } while(cursor.moveToNext());
         }

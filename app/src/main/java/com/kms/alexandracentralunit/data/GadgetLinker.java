@@ -23,16 +23,11 @@ public class GadgetLinker {
      * singleton pattern - provides single, unique list of gadgets inside
      */
     private static GadgetLinker instance;
-    private List<Gadget> gadgets;
+    private List<Gadget> gadgets = new ArrayList<Gadget>();
     private GadgetRepository gadgetRepository;
 
     private GadgetLinker(Context context) {
         this.gadgetRepository = new SQLiteGadgetRepository(context);
-        this.gadgets = new ArrayList<Gadget>();
-    }
-
-    private static GadgetLinker getPrivateInstance() {
-        return instance;
     }
 
     public static GadgetLinker getInstance(Context context) {
@@ -43,9 +38,8 @@ public class GadgetLinker {
         return instance;
     }
 
-    public static Gadget find(UUID id) {
-        GadgetLinker linker = getPrivateInstance();
-        for(Gadget gadget : linker.gadgets)
+    public Gadget find(UUID id) {
+        for(Gadget gadget : this.gadgets)
         {
             if(gadget.getId().equals(id))
             {

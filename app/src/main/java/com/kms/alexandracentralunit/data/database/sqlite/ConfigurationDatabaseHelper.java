@@ -63,6 +63,10 @@ public class ConfigurationDatabaseHelper extends SQLiteOpenHelper {
 
         sqLiteDatabase.execSQL(SQLiteGadgetRepository.SQL_CREATE_TABLE);
         sqLiteDatabase.execSQL(SQLiteActionRepository.SQL_CREATE_TABLE);
+        sqLiteDatabase.execSQL(SQLiteTriggerRepository.SQL_CREATE_TABLE);
+        sqLiteDatabase.execSQL(SQLiteRoomRepository.SQL_CREATE_TABLE);
+        sqLiteDatabase.execSQL(SQLiteSceneRepository.SQL_CREATE_TABLE_SCENES);
+        sqLiteDatabase.execSQL(SQLiteSceneRepository.SQL_CREATE_TABLE_SUBSCENES);
     }
 
     @Override

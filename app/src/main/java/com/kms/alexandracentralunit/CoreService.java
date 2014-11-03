@@ -2,6 +2,7 @@ package com.kms.alexandracentralunit;
 
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.v4.content.LocalBroadcastManager;
@@ -27,6 +28,8 @@ public class CoreService extends Service {
     public static final String UPDATE_MESSAGE = "com.kms.alexandracentralunit.CoreService.UPDATE_MESSAGE";
     public static final String GADGET = "gadgetName";
     private static final String TAG = "CoreService";
+
+    private static Context context;
     public LocalBroadcastManager broadcaster;
     private List<Gadget> gadgets;
     private GadgetRepository gadgetRepository;
@@ -39,9 +42,14 @@ public class CoreService extends Service {
     public CoreService() {
     }
 
+    public static Context getContext() {
+        return CoreService.context;
+    }
+
     @Override
     public void onCreate() {
         broadcaster = LocalBroadcastManager.getInstance(this);
+        context = getApplicationContext();
         super.onCreate();
     }
 
@@ -57,32 +65,36 @@ public class CoreService extends Service {
          * internal system data creation
          * initialization of all required data
          */
+
+        /**
+         *  gadgets
+         */
         gadgetRepository = new SQLiteGadgetRepository(getApplicationContext());
         gadgetLinker = GadgetLinker.getInstance(getApplicationContext());
 
         gadgets = new ArrayList<Gadget>();
-        gadgets.add(new Gadget(gadgetRepository, UUID.randomUUID(), "test1", "MAC1", UUID.randomUUID(), 1));
-        gadgets.add(new Gadget(gadgetRepository, UUID.randomUUID(), "test2", "MAC2", UUID.randomUUID(), 2));
+        gadgets.add(new Gadget(UUID.randomUUID(), 1, UUID.randomUUID(), "test1", "MAC1", 1));
+        gadgets.add(new Gadget(UUID.randomUUID(), 1, UUID.randomUUID(), "test2", "MAC2", 2));
 
         for(Gadget gadget : gadgets)
         {
-            gadget.save();
+            gadgetRepository.add(gadget);
         }
-
         gadgetLinker.loadGadgets();
-        //roomRepository  = new SQLiteRoomRepository(getBaseContext());
-        // sceneRepository = new SQLiteSceneRepository(getBaseContext());
-        Log.d("ILOSC gadzetow poczatek: ", String.valueOf(gadgets.size()));
         for(Gadget gadget : gadgets = gadgetLinker.getAll())
         {
             //TODO: communication setup
-            Toast.makeText(this, "Gadget: "+gadget.getId().toString(), Toast.LENGTH_LONG).show();
-            sendResult(gadget.getName());
+            sendResult(gadget.toString());
         }
-        Log.d("ILOSC gadzetow koniec: ", String.valueOf(gadgets.size()));
-
+        /**
+         * rooms
+         */
+        //roomRepository  = new SQLiteRoomRepository(getBaseContext());
         //rooms = roomRepository.getAll();
-
+        /**
+         * scenes
+         */
+        // sceneRepository = new SQLiteSceneRepository(getBaseContext());
         //scenes = sceneRepository.getAll();
 
     }

@@ -1,8 +1,6 @@
 package com.kms.alexandracentralunit.data.model;
 
 
-import com.kms.alexandracentralunit.data.database.GadgetRepository;
-
 import java.util.UUID;
 
 
@@ -11,28 +9,16 @@ import java.util.UUID;
  */
 public class Gadget {
 
-    //database repository
-    public GadgetRepository repository;
     private UUID id;
+    private long system;
+    private UUID roomId;
     private String name;
     private String address;
-    private UUID roomId;
     private int type;
 
-    public Gadget() {
-    }
-
-    public Gadget(UUID id, String name, String address, UUID roomId, int type) {
+    public Gadget(UUID id, long system, UUID roomId, String name, String address, int type) {
         this.id = id;
-        this.name = name;
-        this.address = address;
-        this.roomId = roomId;
-        this.type = type;
-    }
-
-    public Gadget(GadgetRepository repository, UUID id, String name, String address, UUID roomId, int type) {
-        this.repository = repository;
-        this.id = id;
+        this.system = system;
         this.name = name;
         this.address = address;
         this.roomId = roomId;
@@ -41,6 +27,10 @@ public class Gadget {
 
     public UUID getId() {
         return id;
+    }
+
+    public long getSystem() {
+        return system;
     }
 
     public String getName() {
@@ -59,7 +49,12 @@ public class Gadget {
         return type;
     }
 
-    public void save() {
-        this.repository.add(this);
+    public String toString() {
+        return this.name+": "+this.id.toString();
     }
+
+    public void run(String parameters) {
+
+    }
+
 }

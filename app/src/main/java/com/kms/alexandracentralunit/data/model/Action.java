@@ -2,6 +2,8 @@ package com.kms.alexandracentralunit.data.model;
 
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 /**
@@ -11,16 +13,24 @@ public class Action implements SceneComponent {
 
     public int offset;
     private Gadget gadget;
-    private String actionCode;
+    private String parameters;
 
-    public Action(Gadget gadget, String actionCode, int offset) {
+    public Action(Gadget gadget, String parameters, int offset) {
         this.gadget = gadget;
-        this.actionCode = actionCode;
+        this.parameters = parameters;
         this.offset = offset;
     }
 
     @Override
     public void start() {
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                gadget.run(parameters);
+            }
+        };
+        Timer timer = new Timer();
+        timer.schedule(task, offset);
 
     }
 
@@ -33,8 +43,12 @@ public class Action implements SceneComponent {
         return gadget;
     }
 
-    public String getActionCode() {
-        return actionCode;
+    public String getParameters() {
+        return parameters;
+    }
+
+    public String toString() {
+        return this.gadget.toString()+", akcja: "+this.parameters;
     }
 
 }

@@ -3,6 +3,7 @@ package com.kms.alexandracentralunit.data;
 
 import android.content.ContentValues;
 
+import com.kms.alexandracentralunit.CoreService;
 import com.kms.alexandracentralunit.data.database.sqlite.SQLiteActionRepository;
 import com.kms.alexandracentralunit.data.model.Action;
 import com.kms.alexandracentralunit.data.model.Gadget;
@@ -19,7 +20,7 @@ public class ActionFactory {
 
         String actionCode = values.getAsString(SQLiteActionRepository.KEY_ACTION_GADGET);
         int offset = values.getAsInteger(SQLiteActionRepository.KEY_ACTION_OFFSET);
-        Gadget gadget = GadgetLinker.find((UUID) values.get(SQLiteActionRepository.KEY_ACTION_GADGET));
+        Gadget gadget = GadgetLinker.getInstance(CoreService.getContext()).find((UUID) values.get(SQLiteActionRepository.KEY_ACTION_GADGET));
 
         return new Action(gadget, actionCode, offset);
     }

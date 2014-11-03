@@ -2,6 +2,7 @@ package com.kms.alexandracentralunit.data.model;
 
 
 import java.util.List;
+import java.util.UUID;
 
 
 /**
@@ -10,8 +11,8 @@ import java.util.List;
 public class Room {
 
     List<Gadget> gadgets;
-    private long id;
+    private UUID id;
     private String name;
-    private int type;
+    private int color;
 
 }
