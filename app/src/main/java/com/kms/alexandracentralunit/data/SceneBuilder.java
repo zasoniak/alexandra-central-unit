@@ -6,12 +6,12 @@ import android.content.Context;
 
 import com.kms.alexandracentralunit.data.database.ActionRepository;
 import com.kms.alexandracentralunit.data.database.SceneRepository;
+import com.kms.alexandracentralunit.data.database.TriggerRepository;
 import com.kms.alexandracentralunit.data.database.sqlite.SQLiteActionRepository;
 import com.kms.alexandracentralunit.data.database.sqlite.SQLiteSceneRepository;
-import com.kms.alexandracentralunit.data.model.Action;
+import com.kms.alexandracentralunit.data.database.sqlite.SQLiteTriggerRepository;
 import com.kms.alexandracentralunit.data.model.Scene;
 
-import java.util.List;
 import java.util.UUID;
 
 
@@ -22,41 +22,39 @@ public class SceneBuilder {
 
     SceneRepository sceneRepository;
     ActionRepository actionRepository;
+    TriggerRepository triggerRepository;
+    Scene scene;
 
     //TODO: przemyslec co z triggerami
 
-    public SceneBuilder(Context context) {
-        sceneRepository = new SQLiteSceneRepository(context);
-        actionRepository = new SQLiteActionRepository(context);
+    public SceneBuilder(Context context, SceneRepository sceneRepository) {
+        this.sceneRepository = sceneRepository;
+        this.actionRepository = new SQLiteActionRepository(context);
+        this.triggerRepository = new SQLiteTriggerRepository(context);
     }
 
-    public Scene buildScene(ContentValues values) {
-        //TODO: konstruktor scene oparty na content values z bazy
-        Scene scene = new Scene(UUID.randomUUID(), "s", 1);
-        addActions(scene);
-        addSubscenes(scene);
-        addTriggers(scene);
+    public void buildScene(ContentValues values) {
 
-        return scene;
+        UUID id = UUID.fromString(values.getAsString(SQLiteSceneRepository.KEY_SCENE_ID));
+        long system_id = values.getAsLong(SQLiteSceneRepository.KEY_SCENE_SYSTEM);
+        String name = values.getAsString(SQLiteSceneRepository.KEY_SCENE_NAME);
+        int offset = values.getAsInteger(SQLiteSceneRepository.KEY_SUBSCENE_OFFSET);
+        this.scene = new Scene(id, system_id, name, offset);
     }
 
-    private void addSubscenes(Scene scene) {
-        List<Scene> subscenes = sceneRepository.getAllSubscenes(scene.id);
-        for(Scene subscene : subscenes)
-        {
-            scene.children.add(subscene);
-        }
+    public void addSubscenes() {
+        this.scene.children.addAll(sceneRepository.getAllSubscenes(this.scene.getId()));
     }
 
-    private void addActions(Scene scene) {
-        List<Action> actions = actionRepository.getAllByScene(scene.id);
-        for(Action action : actions)
-        {
-            scene.children.add(action);
-        }
+    public void addActions() {
+        this.scene.children.addAll(actionRepository.getAllByScene(this.scene.getId()));
     }
 
-    private void addTriggers(Scene scene) {
+    public void addTriggers() {
+        this.scene.triggers.addAll(triggerRepository.getAllByScene(this.scene.getId()));
+    }
 
+    public Scene getScene() {
+        return this.scene;
     }
 }
