@@ -23,33 +23,29 @@ import java.util.UUID;
 public class SQLiteSceneRepository implements SceneRepository {
 
 
-    private static final String TAG = "SQLiteSceneRepository";
-    private static final String TABLE_NAME_SCENES = "scenes";
-
-
     public static final String KEY_SCENE_ID = "_id";
     public static final String KEY_SCENE_SYSTEM = "system_id";
     public static final String KEY_SCENE_NAME = "name";
     public static final String KEY_SCENE_CREATED = "created_at";
     public static final String KEY_SCENE_UPDATED = "updated_at";
     public static final String KEY_SCENE_CREATED_BY = "created_by";
-
     private static final String[] TABLE_COLUMNS_SCENES = {KEY_SCENE_ID, KEY_SCENE_SYSTEM,
                                                           KEY_SCENE_NAME, KEY_SCENE_CREATED,
                                                           KEY_SCENE_UPDATED, KEY_SCENE_CREATED_BY};
     public static final String KEY_SCENE_ID_TYPE = "TEXT";
-
     public static final String KEY_SUBSCENE_SCENE = "scene_id";
     public static final String KEY_SUBSCENE_SUBSCENE = "subscene_id";
     public static final String KEY_SUBSCENE_OFFSET = "offset";
     public static final String KEY_SUBSCENE_CREATED = "created_at";
-
-    private static final String TABLE_NAME_SCENES = "scenes";    private static final String[] TABLE_COLUMNS_SUBSCENES = {KEY_SUBSCENE_SCENE,
+    private static final String[] TABLE_COLUMNS_SUBSCENES = {KEY_SUBSCENE_SCENE,
                                                              KEY_SUBSCENE_SUBSCENE,
                                                              KEY_SUBSCENE_OFFSET,
                                                              KEY_SUBSCENE_CREATED};
+    public static final String KEY_SUBSCENE_SCENE_TYPE = "TEXT";
+    private static final String TAG = "SQLiteSceneRepository";
+    private static final String TABLE_NAME_SCENES = "scenes";
     public static final String SQL_DROP_TABLE_SCENES = "DROP TABLE IF EXISTS "+TABLE_NAME_SCENES;
-    private static final String TABLE_NAME_SUBSCENES = "scenes_subscenes";    public static final String KEY_SUBSCENE_SCENE_TYPE = "TEXT";
+    private static final String TABLE_NAME_SUBSCENES = "scenes_subscenes";
     private static final String[] TABLE_COLUMNS_SUBSCENES_SELECTION = {TABLE_NAME_SCENES+"."+KEY_SCENE_ID,
                                                                        TABLE_NAME_SCENES+"."+KEY_SCENE_SYSTEM,
                                                                        TABLE_NAME_SCENES+"."+KEY_SCENE_NAME,
