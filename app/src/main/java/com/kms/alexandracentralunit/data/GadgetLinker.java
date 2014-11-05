@@ -56,4 +56,16 @@ public class GadgetLinker {
     public List<Gadget> getAll() {
         return this.gadgets;
     }
+
+    public List<Gadget> getAllByRoom(UUID roomId) {
+        List<Gadget> gadgetArrayList = new ArrayList<Gadget>();
+        for(Gadget gadget : this.gadgets)
+        {
+            if(gadget.getRoom().equals(roomId))
+            {
+                gadgetArrayList.add(gadget);
+            }
+        }
+        return gadgetArrayList;
+    }
 }

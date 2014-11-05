@@ -21,7 +21,7 @@ public class GadgetFactory {
         UUID roomId = UUID.fromString(values.getAsString(SQLiteGadgetRepository.KEY_GADGET_ROOM));
         String name = values.getAsString(SQLiteGadgetRepository.KEY_GADGET_NAME);
         String address = values.getAsString(SQLiteGadgetRepository.KEY_GADGET_MAC_ADDRESS);
-
+        //TODO: different subclasses!
         int type = values.getAsInteger(SQLiteGadgetRepository.KEY_GADGET_TYPE);
 
         return new Gadget(id, system_id, roomId, name, address, type);

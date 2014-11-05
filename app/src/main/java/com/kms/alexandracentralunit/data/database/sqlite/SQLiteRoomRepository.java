@@ -1,11 +1,17 @@
 package com.kms.alexandracentralunit.data.database.sqlite;
 
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
+import com.kms.alexandracentralunit.data.RoomFactory;
 import com.kms.alexandracentralunit.data.database.RoomRepository;
 import com.kms.alexandracentralunit.data.model.Room;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -57,27 +63,111 @@ public class SQLiteRoomRepository implements RoomRepository {
 
     @Override
     public boolean add(Room room) {
-        return false;
+        Log.d("Room.add", room.toString());
+        SQLiteDatabase sqLiteDatabase = databaseHelper.openDatabase();
+
+        String query = "INSERT INTO "+TABLE_NAME+" ("+
+                KEY_ROOM_ID+COMMA_SEP+
+                KEY_ROOM_SYSTEM+COMMA_SEP+
+                KEY_ROOM_NAME+COMMA_SEP+
+                KEY_ROOM_COLOR+COMMA_SEP+
+                KEY_ROOM_CREATED_BY+") "+"values"+" ("+
+                "\'"+room.getId().toString()+"\'"+COMMA_SEP+
+                "\'"+String.valueOf(room.getSystemId())+"\'"+COMMA_SEP+
+                "\'"+room.getName()+"\'"+COMMA_SEP+
+                "\'"+String.valueOf(room.getColor())+"\'"+COMMA_SEP+
+                "\'"+"Sony"+"\'"+");";
+
+        sqLiteDatabase.execSQL(query);
+        Log.i(TAG, "Inserted new Room: "+room.toString());
+
+        databaseHelper.closeDatabase();
+        return true;
     }
 
     @Override
     public boolean delete(Room room) {
+        //TODO: uzupelnic
         return false;
     }
 
     @Override
     public boolean update(Room room) {
-        return false;
+        Log.d("Room.update", room.toString());
+        SQLiteDatabase sqLiteDatabase = databaseHelper.openDatabase();
+
+        String query = "UPDATE "+TABLE_NAME+" SET "+
+                KEY_ROOM_SYSTEM+" = "+String.valueOf(room.getSystemId())+COMMA_SEP+
+                KEY_ROOM_NAME+" = "+room.getName()+COMMA_SEP+
+                KEY_ROOM_COLOR+" = "+String.valueOf(room.getColor())+
+                KEY_ROOM_UPDATED+" = "+ConfigurationDatabaseHelper.SQL_CURRENT_TIMESTAMP+
+                " WHERE "+KEY_ROOM_ID+" = "+"\'"+room.getId().toString()+"\'"+");";
+
+        sqLiteDatabase.execSQL(query);
+        Log.i(TAG, "Updated Room: "+room.toString());
+        databaseHelper.closeDatabase();
+        return true;
     }
 
     @Override
     public Room find(UUID id) {
-        return null;
+        // obtain thread-safe database access
+        SQLiteDatabase sqLiteDatabase = databaseHelper.openDatabase();
+
+        // build a query
+        Cursor cursor = sqLiteDatabase.query(TABLE_NAME, // a. table
+                TABLE_COLUMNS, // b. column names
+                KEY_ROOM_ID+" = ?", // c. selections
+                new String[] {id.toString()}, // d. selections args
+                null, // e. group by
+                null, // f. having
+                null, // g. order by
+                null); // h. limit
+
+        // prepare structured data
+        ContentValues values = new ContentValues();
+        if(cursor != null)
+        {
+            cursor.moveToFirst();
+            values.put(KEY_ROOM_ID, cursor.getString(0));
+            values.put(KEY_ROOM_SYSTEM, cursor.getLong(1));
+            values.put(KEY_ROOM_NAME, cursor.getString(2));
+            values.put(KEY_ROOM_COLOR, cursor.getInt(3));
+        }
+        // close database connection and release resources
+        databaseHelper.closeDatabase();
+        cursor.close();
+        return RoomFactory.create(values);
     }
 
     @Override
     public List<Room> getAll() {
-        return null;
+        // obtain thread-safe database access
+        SQLiteDatabase sqLiteDatabase = databaseHelper.openDatabase();
+
+        // build a query
+        String query = "SELECT * FROM "+TABLE_NAME+" ORDER BY "+KEY_ROOM_NAME;
+        Cursor cursor = sqLiteDatabase.rawQuery(query, null);
+
+        // prepare structured data
+        ArrayList<Room> rooms = new ArrayList<Room>();
+        if(cursor.moveToFirst())
+        {
+            do
+            {
+                ContentValues values = new ContentValues();
+                values.put(KEY_ROOM_ID, cursor.getString(0));
+                values.put(KEY_ROOM_SYSTEM, cursor.getLong(1));
+                values.put(KEY_ROOM_NAME, cursor.getString(2));
+                values.put(KEY_ROOM_COLOR, cursor.getInt(3));
+                rooms.add(RoomFactory.create(values));
+            } while(cursor.moveToNext());
+        }
+        // close database connection and release resources
+        databaseHelper.closeDatabase();
+        cursor.close();
+        // return rooms
+        return rooms;
     }
 
 }

@@ -14,11 +14,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class ConfigurationDatabaseHelper extends SQLiteOpenHelper {
 
+    public static final String SQL_CURRENT_TIMESTAMP = "CURRENT_TIMESTAMP";
     private static final String TAG = "Configuration Database";
-
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "configurationDatabase";
-
     private static ConfigurationDatabaseHelper instance;
     private AtomicInteger threadCounter = new AtomicInteger();
     private SQLiteDatabase database;

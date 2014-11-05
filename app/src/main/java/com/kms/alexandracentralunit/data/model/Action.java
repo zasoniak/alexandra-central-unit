@@ -4,6 +4,7 @@ package com.kms.alexandracentralunit.data.model;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.UUID;
 
 
 /**
@@ -12,10 +13,12 @@ import java.util.TimerTask;
 public class Action implements SceneComponent {
 
     public int offset;
+    private UUID scene;
     private Gadget gadget;
     private String parameters;
 
-    public Action(Gadget gadget, String parameters, int offset) {
+    public Action(UUID scene, Gadget gadget, String parameters, int offset) {
+        this.scene = scene;
         this.gadget = gadget;
         this.parameters = parameters;
         this.offset = offset;
@@ -45,6 +48,14 @@ public class Action implements SceneComponent {
 
     public String getParameters() {
         return parameters;
+    }
+
+    public UUID getScene() {
+        return scene;
+    }
+
+    public int getOffset() {
+        return offset;
     }
 
     public String toString() {

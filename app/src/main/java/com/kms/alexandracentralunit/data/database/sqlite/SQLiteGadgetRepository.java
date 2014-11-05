@@ -96,7 +96,7 @@ public class SQLiteGadgetRepository implements GadgetRepository {
 
     @Override
     public boolean delete(Gadget gadget) {
-        //TODO: update for UUID
+        //TODO: update for UUID and softdelete
         Log.d("Gadget.remove", gadget.toString());
         SQLiteDatabase sqLiteDatabase = databaseHelper.openDatabase();
 
@@ -110,21 +110,25 @@ public class SQLiteGadgetRepository implements GadgetRepository {
 
     @Override
     public boolean update(Gadget gadget) {
-        //TODO: update for UUID
         Log.d("Gadget.update", gadget.toString());
         SQLiteDatabase sqLiteDatabase = databaseHelper.openDatabase();
 
-        ContentValues values = gadgetToContentValues(gadget);
-        long gadgetId = sqLiteDatabase.update(SQLiteGadgetRepository.TABLE_NAME, values, KEY_GADGET_ID+" = ?", new String[] {
-                String.valueOf(gadget.getId())});
-        Log.i(TAG, "Updated Gadget with ID: "+gadgetId);
-        databaseHelper.closeDatabase();
+        String query = "UPDATE "+TABLE_NAME+" SET "+
+                KEY_GADGET_SYSTEM+" = "+String.valueOf(gadget.getSystem())+COMMA_SEP+
+                KEY_GADGET_ROOM+" = "+gadget.getRoom().toString()+COMMA_SEP+
+                KEY_GADGET_NAME+" = "+gadget.getName()+COMMA_SEP+
+                KEY_GADGET_MAC_ADDRESS+" = "+gadget.getAddress()+COMMA_SEP+
+                KEY_GADGET_TYPE+" = "+String.valueOf(gadget.getType())+
+                KEY_GADGET_UPDATED+" = "+ConfigurationDatabaseHelper.SQL_CURRENT_TIMESTAMP+
+                " WHERE "+KEY_GADGET_ID+" = "+"\'"+gadget.getId().toString()+"\'"+");";
 
+        sqLiteDatabase.execSQL(query);
+        Log.i(TAG, "Updated Gadget with ID: "+gadget.getId().toString());
+        databaseHelper.closeDatabase();
         return true;
     }
 
     public Gadget find(UUID id) {
-
         // obtain thread-safe database access
         SQLiteDatabase sqLiteDatabase = databaseHelper.openDatabase();
 

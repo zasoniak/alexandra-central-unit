@@ -26,8 +26,6 @@ public class SQLiteActionRepository implements ActionRepository {
     public static final String KEY_ACTION_GADGET = "gadget_id";
     public static final String KEY_ACTION_ACTION = "action";
     public static final String KEY_ACTION_OFFSET = "offset";
-    private static final String[] TABLE_COLUMNS_FOR_OBJECT = {KEY_ACTION_GADGET, KEY_ACTION_ACTION,
-                                                              KEY_ACTION_OFFSET};
     public static final String KEY_ACTION_CREATED = "created_at";
     public static final String KEY_ACTION_UPDATED = "updated_at";
     // Actions table column array
@@ -66,21 +64,16 @@ public class SQLiteActionRepository implements ActionRepository {
         Log.d("Action.add", action.toString());
         SQLiteDatabase sqLiteDatabase = databaseHelper.openDatabase();
 
-      /*  ContentValues values = gadgetToContentValues(gadget);
-
         String query = "INSERT INTO "+TABLE_NAME+" ("+
-                KEY_GADGET_ID+COMMA_SEP+
-                KEY_GADGET_NAME+COMMA_SEP+
-                KEY_GADGET_MAC_ADDRESS+COMMA_SEP+
-                KEY_GADGET_ROOM+COMMA_SEP+
-                KEY_GADGET_TYPE+") "+"values"+" ("+
-                "\'"+values.getAsString(KEY_GADGET_ID)+"\'"+COMMA_SEP+
-                "\'"+values.getAsString(KEY_GADGET_NAME)+"\'"+COMMA_SEP+
-                "\'"+values.getAsString(KEY_GADGET_MAC_ADDRESS)+"\'"+COMMA_SEP+
-                "\'"+values.getAsString(KEY_GADGET_ROOM)+"\'"+COMMA_SEP+
-                "\'"+values.getAsString(KEY_GADGET_TYPE)+"\'"+");";
-*/
-        //    sqLiteDatabase.execSQL(query);
+                KEY_ACTION_SCENE+COMMA_SEP+
+                KEY_ACTION_GADGET+COMMA_SEP+
+                KEY_ACTION_ACTION+COMMA_SEP+
+                KEY_ACTION_OFFSET+") "+"values"+" ("+
+                "\'"+action.getScene().toString()+"\'"+COMMA_SEP+
+                "\'"+action.getGadget().getId().toString()+"\'"+COMMA_SEP+
+                "\'"+action.getParameters()+"\'"+COMMA_SEP+
+                "\'"+String.valueOf(action.getOffset())+"\'"+");";
+        sqLiteDatabase.execSQL(query);
         Log.i(TAG, "Inserted new action: "+action.toString());
 
         databaseHelper.closeDatabase();
@@ -89,12 +82,26 @@ public class SQLiteActionRepository implements ActionRepository {
 
     @Override
     public boolean delete(Action action) {
+        //TODO: uzupelnic
         return false;
     }
 
     @Override
     public boolean update(Action action) {
-        return false;
+        Log.d("Action.update", action.toString());
+        SQLiteDatabase sqLiteDatabase = databaseHelper.openDatabase();
+
+        String query = "UPDATE "+TABLE_NAME+" SET "+
+                KEY_ACTION_ACTION+" = "+action.getParameters()+COMMA_SEP+
+                KEY_ACTION_OFFSET+" = "+String.valueOf(action.getOffset())+COMMA_SEP+
+                KEY_ACTION_UPDATED+" = "+ConfigurationDatabaseHelper.SQL_CURRENT_TIMESTAMP+
+                " WHERE "+KEY_ACTION_SCENE+" = "+"\'"+action.getScene().toString()+"\'"+"AND"+
+                KEY_ACTION_GADGET+" = "+"\'"+action.getGadget().getId().toString()+"\'"+");";
+
+        sqLiteDatabase.execSQL(query);
+        Log.i(TAG, "Updated action: "+action.toString());
+        databaseHelper.closeDatabase();
+        return true;
     }
 
     @Override
@@ -104,7 +111,7 @@ public class SQLiteActionRepository implements ActionRepository {
 
         // build a query
         Cursor cursor = sqLiteDatabase.query(TABLE_NAME, // a. table
-                TABLE_COLUMNS_FOR_OBJECT, // b. column names
+                TABLE_COLUMNS, // b. column names
                 KEY_ACTION_SCENE+" = ?", // c. selections
                 new String[] {sceneID.toString()}, // d. selections args
                 null, // e. group by
@@ -119,9 +126,10 @@ public class SQLiteActionRepository implements ActionRepository {
             do
             {
                 ContentValues values = new ContentValues();
-                values.put(KEY_ACTION_GADGET, cursor.getString(0));
-                values.put(KEY_ACTION_ACTION, cursor.getString(1));
-                values.put(KEY_ACTION_OFFSET, cursor.getLong(2));
+                values.put(KEY_ACTION_SCENE, cursor.getString(0));
+                values.put(KEY_ACTION_GADGET, cursor.getString(1));
+                values.put(KEY_ACTION_ACTION, cursor.getString(2));
+                values.put(KEY_ACTION_OFFSET, cursor.getLong(3));
                 actions.add(ActionFactory.create(values));
             } while(cursor.moveToNext());
         }
