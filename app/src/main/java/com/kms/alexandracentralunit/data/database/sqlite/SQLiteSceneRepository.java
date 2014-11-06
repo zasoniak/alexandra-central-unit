@@ -5,12 +5,18 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 
 import com.kms.alexandracentralunit.data.SceneBuilder;
+import com.kms.alexandracentralunit.data.database.ActionRepository;
 import com.kms.alexandracentralunit.data.database.SceneRepository;
+import com.kms.alexandracentralunit.data.database.TriggerRepository;
+import com.kms.alexandracentralunit.data.model.Action;
 import com.kms.alexandracentralunit.data.model.Scene;
+import com.kms.alexandracentralunit.data.model.SceneComponent;
+import com.kms.alexandracentralunit.data.model.Trigger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,29 +96,70 @@ public class SQLiteSceneRepository implements SceneRepository {
 
     @Override
     public boolean add(Scene scene) {
-        //TODO: zapis subscenes, actions, triggers
         Log.d("Scene.add", scene.toString());
+        TriggerRepository triggerRepository = new SQLiteTriggerRepository(this.context);
+        ActionRepository actionRepository = new SQLiteActionRepository(this.context);
         SQLiteDatabase sqLiteDatabase = databaseHelper.openDatabase();
 
-        String query = "INSERT INTO "+TABLE_NAME_SCENES+" ("+
-                KEY_SCENE_ID+COMMA_SEP+
-                KEY_SCENE_SYSTEM+COMMA_SEP+
-                KEY_SCENE_NAME+COMMA_SEP+
-                KEY_SCENE_CREATED_BY+") "+"values"+" ("+
-                "\'"+scene.getId().toString()+"\'"+COMMA_SEP+
-                "\'"+String.valueOf(scene.getSystem())+"\'"+COMMA_SEP+
-                "\'"+scene.getName()+"\'"+");";
+        sqLiteDatabase.beginTransaction();
+        try
+        {
+            String query = "INSERT INTO "+TABLE_NAME_SCENES+" ("+
+                    KEY_SCENE_ID+COMMA_SEP+
+                    KEY_SCENE_SYSTEM+COMMA_SEP+
+                    KEY_SCENE_NAME+COMMA_SEP+
+                    KEY_SCENE_CREATED_BY+") "+"values"+" ("+
+                    "\'"+scene.getId().toString()+"\'"+COMMA_SEP+
+                    "\'"+String.valueOf(scene.getSystem())+"\'"+COMMA_SEP+
+                    "\'"+scene.getName()+"\'"+");";
+            sqLiteDatabase.execSQL(query);
 
-        sqLiteDatabase.execSQL(query);
-        Log.i(TAG, "Inserted new Scene with ID: "+scene.getId().toString());
+            List<Trigger> triggers = scene.getTriggers();
+            for(Trigger trigger : triggers)
+            {
+                triggerRepository.add(trigger);
+            }
 
-        databaseHelper.closeDatabase();
+            List<SceneComponent> children = scene.getChildren();
+            for(SceneComponent child : children)
+            {
+                if(child instanceof Scene)
+                {
+                    this.addSubscene((Scene) child);
+                }
+                else
+                {
+                    actionRepository.add((Action) child);
+                }
+            }
+            sqLiteDatabase.setTransactionSuccessful();
+            Log.i(TAG, "Inserted new Scene with ID: "+scene.getId().toString());
+        }
+        catch (SQLiteException ex)
+        {
+            return false;
+        }
+        finally
+        {
+            sqLiteDatabase.endTransaction();
+            databaseHelper.closeDatabase();
+        }
         return true;
+    }
+
+    @Override
+    public boolean addSubscene(Scene scene) {
+        return false;
     }
 
     @Override
     public boolean delete(Scene scene) {
         //TODO: implement
+        return false;
+    }
+
+    @Override
+    public boolean deleteSubscene(Scene scene) {
         return false;
     }
 
@@ -137,7 +184,7 @@ public class SQLiteSceneRepository implements SceneRepository {
                 null); // h. limit
 
         // prepare structured data
-        SceneBuilder builder = new SceneBuilder(this.context,this);
+        SceneBuilder builder = new SceneBuilder(this.context, this);
         ContentValues values = new ContentValues();
         if(cursor != null)
         {
@@ -194,6 +241,7 @@ public class SQLiteSceneRepository implements SceneRepository {
 
     @Override
     public List<Scene> getAllByRoom(UUID roomID) {
+
         return null;
     }
 
@@ -205,11 +253,10 @@ public class SQLiteSceneRepository implements SceneRepository {
         // build a query
 
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-        queryBuilder.setTables(TABLE_NAME_SCENES+ " RIGHT INNER JOIN "+ TABLE_NAME_SUBSCENES + " ON ("+TABLE_NAME_SCENES+"."+KEY_SCENE_ID+" = "+TABLE_NAME_SUBSCENES+"."+KEY_SUBSCENE_SCENE+")");
+        queryBuilder.setTables(TABLE_NAME_SCENES+" RIGHT INNER JOIN "+TABLE_NAME_SUBSCENES+" ON ("+TABLE_NAME_SCENES+"."+KEY_SCENE_ID+" = "+TABLE_NAME_SUBSCENES+"."+KEY_SUBSCENE_SCENE+")");
         queryBuilder.appendWhere(TABLE_NAME_SUBSCENES+"."+KEY_SUBSCENE_SCENE+" = "+id.toString());
 
-
-        Cursor cursor =queryBuilder.query(sqLiteDatabase,TABLE_COLUMNS_SUBSCENES_SELECTION,null,null,null,null,TABLE_NAME_SUBSCENES+"."+KEY_SUBSCENE_OFFSET);
+        Cursor cursor = queryBuilder.query(sqLiteDatabase, TABLE_COLUMNS_SUBSCENES_SELECTION, null, null, null, null, TABLE_NAME_SUBSCENES+"."+KEY_SUBSCENE_OFFSET);
 
         // prepare structured data
         ArrayList<Scene> subscenes = new ArrayList<Scene>();
@@ -236,5 +283,4 @@ public class SQLiteSceneRepository implements SceneRepository {
         // return gadgets list
         return subscenes;
     }
-
 }

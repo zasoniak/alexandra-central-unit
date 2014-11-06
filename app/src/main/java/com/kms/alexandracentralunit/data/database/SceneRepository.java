@@ -13,7 +13,9 @@ import java.util.UUID;
 public interface SceneRepository {
 
     public boolean add(Scene scene);
+    public boolean addSubscene(Scene scene);
     public boolean delete(Scene scene);
+    public boolean deleteSubscene(Scene scene);
     public boolean update(Scene scene);
     public Scene find(UUID id);
     public List<Scene> getAll();

@@ -12,7 +12,6 @@ import com.kms.alexandracentralunit.data.database.sqlite.SQLiteScheduleRepositor
 import com.kms.alexandracentralunit.data.model.ScheduledScene;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 
@@ -42,17 +41,11 @@ public class ScheduleManagerService extends IntentService {
         scheduledScenes = repository.getAll();
         for(ScheduledScene scheduledScene : scheduledScenes)
         {
-            //TODO: obsługa czasu i interwałów
-            Intent newIntent = new Intent(CoreService.getContext(), ScheduleReceiver.class).putExtra(ScheduledScene.EXTRA_ID, scheduledScene.getId().toString()).putExtra(ScheduledScene.EXTRA_SCENE_ID, scheduledScene.getScene().toString()).putExtra(ScheduledScene.EXTRA_TIME, scheduledScene.getTime().toString()).putExtra(ScheduledScene.EXTRA_REPEAT_INTERVAL, scheduledScene.getRepeatInterval()).putExtra(ScheduledScene.EXTRA_CONDITIONS, scheduledScene.getConditions());
+            Intent newIntent = new Intent(CoreService.getContext(), ScheduleReceiver.class).putExtra(ScheduledScene.EXTRA_ID, scheduledScene.getId().toString()).putExtra(ScheduledScene.EXTRA_SCENE_ID, scheduledScene.getScene().toString()).putExtra(ScheduledScene.EXTRA_TIME, scheduledScene.getTime()).putExtra(ScheduledScene.EXTRA_REPEAT_INTERVAL, scheduledScene.getRepeatInterval()).putExtra(ScheduledScene.EXTRA_CONDITIONS, scheduledScene.getConditions());
             PendingIntent alarmIntent = PendingIntent.getBroadcast(CoreService.getContext(), 0, newIntent, 0);
             //remember for the future
             alarmIntents.add(alarmIntent);
-
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(System.currentTimeMillis());
-            calendar.set(Calendar.HOUR_OF_DAY, 8);
-            calendar.set(Calendar.MINUTE, 30);
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_HOUR, alarmIntent);
+            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, scheduledScene.getTime(), scheduledScene.getRepeatInterval(), alarmIntent);
         }
 
     }

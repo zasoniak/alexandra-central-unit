@@ -1,8 +1,6 @@
 package com.kms.alexandracentralunit.data.model;
 
 
-import android.text.format.Time;
-
 import java.util.UUID;
 
 
@@ -20,11 +18,11 @@ public class ScheduledScene {
     public UUID id;
     public UUID scene;
     public int system;
-    public Time time;
-    public String repeatInterval;
+    public long time;
+    public long repeatInterval;
     public String conditions;
 
-    public ScheduledScene(UUID id, UUID scene, int system, Time time, String repeatInterval, String conditions) {
+    public ScheduledScene(UUID id, UUID scene, int system, long time, long repeatInterval, String conditions) {
         this.id = id;
         this.scene = scene;
         this.system = system;
@@ -45,11 +43,11 @@ public class ScheduledScene {
         return system;
     }
 
-    public Time getTime() {
+    public long getTime() {
         return time;
     }
 
-    public String getRepeatInterval() {
+    public long getRepeatInterval() {
         return repeatInterval;
     }
 
