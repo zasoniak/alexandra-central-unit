@@ -25,7 +25,7 @@ public class RoomFactory {
         int color = values.getAsInteger(SQLiteRoomRepository.KEY_ROOM_COLOR);
         List<Gadget> gadgets = GadgetLinker.getInstance(CoreService.getContext()).getAllByRoom(id);
 
-        return new Room(gadgets, systemId, id, name, color);
+        return new Room(id, systemId, name, color, gadgets);
     }
 
 }

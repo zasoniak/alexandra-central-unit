@@ -10,17 +10,17 @@ import java.util.UUID;
  */
 public class Room {
 
-    List<Gadget> gadgets;
-    private long systemId;
     private UUID id;
+    private long systemId;
     private String name;
     private int color;
+    List<Gadget> gadgets;
 
-    public Room(List<Gadget> gadgets, long systemId, UUID id, String name, int color) {
-        this.gadgets = gadgets;
-        this.systemId = systemId;
+    public Room(UUID id, long systemId, String name, int color, List<Gadget> gadgets) {
         this.id = id;
+        this.systemId = systemId;
         this.name = name;
+        this.gadgets = gadgets;
         this.color = color;
     }
 
@@ -38,5 +38,9 @@ public class Room {
 
     public int getColor() {
         return color;
+    }
+
+    public List<Gadget> getGadgets() {
+        return gadgets;
     }
 }
