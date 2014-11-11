@@ -63,7 +63,7 @@ public class Home {
     public Scene getScene(long id) {
         for(Scene scene : this.scenes)
         {
-            //    if(scene.getId()==id)
+            if(scene.getId() == id)
             return scene;
         }
         return null;
@@ -72,7 +72,7 @@ public class Home {
     public Room getRoom(long id) {
         for(Room room : this.rooms)
         {
-            //  if(room.getId()==id)
+            if(room.getId() == id)
             return room;
         }
         return null;
@@ -81,7 +81,7 @@ public class Home {
     public ScheduledScene getScheduledScene(long id) {
         for(ScheduledScene scheduledScene : this.schedule)
         {
-            //       if(scheduledScene.getId()==id)
+            if(scheduledScene.getId() == id)
             return scheduledScene;
         }
         return null;
@@ -90,10 +90,17 @@ public class Home {
     public User getUser(long id) {
         for(User user : this.users)
         {
-            //     if(user.getId()==id)
+            if(user.getId() == id)
             return user;
         }
         return null;
     }
 
+    public long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
 }

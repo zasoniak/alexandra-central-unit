@@ -3,6 +3,11 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 19
     buildToolsVersion "20.0.0"
+    packagingOptions
+            {
+                exclude 'META-INF/LICENSE'
+                exclude 'META-INF/NOTICE'
+            }
 
     defaultConfig {
         applicationId "com.kms.alexandracentralunit"
@@ -24,4 +29,5 @@ dependencies {
     compile 'com.google.code.gson:gson:2.3'
     compile 'com.loopj.android:android-async-http:1.4.6'
     compile 'com.android.support:support-v4:21.0.0'
+    compile 'com.firebase:firebase-client-android:2.0.0'
 }

@@ -23,17 +23,17 @@ public class SQLiteScheduleRepository implements ScheduleRepository {
     }
 
     @Override
-    public boolean add() {
+    public boolean add(ScheduledScene scheduledScene) {
         return false;
     }
 
     @Override
-    public boolean delete() {
+    public boolean delete(ScheduledScene scheduledScene) {
         return false;
     }
 
     @Override
-    public boolean update() {
+    public boolean update(ScheduledScene scheduledScene) {
         return false;
     }
 

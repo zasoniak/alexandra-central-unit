@@ -3,6 +3,7 @@ package com.kms.alexandracentralunit.data;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.util.Log;
 
 import com.kms.alexandracentralunit.CoreService;
 import com.kms.alexandracentralunit.data.database.HomeRepository;
@@ -16,8 +17,8 @@ import com.kms.alexandracentralunit.data.model.User;
 
 public class SyncService extends IntentService {
 
-    private Home home;
-    private HomeRepository homeRepository;
+    protected Home home;
+    protected HomeRepository homeRepository;
 
     public SyncService() {
         super("Sync service");
@@ -25,6 +26,7 @@ public class SyncService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+        Log.d("syncservice", "started");
         home = CoreService.getHome();
         homeRepository = CoreService.getHomeRepository();
 
@@ -35,21 +37,23 @@ public class SyncService extends IntentService {
         return false;
     }
 
-    private boolean add(Room room) {
+    protected boolean add(Room room) {
+        if(home.getRoom(room.getId()) == null)
         home.getRooms().add(room);
-
+        Log.d("ilosc pokoi:", String.valueOf(home.getRooms().size()));
         return homeRepository.add(room);
 
     }
 
-    private boolean delete(Room room) {
-        home.getRooms().remove(room);
+    protected boolean delete(Room room) {
+        Room temp = home.getRoom(room.getId());
+        home.getRooms().remove(temp);
 
-        return homeRepository.delete(room);
+        return homeRepository.delete(temp);
 
     }
 
-    private boolean update(Room room) {
+    protected boolean update(Room room) {
         for(Room room1 : home.getRooms())
         {
             if(room1.getId() == room.getId())
@@ -63,20 +67,21 @@ public class SyncService extends IntentService {
         return false;
     }
 
-    private boolean add(Gadget gadget) {
+    protected boolean add(Gadget gadget) {
+        if(home.getGadget(gadget.getId()) == null)
         home.getGadgets().add(gadget);
 
         return homeRepository.add(gadget);
 
     }
 
-    private boolean delete(Gadget gadget) {
+    protected boolean delete(Gadget gadget) {
         home.getGadgets().remove(gadget);
         return homeRepository.delete(gadget);
 
     }
 
-    private boolean update(Gadget gadget) {
+    protected boolean update(Gadget gadget) {
         for(Gadget gadget1 : home.getGadgets())
         {
             if(gadget1.getId().equals(gadget.getId()))
@@ -89,20 +94,21 @@ public class SyncService extends IntentService {
         return false;
     }
 
-    private boolean add(Scene scene) {
+    protected boolean add(Scene scene) {
+        if(home.getScene(scene.getId()) == null)
         home.getScenes().add(scene);
 
         return homeRepository.add(scene);
 
     }
 
-    private boolean delete(Scene scene) {
+    protected boolean delete(Scene scene) {
         home.getScenes().remove(scene);
         return homeRepository.delete(scene);
 
     }
 
-    private boolean update(Scene scene) {
+    protected boolean update(Scene scene) {
         for(Scene scene1 : home.getScenes())
         {
             if(scene1.getId() == scene.getId())
@@ -117,20 +123,21 @@ public class SyncService extends IntentService {
         return false;
     }
 
-    private boolean add(ScheduledScene scheduledscene) {
+    protected boolean add(ScheduledScene scheduledscene) {
+        if(home.getScheduledScene(scheduledscene.getId()) == null)
         home.getSchedule().add(scheduledscene);
 
         return homeRepository.add(scheduledscene);
 
     }
 
-    private boolean delete(ScheduledScene scheduledscene) {
+    protected boolean delete(ScheduledScene scheduledscene) {
         home.getSchedule().remove(scheduledscene);
         return homeRepository.delete(scheduledscene);
 
     }
 
-    private boolean update(ScheduledScene scheduledscene) {
+    protected boolean update(ScheduledScene scheduledscene) {
         for(ScheduledScene scheduledscene1 : home.getSchedule())
         {
             if(scheduledscene1.getId() == scheduledscene.getId())
@@ -142,20 +149,21 @@ public class SyncService extends IntentService {
         return false;
     }
 
-    private boolean add(User user) {
+    protected boolean add(User user) {
+        if(home.getUser(user.getId()) == null)
         home.getUsers().add(user);
 
         return homeRepository.add(user);
 
     }
 
-    private boolean delete(User user) {
+    protected boolean delete(User user) {
         home.getUsers().remove(user);
         return homeRepository.delete(user);
 
     }
 
-    private boolean update(User user) {
+    protected boolean update(User user) {
         for(User user1 : home.getUsers())
         {
             if(user1.getId() == user.getId())

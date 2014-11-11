@@ -72,7 +72,7 @@ public class SQLiteRoomRepository implements RoomRepository {
                 KEY_ROOM_NAME+COMMA_SEP+
                 KEY_ROOM_COLOR+COMMA_SEP+
                 KEY_ROOM_CREATED_BY+") "+"values"+" ("+
-                "\'"+room.getId().toString()+"\'"+COMMA_SEP+
+                "\'"+String.valueOf(room.getId())+"\'"+COMMA_SEP+
                 "\'"+String.valueOf(room.getSystemId())+"\'"+COMMA_SEP+
                 "\'"+room.getName()+"\'"+COMMA_SEP+
                 "\'"+String.valueOf(room.getColor())+"\'"+COMMA_SEP+
@@ -101,7 +101,7 @@ public class SQLiteRoomRepository implements RoomRepository {
                 KEY_ROOM_NAME+" = "+room.getName()+COMMA_SEP+
                 KEY_ROOM_COLOR+" = "+String.valueOf(room.getColor())+
                 KEY_ROOM_UPDATED+" = "+ConfigurationDatabaseHelper.SQL_CURRENT_TIMESTAMP+
-                " WHERE "+KEY_ROOM_ID+" = "+"\'"+room.getId().toString()+"\'"+");";
+                " WHERE "+KEY_ROOM_ID+" = "+"\'"+String.valueOf(room.getId())+"\'"+");";
 
         sqLiteDatabase.execSQL(query);
         Log.i(TAG, "Updated Room: "+room.toString());

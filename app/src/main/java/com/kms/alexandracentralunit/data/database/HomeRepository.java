@@ -14,7 +14,7 @@ import com.kms.alexandracentralunit.data.model.User;
  */
 public interface HomeRepository {
 
-    public Home getHome();
+    public Home getHome(long id, String name);
     public boolean add(Home home);
     public boolean update(Home home);
     public boolean delete(Home home);

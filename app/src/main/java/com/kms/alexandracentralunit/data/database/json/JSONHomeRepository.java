@@ -15,6 +15,8 @@ import com.kms.alexandracentralunit.data.model.Scene;
 import com.kms.alexandracentralunit.data.model.ScheduledScene;
 import com.kms.alexandracentralunit.data.model.User;
 
+import java.util.ArrayList;
+
 
 /**
  * Created by Mateusz Zasoński on 2014-11-11.
@@ -36,16 +38,24 @@ public class JSONHomeRepository implements HomeRepository {
     }
 
     @Override
-    public Home getHome() {
+    public Home getHome(long id, String name) {
 
         HomeBuilder builder = new HomeBuilder();
+        builder.create(id, name);
+        builder.addGadgets(new ArrayList<Gadget>());
+        ArrayList<Room> arsra = new ArrayList<Room>();
+        arsra.add(new Room(1, 0, "salon", 89741, new ArrayList<Gadget>()));
+        builder.addRooms(arsra);
+        builder.addUsers(new ArrayList<User>());
+        builder.addScenes(new ArrayList<Scene>());
+        builder.addSchedule(new ArrayList<ScheduledScene>());
 
-        builder.create(2, "domek");
-        builder.addUsers(userRepository.getAll());
-        builder.addGadgets(gadgetRepository.getAll());
-        builder.addRooms(roomRepository.getAll());
-        builder.addScenes(sceneRepository.getAll());
-        builder.addSchedule(scheduleRepository.getAll());
+        //        builder.create(2, "domek");
+        //        builder.addUsers(userRepository.getAll());
+        //        builder.addGadgets(gadgetRepository.getAll());
+        //        builder.addRooms(roomRepository.getAll());
+        //        builder.addScenes(sceneRepository.getAll());
+        //        builder.addSchedule(scheduleRepository.getAll());
 
         return builder.getHome();
     }

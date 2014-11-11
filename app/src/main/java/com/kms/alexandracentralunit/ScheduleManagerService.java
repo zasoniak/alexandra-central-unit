@@ -43,7 +43,7 @@ public class ScheduleManagerService extends IntentService {
         for(ScheduledScene scheduledScene : scheduledScenes)
         {
             //TODO: obsługa czasu i interwałów
-            Intent newIntent = new Intent(CoreService.getContext(), ScheduleReceiver.class).putExtra(ScheduledScene.EXTRA_ID, scheduledScene.getId().toString()).putExtra(ScheduledScene.EXTRA_SCENE_ID, scheduledScene.getScene().toString()).putExtra(ScheduledScene.EXTRA_TIME, scheduledScene.getTime().toString()).putExtra(ScheduledScene.EXTRA_REPEAT_INTERVAL, scheduledScene.getRepeatInterval()).putExtra(ScheduledScene.EXTRA_CONDITIONS, scheduledScene.getConditions());
+            Intent newIntent = new Intent(CoreService.getContext(), ScheduleReceiver.class).putExtra(ScheduledScene.EXTRA_ID, scheduledScene.getId()).putExtra(ScheduledScene.EXTRA_SCENE_ID, scheduledScene.getScene()).putExtra(ScheduledScene.EXTRA_TIME, scheduledScene.getTime().toString()).putExtra(ScheduledScene.EXTRA_REPEAT_INTERVAL, scheduledScene.getRepeatInterval()).putExtra(ScheduledScene.EXTRA_CONDITIONS, scheduledScene.getConditions());
             PendingIntent alarmIntent = PendingIntent.getBroadcast(CoreService.getContext(), 0, newIntent, 0);
             //remember for the future
             alarmIntents.add(alarmIntent);

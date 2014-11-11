@@ -82,7 +82,7 @@ public class SQLiteGadgetRepository implements GadgetRepository {
                 KEY_GADGET_TYPE+") "+"values"+" ("+
                 "\'"+gadget.getId().toString()+"\'"+COMMA_SEP+
                 "\'"+String.valueOf(gadget.getSystem())+"\'"+COMMA_SEP+
-                "\'"+gadget.getRoom().toString()+"\'"+COMMA_SEP+
+                "\'"+String.valueOf(gadget.getRoom())+"\'"+COMMA_SEP+
                 "\'"+gadget.getName()+"\'"+COMMA_SEP+
                 "\'"+gadget.getAddress()+"\'"+COMMA_SEP+
                 "\'"+String.valueOf(gadget.getType())+"\'"+");";
@@ -115,7 +115,7 @@ public class SQLiteGadgetRepository implements GadgetRepository {
 
         String query = "UPDATE "+TABLE_NAME+" SET "+
                 KEY_GADGET_SYSTEM+" = "+String.valueOf(gadget.getSystem())+COMMA_SEP+
-                KEY_GADGET_ROOM+" = "+gadget.getRoom().toString()+COMMA_SEP+
+                KEY_GADGET_ROOM+" = "+String.valueOf(gadget.getRoom())+COMMA_SEP+
                 KEY_GADGET_NAME+" = "+gadget.getName()+COMMA_SEP+
                 KEY_GADGET_MAC_ADDRESS+" = "+gadget.getAddress()+COMMA_SEP+
                 KEY_GADGET_TYPE+" = "+String.valueOf(gadget.getType())+
@@ -270,7 +270,7 @@ public class SQLiteGadgetRepository implements GadgetRepository {
         values.put(SQLiteGadgetRepository.KEY_GADGET_ID, gadget.getId().toString());
         values.put(SQLiteGadgetRepository.KEY_GADGET_NAME, gadget.getName());
         values.put(SQLiteGadgetRepository.KEY_GADGET_MAC_ADDRESS, gadget.getAddress());
-        values.put(SQLiteGadgetRepository.KEY_GADGET_ROOM, gadget.getRoom().toString());
+        values.put(SQLiteGadgetRepository.KEY_GADGET_ROOM, String.valueOf(gadget.getRoom()));
         values.put(SQLiteGadgetRepository.KEY_GADGET_TYPE, gadget.getType());
         values.put(SQLiteGadgetRepository.KEY_GADGET_UPDATED, 0);
         return values;

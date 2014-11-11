@@ -22,7 +22,6 @@ import java.util.UUID;
  */
 public class SQLiteSceneRepository implements SceneRepository {
 
-
     public static final String KEY_SCENE_ID = "_id";
     public static final String KEY_SCENE_SYSTEM = "system_id";
     public static final String KEY_SCENE_NAME = "name";
@@ -46,10 +45,9 @@ public class SQLiteSceneRepository implements SceneRepository {
     private static final String TABLE_NAME_SCENES = "scenes";
     public static final String SQL_DROP_TABLE_SCENES = "DROP TABLE IF EXISTS "+TABLE_NAME_SCENES;
     private static final String TABLE_NAME_SUBSCENES = "scenes_subscenes";
-    private static final String[] TABLE_COLUMNS_SUBSCENES_SELECTION = {TABLE_NAME_SCENES+"."+KEY_SCENE_ID,
-                                                                       TABLE_NAME_SCENES+"."+KEY_SCENE_SYSTEM,
-                                                                       TABLE_NAME_SCENES+"."+KEY_SCENE_NAME,
-                                                                       TABLE_NAME_SUBSCENES+"."+KEY_SUBSCENE_OFFSET};
+    private static final String[] TABLE_COLUMNS_SUBSCENES_SELECTION = {
+            TABLE_NAME_SCENES+"."+KEY_SCENE_ID, TABLE_NAME_SCENES+"."+KEY_SCENE_SYSTEM,
+            TABLE_NAME_SCENES+"."+KEY_SCENE_NAME, TABLE_NAME_SUBSCENES+"."+KEY_SUBSCENE_OFFSET};
     /**
      * subscenes table
      */
@@ -99,12 +97,12 @@ public class SQLiteSceneRepository implements SceneRepository {
                 KEY_SCENE_SYSTEM+COMMA_SEP+
                 KEY_SCENE_NAME+COMMA_SEP+
                 KEY_SCENE_CREATED_BY+") "+"values"+" ("+
-                "\'"+scene.getId().toString()+"\'"+COMMA_SEP+
-                "\'"+String.valueOf(scene.getSystem())+"\'"+COMMA_SEP+
+                "\'"+String.valueOf(scene.getId())+"\'"+COMMA_SEP+
+                "\'"+String.valueOf(0)+"\'"+COMMA_SEP+
                 "\'"+scene.getName()+"\'"+");";
 
         sqLiteDatabase.execSQL(query);
-        Log.i(TAG, "Inserted new Scene with ID: "+scene.getId().toString());
+        Log.i(TAG, "Inserted new Scene with ID: "+String.valueOf(scene.getId()));
 
         databaseHelper.closeDatabase();
         return true;
@@ -137,7 +135,7 @@ public class SQLiteSceneRepository implements SceneRepository {
                 null); // h. limit
 
         // prepare structured data
-        SceneBuilder builder = new SceneBuilder(this.context,this);
+        SceneBuilder builder = new SceneBuilder();
         ContentValues values = new ContentValues();
         if(cursor != null)
         {
@@ -149,11 +147,11 @@ public class SQLiteSceneRepository implements SceneRepository {
         // close database connection and release resources
         databaseHelper.closeDatabase();
         cursor.close();
-        builder.buildScene(values);
-        builder.addActions();
-        builder.addTriggers();
-        builder.addSubscenes();
-        return builder.getScene();
+        //        builder.buildScene(values);
+        //        builder.addActions();
+        //        builder.addTriggers();
+        //        builder.addSubscenes();
+        return null;
     }
 
     @Override
@@ -172,17 +170,17 @@ public class SQLiteSceneRepository implements SceneRepository {
         {
             do
             {
-                SceneBuilder builder = new SceneBuilder(this.context, this);
+                SceneBuilder builder = new SceneBuilder();
                 ContentValues values = new ContentValues();
                 values.put(KEY_SCENE_ID, cursor.getString(0));
                 values.put(KEY_SCENE_SYSTEM, cursor.getLong(1));
                 values.put(KEY_SCENE_NAME, cursor.getString(2));
                 values.put(KEY_SCENE_NAME, 0);
-                builder.buildScene(values);
-                builder.addActions();
-                builder.addTriggers();
-                builder.addSubscenes();
-                scenes.add(builder.getScene());
+                //                builder.buildScene(values);
+                //                builder.addActions();
+                //                builder.addTriggers();
+                //                builder.addSubscenes();
+                //                scenes.add(builder.getScene());
             } while(cursor.moveToNext());
         }
         // close database connection and release resources
@@ -205,11 +203,10 @@ public class SQLiteSceneRepository implements SceneRepository {
         // build a query
 
         SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
-        queryBuilder.setTables(TABLE_NAME_SCENES+ " RIGHT INNER JOIN "+ TABLE_NAME_SUBSCENES + " ON ("+TABLE_NAME_SCENES+"."+KEY_SCENE_ID+" = "+TABLE_NAME_SUBSCENES+"."+KEY_SUBSCENE_SCENE+")");
+        queryBuilder.setTables(TABLE_NAME_SCENES+" RIGHT INNER JOIN "+TABLE_NAME_SUBSCENES+" ON ("+TABLE_NAME_SCENES+"."+KEY_SCENE_ID+" = "+TABLE_NAME_SUBSCENES+"."+KEY_SUBSCENE_SCENE+")");
         queryBuilder.appendWhere(TABLE_NAME_SUBSCENES+"."+KEY_SUBSCENE_SCENE+" = "+id.toString());
 
-
-        Cursor cursor =queryBuilder.query(sqLiteDatabase,TABLE_COLUMNS_SUBSCENES_SELECTION,null,null,null,null,TABLE_NAME_SUBSCENES+"."+KEY_SUBSCENE_OFFSET);
+        Cursor cursor = queryBuilder.query(sqLiteDatabase, TABLE_COLUMNS_SUBSCENES_SELECTION, null, null, null, null, TABLE_NAME_SUBSCENES+"."+KEY_SUBSCENE_OFFSET);
 
         // prepare structured data
         ArrayList<Scene> subscenes = new ArrayList<Scene>();
@@ -217,17 +214,17 @@ public class SQLiteSceneRepository implements SceneRepository {
         {
             do
             {
-                SceneBuilder builder = new SceneBuilder(this.context, this);
+                SceneBuilder builder = new SceneBuilder();
                 ContentValues values = new ContentValues();
                 values.put(KEY_SCENE_ID, cursor.getString(0));
                 values.put(KEY_SCENE_SYSTEM, cursor.getLong(1));
                 values.put(KEY_SCENE_NAME, cursor.getString(2));
                 values.put(KEY_SUBSCENE_OFFSET, cursor.getString(3));
-                builder.buildScene(values);
-                builder.addActions();
-                builder.addTriggers();
-                builder.addSubscenes();
-                subscenes.add(builder.getScene());
+                //                builder.buildScene(values);
+                //                builder.addActions();
+                //                builder.addTriggers();
+                //                builder.addSubscenes();
+                //                subscenes.add(builder.getScene());
             } while(cursor.moveToNext());
         }
         // close database connection and release resources

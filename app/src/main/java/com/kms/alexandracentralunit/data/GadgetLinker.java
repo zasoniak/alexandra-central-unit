@@ -57,11 +57,11 @@ public class GadgetLinker {
         return this.gadgets;
     }
 
-    public List<Gadget> getAllByRoom(UUID roomId) {
+    public List<Gadget> getAllByRoom(long roomId) {
         List<Gadget> gadgetArrayList = new ArrayList<Gadget>();
         for(Gadget gadget : this.gadgets)
         {
-            if(gadget.getRoom().equals(roomId))
+            if(gadget.getRoom() == (roomId))
             {
                 gadgetArrayList.add(gadget);
             }

@@ -61,8 +61,6 @@ public class ConfigurationDatabaseHelper extends SQLiteOpenHelper {
         Log.i(TAG, "Creating database ["+DATABASE_NAME+" v."+DATABASE_VERSION+"]...");
 
         sqLiteDatabase.execSQL(SQLiteGadgetRepository.SQL_CREATE_TABLE);
-        sqLiteDatabase.execSQL(SQLiteActionRepository.SQL_CREATE_TABLE);
-        sqLiteDatabase.execSQL(SQLiteTriggerRepository.SQL_CREATE_TABLE);
         sqLiteDatabase.execSQL(SQLiteRoomRepository.SQL_CREATE_TABLE);
         sqLiteDatabase.execSQL(SQLiteSceneRepository.SQL_CREATE_TABLE_SCENES);
         sqLiteDatabase.execSQL(SQLiteSceneRepository.SQL_CREATE_TABLE_SUBSCENES);
@@ -73,7 +71,6 @@ public class ConfigurationDatabaseHelper extends SQLiteOpenHelper {
         Log.i(TAG, "Upgrading database ["+DATABASE_NAME+" v."+oldVersion+"] to ["+DATABASE_NAME+" v."+newVersion+"]...");
 
         sqLiteDatabase.execSQL(SQLiteGadgetRepository.SQL_DROP_TABLE);
-        sqLiteDatabase.execSQL(SQLiteActionRepository.SQL_DROP_TABLE);
         onCreate(sqLiteDatabase);
     }
 

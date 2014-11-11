@@ -21,7 +21,6 @@ import java.util.ArrayList;
 public class AdminActivity extends Activity {
 
     BroadcastReceiver receiver;
-    private ArrayAdapter adapter;
     private ArrayList<String> gadgetArrayList;
 
     @Override
@@ -30,7 +29,7 @@ public class AdminActivity extends Activity {
         setContentView(R.layout.activity_admin);
         ListView listView = (ListView) findViewById(R.id.gadget_list);
         gadgetArrayList = new ArrayList<String>();
-        adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, gadgetArrayList);
+        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, gadgetArrayList);
         listView.setAdapter(adapter);
         ConfigurationDatabaseHelper.getInstance(getApplicationContext());
         receiver = new BroadcastReceiver() {

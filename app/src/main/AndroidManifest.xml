@@ -4,6 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
 
     <application
         android:allowBackup="true"
@@ -36,9 +37,10 @@
         </receiver>
 
         <service
-            android:name=".data.SyncService"
-            android:enabled="true"
-            android:exported="true">
+            android:name="com.kms.alexandracentralunit.data.SyncService">
+        </service>
+        <service
+            android:name="com.kms.alexandracentralunit.data.FirebaseSyncService">
         </service>
     </application>
 
