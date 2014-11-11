@@ -23,4 +23,7 @@ public class User {
     private Image photo;
     private Date birthday;
 
+    public long getId() {
+        return id;
+    }
 }

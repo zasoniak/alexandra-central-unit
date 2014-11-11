@@ -3,13 +3,15 @@
     package="com.kms.alexandracentralunit"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".AdminActivity"
+            android:name="com.kms.alexandracentralunit.AdminActivity"
             android:label="@string/title_activity_admin">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -19,25 +21,25 @@
         </activity>
 
         <service
-            android:name=".RemoteToLocalDatabaseSyncService"
-            android:enabled="true"
-            android:exported="true">
-        </service>
-        <service
-            android:name=".CoreService"
+            android:name="com.kms.alexandracentralunit.CoreService"
             android:enabled="true"
             android:exported="true">
         </service>
 
         <receiver
-            android:name=".Autostart"
+            android:name="com.kms.alexandracentralunit.Autostart"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
             </intent-filter>
         </receiver>
+
+        <service
+            android:name=".data.SyncService"
+            android:enabled="true"
+            android:exported="true">
+        </service>
     </application>
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"></uses-permission>
 
 </manifest>

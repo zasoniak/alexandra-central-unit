@@ -2,7 +2,6 @@ package com.kms.alexandracentralunit.data.model;
 
 
 import java.util.List;
-import java.util.UUID;
 
 
 /**
@@ -10,13 +9,13 @@ import java.util.UUID;
  */
 public class Room {
 
-    private UUID id;
+    List<Gadget> gadgets;
+    private long id;
     private long systemId;
     private String name;
     private int color;
-    List<Gadget> gadgets;
 
-    public Room(UUID id, long systemId, String name, int color, List<Gadget> gadgets) {
+    public Room(long id, long systemId, String name, int color, List<Gadget> gadgets) {
         this.id = id;
         this.systemId = systemId;
         this.name = name;
@@ -28,19 +27,35 @@ public class Room {
         return systemId;
     }
 
-    public UUID getId() {
+    public long getId() {
         return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getName() {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public int getColor() {
         return color;
     }
 
+    public void setColor(int color) {
+        this.color = color;
+    }
+
     public List<Gadget> getGadgets() {
         return gadgets;
+    }
+
+    public void setGadgets(List<Gadget> gadgets) {
+        this.gadgets = gadgets;
     }
 }

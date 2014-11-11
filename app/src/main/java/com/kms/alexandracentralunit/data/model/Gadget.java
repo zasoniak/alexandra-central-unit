@@ -11,12 +11,12 @@ public class Gadget {
 
     private UUID id;
     private long system;
-    private UUID roomId;
+    private long roomId;
     private String name;
     private String address;
     private int type;
 
-    public Gadget(UUID id, long system, UUID roomId, String name, String address, int type) {
+    public Gadget(UUID id, long system, long roomId, String name, String address, int type) {
         this.id = id;
         this.system = system;
         this.name = name;
@@ -37,11 +37,15 @@ public class Gadget {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getAddress() {
         return address;
     }
 
-    public UUID getRoom() {
+    public long getRoom() {
         return roomId;
     }
 
@@ -49,8 +53,16 @@ public class Gadget {
         return type;
     }
 
+    public void setRoomId(long roomId) {
+        this.roomId = roomId;
+    }
+
     public String toString() {
         return this.name+": "+this.id.toString();
+    }
+
+    public void setup() {
+        //TODO: communication setup
     }
 
     public void run(String parameters) {

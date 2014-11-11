@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.UUID;
 
 
 /**
@@ -13,17 +12,15 @@ import java.util.UUID;
  */
 public class Scene implements SceneComponent {
 
-    public UUID id;
-    public long system;
+    public long id;
     public String name;
     public int offset;
 
     public List<SceneComponent> children;
     public List<Trigger> triggers;
 
-    public Scene(UUID id, long system, String name, int offset) {
+    public Scene(long id, long system, String name, int offset) {
         this.id = id;
-        this.system = system;
         this.name = name;
         this.offset = offset;
     }
@@ -55,28 +52,41 @@ public class Scene implements SceneComponent {
         return new ArrayList<SceneComponent>();
     }
 
-    public UUID getId() {
+    public long getId() {
         return id;
     }
 
-    public long getSystem() {
-        return system;
-    }
 
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getOffset() {
         return offset;
     }
 
+    public void setOffset(int offset) {
+        this.offset = offset;
+    }
+
     public List<SceneComponent> getChildren() {
         return children;
     }
 
+    public void setChildren(List<SceneComponent> children) {
+        this.children = children;
+    }
+
     public List<Trigger> getTriggers() {
         return triggers;
+    }
+
+    public void setTriggers(List<Trigger> triggers) {
+        this.triggers = triggers;
     }
 
     public void checkTriggers(Gadget gadget, String action) {

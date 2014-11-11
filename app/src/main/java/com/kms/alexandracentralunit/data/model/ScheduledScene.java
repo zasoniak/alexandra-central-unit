@@ -3,8 +3,6 @@ package com.kms.alexandracentralunit.data.model;
 
 import android.text.format.Time;
 
-import java.util.UUID;
-
 
 /**
  * Created by Mateusz Zasoński on 2014-11-05.
@@ -17,14 +15,14 @@ public class ScheduledScene {
     public static final String EXTRA_REPEAT_INTERVAL = "com.kms.alexandracentralunit.EXTRA_REPEAT_INTERVAL";
     public static final String EXTRA_CONDITIONS = "com.kms.alexandracentralunit.EXTRA_CONDITIONS";
 
-    public UUID id;
-    public UUID scene;
-    public int system;
+    public long id;
+    public long scene;
+    public long system;
     public Time time;
     public String repeatInterval;
     public String conditions;
 
-    public ScheduledScene(UUID id, UUID scene, int system, Time time, String repeatInterval, String conditions) {
+    public ScheduledScene(long id, long scene, long system, Time time, String repeatInterval, String conditions) {
         this.id = id;
         this.scene = scene;
         this.system = system;
@@ -33,15 +31,15 @@ public class ScheduledScene {
         this.conditions = conditions;
     }
 
-    public UUID getId() {
+    public long getId() {
         return id;
     }
 
-    public UUID getScene() {
+    public long getScene() {
         return scene;
     }
 
-    public int getSystem() {
+    public long getSystem() {
         return system;
     }
 

@@ -9,18 +9,10 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.kms.alexandracentralunit.data.GadgetLinker;
-import com.kms.alexandracentralunit.data.database.GadgetRepository;
-import com.kms.alexandracentralunit.data.database.RoomRepository;
-import com.kms.alexandracentralunit.data.database.SceneRepository;
-import com.kms.alexandracentralunit.data.database.sqlite.SQLiteGadgetRepository;
+import com.kms.alexandracentralunit.data.database.HomeRepository;
+import com.kms.alexandracentralunit.data.database.json.JSONHomeRepository;
 import com.kms.alexandracentralunit.data.model.Gadget;
-import com.kms.alexandracentralunit.data.model.Room;
-import com.kms.alexandracentralunit.data.model.Scene;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import com.kms.alexandracentralunit.data.model.Home;
 
 
 public class CoreService extends Service {
@@ -30,14 +22,9 @@ public class CoreService extends Service {
     private static final String TAG = "CoreService";
 
     private static Context context;
+    private static Home home;
+    private static HomeRepository homeRepository;
     public LocalBroadcastManager broadcaster;
-    private List<Gadget> gadgets;
-    private GadgetRepository gadgetRepository;
-    private GadgetLinker gadgetLinker;
-    private List<Room> rooms;
-    private RoomRepository roomRepository;
-    private List<Scene> scenes;
-    private SceneRepository sceneRepository;
 
     public CoreService() {
     }
@@ -46,10 +33,26 @@ public class CoreService extends Service {
         return CoreService.context;
     }
 
+    public static Home getHome() {
+        return home;
+    }
+
+    public static HomeRepository getHomeRepository() {
+        return homeRepository;
+    }
+
     @Override
     public void onCreate() {
         broadcaster = LocalBroadcastManager.getInstance(this);
         context = getApplicationContext();
+        homeRepository = new JSONHomeRepository();
+        home = homeRepository.getHome();
+
+        for(Gadget gadget : home.getGadgets())
+        {
+            gadget.setup();
+        }
+
         super.onCreate();
     }
 
@@ -60,42 +63,6 @@ public class CoreService extends Service {
         //startActivity(intents);
         Toast.makeText(this, "Core Service Started", Toast.LENGTH_LONG).show();
         Log.d(TAG, "onStart");
-
-        /**
-         * internal system data creation
-         * initialization of all required data
-         */
-
-        /**
-         *  gadgets
-         */
-        gadgetRepository = new SQLiteGadgetRepository(getApplicationContext());
-        gadgetLinker = GadgetLinker.getInstance(getApplicationContext());
-
-        gadgets = new ArrayList<Gadget>();
-        gadgets.add(new Gadget(UUID.randomUUID(), 1, UUID.randomUUID(), "test1", "MAC1", 1));
-        gadgets.add(new Gadget(UUID.randomUUID(), 1, UUID.randomUUID(), "test2", "MAC2", 2));
-
-        for(Gadget gadget : gadgets)
-        {
-            gadgetRepository.add(gadget);
-        }
-        gadgetLinker.loadGadgets();
-        for(Gadget gadget : gadgets = gadgetLinker.getAll())
-        {
-            //TODO: communication setup
-            sendResult(gadget.toString());
-        }
-        /**
-         * rooms
-         */
-        //roomRepository  = new SQLiteRoomRepository(getBaseContext());
-        //rooms = roomRepository.getAll();
-        /**
-         * scenes
-         */
-        // sceneRepository = new SQLiteSceneRepository(getBaseContext());
-        //scenes = sceneRepository.getAll();
 
     }
 

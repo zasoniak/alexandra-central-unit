@@ -11,8 +11,8 @@ import java.util.List;
  */
 public interface ScheduleRepository {
 
-    public boolean add();
-    public boolean delete();
-    public boolean update();
+    public boolean add(ScheduledScene scheduledScene);
+    public boolean delete(ScheduledScene scheduledScene);
+    public boolean update(ScheduledScene scheduledScene);
     public List<ScheduledScene> getAll();
 }
