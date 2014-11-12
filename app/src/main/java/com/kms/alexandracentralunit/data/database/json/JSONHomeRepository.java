@@ -38,14 +38,12 @@ public class JSONHomeRepository implements HomeRepository {
     }
 
     @Override
-    public Home getHome(long id, String name) {
+    public Home getHome(String id, String name) {
 
         HomeBuilder builder = new HomeBuilder();
         builder.create(id, name);
         builder.addGadgets(new ArrayList<Gadget>());
-        ArrayList<Room> arsra = new ArrayList<Room>();
-        arsra.add(new Room(1, 0, "salon", 89741, new ArrayList<Gadget>()));
-        builder.addRooms(arsra);
+        builder.addRooms(new ArrayList<Room>());
         builder.addUsers(new ArrayList<User>());
         builder.addScenes(new ArrayList<Scene>());
         builder.addSchedule(new ArrayList<ScheduledScene>());

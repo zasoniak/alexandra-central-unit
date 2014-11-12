@@ -3,8 +3,6 @@ package com.kms.alexandracentralunit.data.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 
 /**
@@ -12,35 +10,31 @@ import java.util.TimerTask;
  */
 public class Scene implements SceneComponent {
 
-    public long id;
+    public String id;
     public String name;
-    public int offset;
 
     public List<SceneComponent> children;
     public List<Trigger> triggers;
 
-    public Scene(long id, long system, String name, int offset) {
+    public Scene(String id, String name, int offset) {
         this.id = id;
         this.name = name;
-        this.offset = offset;
+    }
+
+    public Scene(String id, String name, List<Trigger> triggers, List<SceneComponent> children) {
+        this.id = id;
+        this.name = name;
+        this.triggers = triggers;
+        this.children = children;
     }
 
     @Override
     public void start() {
+        for(SceneComponent child : children)
+        {
+            child.start();
+        }
 
-        //TODO: check if that work
-
-        TimerTask task = new TimerTask() {
-            @Override
-            public void run() {
-                for(SceneComponent child : children)
-                {
-                    child.start();
-                }
-            }
-        };
-        Timer timer = new Timer();
-        timer.schedule(task, offset);
     }
 
     @Override
@@ -52,10 +46,9 @@ public class Scene implements SceneComponent {
         return new ArrayList<SceneComponent>();
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
-
 
     public String getName() {
         return name;
@@ -63,14 +56,6 @@ public class Scene implements SceneComponent {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public int getOffset() {
-        return offset;
-    }
-
-    public void setOffset(int offset) {
-        this.offset = offset;
     }
 
     public List<SceneComponent> getChildren() {

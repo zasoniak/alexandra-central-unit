@@ -48,7 +48,7 @@ public class CoreService extends Service {
         return home;
     }
 
-    public static long getHomeId() {
+    public static String getHomeId() {
         return home.getId();
     }
 
@@ -63,7 +63,7 @@ public class CoreService extends Service {
         context = getApplicationContext();
         homeRepository = new JSONHomeRepository();
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        long homeId = sharedPreferences.getLong(HOME_ID, 5);
+        String homeId = sharedPreferences.getString(HOME_ID, "5");
         String homeName = sharedPreferences.getString(HOME_NAME, "domek");
         home = homeRepository.getHome(homeId, homeName);
         Firebase.setAndroidContext(getApplication());
@@ -88,8 +88,11 @@ public class CoreService extends Service {
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                sendResult(home.getRoom(3).getName());
-                Log.d("nowy", "wiadomosc");
+                // sendResult(home.getRoom("0").getName());
+                Log.d("ilosc pokoi:", String.valueOf(home.getRooms().size()));
+                Log.d("ilosc urzadzen:", String.valueOf(home.getGadgets().size()));
+                Log.d("ilosc scen:", String.valueOf(home.getScenes().size()));
+                Log.d("ilosc harmonogramow:", String.valueOf(home.getSchedule().size()));
             }
         };
         Timer timer = new Timer();
@@ -131,7 +134,7 @@ public class CoreService extends Service {
     private void firstRunSetup() {
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putLong(HOME_ID, 0);
+        editor.putString(HOME_ID, "0");
         editor.putString(HOME_NAME, "Dom Krola Artura");
         editor.apply();
     }

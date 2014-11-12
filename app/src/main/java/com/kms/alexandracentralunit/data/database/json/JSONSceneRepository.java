@@ -5,7 +5,6 @@ import com.kms.alexandracentralunit.data.database.SceneRepository;
 import com.kms.alexandracentralunit.data.model.Scene;
 
 import java.util.List;
-import java.util.UUID;
 
 
 /**
@@ -29,7 +28,7 @@ public class JSONSceneRepository implements SceneRepository {
     }
 
     @Override
-    public Scene find(UUID id) {
+    public Scene find(String id) {
         return null;
     }
 
@@ -39,12 +38,12 @@ public class JSONSceneRepository implements SceneRepository {
     }
 
     @Override
-    public List<Scene> getAllByRoom(UUID roomID) {
+    public List<Scene> getAllByRoom(String roomID) {
         return null;
     }
 
     @Override
-    public List<Scene> getAllSubscenes(UUID id) {
+    public List<Scene> getAllSubscenes(String id) {
         return null;
     }
 }

@@ -36,7 +36,7 @@ public class SQLiteUserRepository implements UserRepository {
     }
 
     @Override
-    public User find(long id) {
+    public User find(String id) {
         return null;
     }
 

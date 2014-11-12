@@ -9,30 +9,20 @@ import java.util.List;
  */
 public class Room {
 
+    final private String id;
     List<Gadget> gadgets;
-    private long id;
-    private long systemId;
     private String name;
     private int color;
 
-    public Room(long id, long systemId, String name, int color, List<Gadget> gadgets) {
+    public Room(String id, String name, int color, List<Gadget> gadgets) {
         this.id = id;
-        this.systemId = systemId;
         this.name = name;
         this.gadgets = gadgets;
         this.color = color;
     }
 
-    public long getSystemId() {
-        return systemId;
-    }
-
-    public long getId() {
+    public String getId() {
         return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public String getName() {

@@ -10,7 +10,7 @@ import java.util.UUID;
  */
 public class Home {
 
-    private final long id;
+    private final String id;
     private String name;
 
     private ArrayList<Gadget> gadgets = new ArrayList<Gadget>();
@@ -19,7 +19,7 @@ public class Home {
     private ArrayList<ScheduledScene> schedule = new ArrayList<ScheduledScene>();
     private ArrayList<User> users = new ArrayList<User>();
 
-    public Home(long id, String name, ArrayList<Gadget> gadgets, ArrayList<Scene> scenes, ArrayList<Room> rooms, ArrayList<ScheduledScene> schedule, ArrayList<User> users) {
+    public Home(String id, String name, ArrayList<Gadget> gadgets, ArrayList<Scene> scenes, ArrayList<Room> rooms, ArrayList<ScheduledScene> schedule, ArrayList<User> users) {
         this.id = id;
         this.name = name;
         this.gadgets = gadgets;
@@ -60,47 +60,51 @@ public class Home {
         return null;
     }
 
-    public Scene getScene(long id) {
+    public Scene getScene(String id) {
         for(Scene scene : this.scenes)
         {
-            if(scene.getId() == id)
+            if(scene.getId().equals(id))
             return scene;
         }
         return null;
     }
 
-    public Room getRoom(long id) {
+    public Room getRoom(String id) {
         for(Room room : this.rooms)
         {
-            if(room.getId() == id)
+            if(room.getId().equals(id))
             return room;
         }
         return null;
     }
 
-    public ScheduledScene getScheduledScene(long id) {
+    public ScheduledScene getScheduledScene(String id) {
         for(ScheduledScene scheduledScene : this.schedule)
         {
-            if(scheduledScene.getId() == id)
+            if(scheduledScene.getId().equals(id))
             return scheduledScene;
         }
         return null;
     }
 
-    public User getUser(long id) {
+    public User getUser(String id) {
         for(User user : this.users)
         {
-            if(user.getId() == id)
+            if(user.getId().equals(id))
             return user;
         }
         return null;
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

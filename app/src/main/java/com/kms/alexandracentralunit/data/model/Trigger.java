@@ -1,6 +1,7 @@
 package com.kms.alexandracentralunit.data.model;
 
 
+import java.util.HashMap;
 import java.util.UUID;
 
 
@@ -9,21 +10,23 @@ import java.util.UUID;
  */
 public class Trigger {
 
-    public UUID scene;
-    public Gadget gadget;
+    public String scene;
+    public UUID gadget;
     public String action;
+    public HashMap<String, String> parameters;
 
-    public Trigger(UUID scene, Gadget gadget, String action) {
+    public Trigger(String scene, UUID gadget, String action, HashMap<String, String> parameters) {
         this.scene = scene;
         this.gadget = gadget;
         this.action = action;
+        this.parameters = parameters;
     }
 
-    public UUID getScene() {
+    public String getScene() {
         return scene;
     }
 
-    public Gadget getGadget() {
+    public UUID getGadget() {
         return gadget;
     }
 

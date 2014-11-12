@@ -39,12 +39,12 @@ public class JSONGadgetRepository implements GadgetRepository {
     }
 
     @Override
-    public List<Gadget> getAllByRoom(UUID roomID) {
+    public List<Gadget> getAllByRoom(String roomID) {
         return null;
     }
 
     @Override
-    public List<Gadget> getAllByType(int type) {
+    public List<Gadget> getAllByType(String type) {
         return null;
     }
 }

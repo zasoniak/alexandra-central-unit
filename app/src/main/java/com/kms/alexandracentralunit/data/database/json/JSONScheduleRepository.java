@@ -12,6 +12,14 @@ import java.util.List;
  */
 public class JSONScheduleRepository implements ScheduleRepository {
 
+    public static final String ID = "id";
+    public static final String SCENE = "scene";
+    public static final String TIME = "time";
+    public static final String REPEAT_INTERVAL = "repeatInterval";
+    public static final String CONDITIONS = "conditions";
+    public static final String CONDITION_TYPE = "type";
+    public static final String CONDITION_VALUE = "value";
+
     @Override
     public boolean add(ScheduledScene scheduledScene) {
         return false;

@@ -1,10 +1,10 @@
 package com.kms.alexandracentralunit.data.model;
 
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.UUID;
 
 
 /**
@@ -13,13 +13,15 @@ import java.util.UUID;
 public class Action implements SceneComponent {
 
     public int offset;
-    private UUID scene;
+    private String scene;
     private Gadget gadget;
-    private String parameters;
+    private String action;
+    private HashMap<String, String> parameters;
 
-    public Action(UUID scene, Gadget gadget, String parameters, int offset) {
+    public Action(String scene, Gadget gadget, String action, HashMap<String, String> parameters, int offset) {
         this.scene = scene;
         this.gadget = gadget;
+        this.action = action;
         this.parameters = parameters;
         this.offset = offset;
     }
@@ -46,11 +48,11 @@ public class Action implements SceneComponent {
         return gadget;
     }
 
-    public String getParameters() {
+    public HashMap<String, String> getParameters() {
         return parameters;
     }
 
-    public UUID getScene() {
+    public String getScene() {
         return scene;
     }
 

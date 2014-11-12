@@ -14,7 +14,7 @@ public interface UserRepository {
     public boolean add(User user);
     public boolean delete(User user);
     public boolean update(User user);
-    public User find(long id);
+    public User find(String id);
     public List<User> getAll();
 
 }

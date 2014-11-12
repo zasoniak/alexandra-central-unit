@@ -8,7 +8,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.kms.alexandracentralunit.CoreService;
-import com.kms.alexandracentralunit.data.GadgetFactory;
 import com.kms.alexandracentralunit.data.database.GadgetRepository;
 import com.kms.alexandracentralunit.data.model.Gadget;
 
@@ -157,7 +156,7 @@ public class SQLiteGadgetRepository implements GadgetRepository {
         // close database connection and release resources
         databaseHelper.closeDatabase();
         cursor.close();
-        return GadgetFactory.create(values);
+        return null;
     }
 
     public List<Gadget> getAll() {
@@ -181,7 +180,7 @@ public class SQLiteGadgetRepository implements GadgetRepository {
                 values.put(KEY_GADGET_NAME, cursor.getString(3));
                 values.put(KEY_GADGET_MAC_ADDRESS, cursor.getString(4));
                 values.put(KEY_GADGET_TYPE, cursor.getInt(5));
-                gadgets.add(GadgetFactory.create(values));
+                //     gadgets.add(GadgetFactory.create(values));
             } while(cursor.moveToNext());
         }
         // close database connection and release resources
@@ -191,7 +190,7 @@ public class SQLiteGadgetRepository implements GadgetRepository {
         return gadgets;
     }
 
-    public List<Gadget> getAllByRoom(UUID roomID) {
+    public List<Gadget> getAllByRoom(String roomID) {
         // obtain thread-safe database access
         SQLiteDatabase sqLiteDatabase = databaseHelper.openDatabase();
 
@@ -218,7 +217,7 @@ public class SQLiteGadgetRepository implements GadgetRepository {
                 values.put(KEY_GADGET_NAME, cursor.getString(3));
                 values.put(KEY_GADGET_MAC_ADDRESS, cursor.getString(4));
                 values.put(KEY_GADGET_TYPE, cursor.getInt(5));
-                gadgets.add(GadgetFactory.create(values));
+                //     gadgets.add(GadgetFactory.create(values));
             } while(cursor.moveToNext());
         }
         // close database connection and release resources
@@ -228,7 +227,7 @@ public class SQLiteGadgetRepository implements GadgetRepository {
         return gadgets;
     }
 
-    public List<Gadget> getAllByType(int type) {
+    public List<Gadget> getAllByType(String type) {
         // obtain thread-safe database access
         SQLiteDatabase sqLiteDatabase = databaseHelper.openDatabase();
 
@@ -255,7 +254,7 @@ public class SQLiteGadgetRepository implements GadgetRepository {
                 values.put(KEY_GADGET_NAME, cursor.getString(3));
                 values.put(KEY_GADGET_MAC_ADDRESS, cursor.getString(4));
                 values.put(KEY_GADGET_TYPE, cursor.getInt(5));
-                gadgets.add(GadgetFactory.create(values));
+                //        gadgets.add(GadgetFactory.create(values));
             } while(cursor.moveToNext());
         }
         // close database connection and release resources

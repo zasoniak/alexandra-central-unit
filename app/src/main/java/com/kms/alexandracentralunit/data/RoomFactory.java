@@ -18,13 +18,12 @@ public class RoomFactory {
 
     public static Room create(ContentValues values) {
 
-        long id = values.getAsLong(SQLiteRoomRepository.KEY_ROOM_ID);
-        long systemId = values.getAsLong(SQLiteRoomRepository.KEY_ROOM_SYSTEM);
+        String id = values.getAsString(SQLiteRoomRepository.KEY_ROOM_ID);
         String name = values.getAsString(SQLiteRoomRepository.KEY_ROOM_NAME);
         int color = values.getAsInteger(SQLiteRoomRepository.KEY_ROOM_COLOR);
         List<Gadget> gadgets = GadgetLinker.getInstance(CoreService.getContext()).getAllByRoom(id);
 
-        return new Room(id, systemId, name, color, gadgets);
+        return new Room(id, name, color, gadgets);
     }
 
 }

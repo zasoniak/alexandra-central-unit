@@ -1,6 +1,7 @@
 package com.kms.alexandracentralunit.data.database.json;
 
 
+import com.kms.alexandracentralunit.CoreService;
 import com.kms.alexandracentralunit.data.database.RoomRepository;
 import com.kms.alexandracentralunit.data.model.Room;
 
@@ -35,7 +36,7 @@ public class JSONRoomRepository implements RoomRepository {
     }
 
     @Override
-    public Room find(UUID id) {
+    public Room find(String id) {
         return null;
     }
 
@@ -45,15 +46,14 @@ public class JSONRoomRepository implements RoomRepository {
     }
 
     private Room parseJSON(JSONObject object) {
-        long id;
-        long systemID;
+        String id;
+        String systemID;
         String name;
         int color;
         List<UUID> gadgets = new ArrayList<UUID>();
         try
         {
-            id = object.getLong("id");
-            systemID = object.getLong("system_id");
+            id = object.getString("id");
             name = object.getString("name");
             color = object.getInt("color");
             JSONArray uuids = object.getJSONArray("gadgets");
@@ -67,7 +67,7 @@ public class JSONRoomRepository implements RoomRepository {
             e.printStackTrace();
             return null;
         }
-        return new Room(id, systemID, name, color, null);
+        return new Room(id, name, color, null);
     }
 
     private JSONObject toJSON(Room room) {
@@ -75,7 +75,7 @@ public class JSONRoomRepository implements RoomRepository {
         try
         {
             result.put("id", room.getId());
-            result.put("system_id", room.getSystemId());
+            result.put("system_id", CoreService.getHomeId());
             result.put("name", room.getName());
             result.put("color", room.getColor());
             JSONArray array = new JSONArray(room.getGadgets());

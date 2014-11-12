@@ -7,13 +7,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.kms.alexandracentralunit.CoreService;
 import com.kms.alexandracentralunit.data.RoomFactory;
 import com.kms.alexandracentralunit.data.database.RoomRepository;
 import com.kms.alexandracentralunit.data.model.Room;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 
 /**
@@ -73,7 +73,7 @@ public class SQLiteRoomRepository implements RoomRepository {
                 KEY_ROOM_COLOR+COMMA_SEP+
                 KEY_ROOM_CREATED_BY+") "+"values"+" ("+
                 "\'"+String.valueOf(room.getId())+"\'"+COMMA_SEP+
-                "\'"+String.valueOf(room.getSystemId())+"\'"+COMMA_SEP+
+                "\'"+String.valueOf(CoreService.getHomeId())+"\'"+COMMA_SEP+
                 "\'"+room.getName()+"\'"+COMMA_SEP+
                 "\'"+String.valueOf(room.getColor())+"\'"+COMMA_SEP+
                 "\'"+"Sony"+"\'"+");";
@@ -97,7 +97,7 @@ public class SQLiteRoomRepository implements RoomRepository {
         SQLiteDatabase sqLiteDatabase = databaseHelper.openDatabase();
 
         String query = "UPDATE "+TABLE_NAME+" SET "+
-                KEY_ROOM_SYSTEM+" = "+String.valueOf(room.getSystemId())+COMMA_SEP+
+                KEY_ROOM_SYSTEM+" = "+String.valueOf(CoreService.getHomeId())+COMMA_SEP+
                 KEY_ROOM_NAME+" = "+room.getName()+COMMA_SEP+
                 KEY_ROOM_COLOR+" = "+String.valueOf(room.getColor())+
                 KEY_ROOM_UPDATED+" = "+ConfigurationDatabaseHelper.SQL_CURRENT_TIMESTAMP+
@@ -110,7 +110,7 @@ public class SQLiteRoomRepository implements RoomRepository {
     }
 
     @Override
-    public Room find(UUID id) {
+    public Room find(String id) {
         // obtain thread-safe database access
         SQLiteDatabase sqLiteDatabase = databaseHelper.openDatabase();
 

@@ -1,6 +1,7 @@
 package com.kms.alexandracentralunit.data.model;
 
 
+import java.util.HashMap;
 import java.util.UUID;
 
 
@@ -10,13 +11,13 @@ import java.util.UUID;
 public class Gadget {
 
     private UUID id;
-    private long system;
-    private long roomId;
+    private String system;
+    private String roomId;
     private String name;
     private String address;
-    private int type;
+    private String type; //TODO: delete when subclasses created!!!
 
-    public Gadget(UUID id, long system, long roomId, String name, String address, int type) {
+    public Gadget(UUID id, String system, String roomId, String name, String address, String type) {
         this.id = id;
         this.system = system;
         this.name = name;
@@ -29,7 +30,7 @@ public class Gadget {
         return id;
     }
 
-    public long getSystem() {
+    public String getSystem() {
         return system;
     }
 
@@ -45,15 +46,15 @@ public class Gadget {
         return address;
     }
 
-    public long getRoom() {
+    public String getRoom() {
         return roomId;
     }
 
-    public int getType() {
+    public String getType() {
         return type;
     }
 
-    public void setRoomId(long roomId) {
+    public void setRoomId(String roomId) {
         this.roomId = roomId;
     }
 
@@ -65,7 +66,7 @@ public class Gadget {
         //TODO: communication setup
     }
 
-    public void run(String parameters) {
+    public void run(HashMap<String, String> parameters) {
 
     }
 

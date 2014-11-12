@@ -39,8 +39,10 @@ public class SyncService extends IntentService {
 
     protected boolean add(Room room) {
         if(home.getRoom(room.getId()) == null)
-        home.getRooms().add(room);
-        Log.d("ilosc pokoi:", String.valueOf(home.getRooms().size()));
+        {
+            home.getRooms().add(room);
+        }
+
         return homeRepository.add(room);
 
     }
@@ -67,11 +69,16 @@ public class SyncService extends IntentService {
         return false;
     }
 
-    protected boolean add(Gadget gadget) {
-        if(home.getGadget(gadget.getId()) == null)
-        home.getGadgets().add(gadget);
-
-        return homeRepository.add(gadget);
+    protected boolean add(Gadget newGadget) {
+        if(home.getGadget(newGadget.getId()) == null)
+        {
+            home.getGadgets().add(newGadget);
+        }
+        if(home.getRoom(newGadget.getRoom()) != null)
+        {
+            home.getRoom(newGadget.getRoom()).getGadgets().add(newGadget);
+        }
+        return homeRepository.add(newGadget);
 
     }
 
@@ -81,14 +88,19 @@ public class SyncService extends IntentService {
 
     }
 
-    protected boolean update(Gadget gadget) {
-        for(Gadget gadget1 : home.getGadgets())
+    protected boolean update(Gadget newGadget) {
+        for(Gadget gadget : home.getGadgets())
         {
-            if(gadget1.getId().equals(gadget.getId()))
+            if(gadget.getId().equals(newGadget.getId()))
             {
-                gadget1.setName(gadget.getName());
-                gadget1.setRoomId(gadget.getRoom());
-                return homeRepository.update(gadget1);
+                gadget.setName(newGadget.getName());
+                if(!newGadget.getRoom().equals(gadget.getRoom()))
+                {
+                    home.getRoom(gadget.getRoom()).getGadgets().remove(gadget);
+                    home.getRoom(newGadget.getRoom()).getGadgets().add(newGadget);
+                    gadget.setRoomId(newGadget.getRoom());
+                }
+                return homeRepository.update(gadget);
             }
         }
         return false;
@@ -96,7 +108,9 @@ public class SyncService extends IntentService {
 
     protected boolean add(Scene scene) {
         if(home.getScene(scene.getId()) == null)
-        home.getScenes().add(scene);
+        {
+            home.getScenes().add(scene);
+        }
 
         return homeRepository.add(scene);
 
@@ -108,16 +122,15 @@ public class SyncService extends IntentService {
 
     }
 
-    protected boolean update(Scene scene) {
-        for(Scene scene1 : home.getScenes())
+    protected boolean update(Scene newScene) {
+        for(Scene scene : home.getScenes())
         {
-            if(scene1.getId() == scene.getId())
+            if(scene.getId().equals(newScene.getId()))
             {
-                scene1.setName(scene.getName());
-                scene1.setOffset(scene.getOffset());
-                scene1.setTriggers(scene.getTriggers());
-                scene1.setChildren(scene.getChildren());
-                return homeRepository.update(scene1);
+                scene.setName(newScene.getName());
+                scene.setTriggers(newScene.getTriggers());
+                scene.setChildren(newScene.getChildren());
+                return homeRepository.update(scene);
             }
         }
         return false;
@@ -125,7 +138,9 @@ public class SyncService extends IntentService {
 
     protected boolean add(ScheduledScene scheduledscene) {
         if(home.getScheduledScene(scheduledscene.getId()) == null)
-        home.getSchedule().add(scheduledscene);
+        {
+            home.getSchedule().add(scheduledscene);
+        }
 
         return homeRepository.add(scheduledscene);
 
@@ -140,7 +155,7 @@ public class SyncService extends IntentService {
     protected boolean update(ScheduledScene scheduledscene) {
         for(ScheduledScene scheduledscene1 : home.getSchedule())
         {
-            if(scheduledscene1.getId() == scheduledscene.getId())
+            if(scheduledscene1.getId().equals(scheduledscene.getId()))
             {
                 scheduledscene1 = scheduledscene;
                 return homeRepository.update(scheduledscene1);
@@ -151,7 +166,9 @@ public class SyncService extends IntentService {
 
     protected boolean add(User user) {
         if(home.getUser(user.getId()) == null)
-        home.getUsers().add(user);
+        {
+            home.getUsers().add(user);
+        }
 
         return homeRepository.add(user);
 
@@ -166,7 +183,7 @@ public class SyncService extends IntentService {
     protected boolean update(User user) {
         for(User user1 : home.getUsers())
         {
-            if(user1.getId() == user.getId())
+            if(user1.getId().equals(user.getId()))
             {
                 user1 = user;
                 return homeRepository.update(user1);

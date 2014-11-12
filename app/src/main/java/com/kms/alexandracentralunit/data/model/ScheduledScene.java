@@ -1,7 +1,7 @@
 package com.kms.alexandracentralunit.data.model;
 
 
-import android.text.format.Time;
+import java.util.HashMap;
 
 
 /**
@@ -15,43 +15,37 @@ public class ScheduledScene {
     public static final String EXTRA_REPEAT_INTERVAL = "com.kms.alexandracentralunit.EXTRA_REPEAT_INTERVAL";
     public static final String EXTRA_CONDITIONS = "com.kms.alexandracentralunit.EXTRA_CONDITIONS";
 
-    public long id;
-    public long scene;
-    public long system;
-    public Time time;
-    public String repeatInterval;
-    public String conditions;
+    public String id;
+    public String scene;
+    public long time;
+    public long repeatInterval;
+    public HashMap<String, String> conditions = new HashMap<String, String>();
 
-    public ScheduledScene(long id, long scene, long system, Time time, String repeatInterval, String conditions) {
+    public ScheduledScene(String id, String scene, long time, long repeatInterval, HashMap<String, String> conditions) {
         this.id = id;
         this.scene = scene;
-        this.system = system;
         this.time = time;
         this.repeatInterval = repeatInterval;
         this.conditions = conditions;
     }
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 
-    public long getScene() {
+    public String getScene() {
         return scene;
     }
 
-    public long getSystem() {
-        return system;
-    }
-
-    public Time getTime() {
+    public long getTime() {
         return time;
     }
 
-    public String getRepeatInterval() {
+    public long getRepeatInterval() {
         return repeatInterval;
     }
 
-    public String getConditions() {
+    public HashMap<String, String> getConditions() {
         return conditions;
     }
 }

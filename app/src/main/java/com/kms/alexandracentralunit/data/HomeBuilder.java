@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class HomeBuilder {
 
-    private long id;
+    private String id;
     private String name;
 
     private ArrayList<Gadget> gadgets = new ArrayList<Gadget>();
@@ -29,7 +29,7 @@ public class HomeBuilder {
     public HomeBuilder() {
     }
 
-    public void create(long id, String name) {
+    public void create(String id, String name) {
         this.id = id;
         this.name = name;
     }

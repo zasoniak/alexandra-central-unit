@@ -11,7 +11,7 @@ import java.util.Date;
  */
 public class User {
 
-    private long id;
+    private String id;
     private String name;
     private String surname;
     private String password;
@@ -23,7 +23,7 @@ public class User {
     private Image photo;
     private Date birthday;
 
-    public long getId() {
+    public String getId() {
         return id;
     }
 }

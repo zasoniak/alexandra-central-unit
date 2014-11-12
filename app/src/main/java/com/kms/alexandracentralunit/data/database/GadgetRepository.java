@@ -17,6 +17,6 @@ public interface GadgetRepository {
     public boolean update(Gadget gadget);
     public Gadget find(UUID id);
     public List<Gadget> getAll();
-    public List<Gadget> getAllByRoom(UUID roomID);
-    public List<Gadget> getAllByType(int type);
+    public List<Gadget> getAllByRoom(String roomId);
+    public List<Gadget> getAllByType(String type);
 }
