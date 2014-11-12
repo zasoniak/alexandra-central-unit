@@ -88,7 +88,7 @@ public class CoreService extends Service {
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                sendResult(home.getRoom(1).getName());
+                sendResult(home.getRoom(3).getName());
                 Log.d("nowy", "wiadomosc");
             }
         };

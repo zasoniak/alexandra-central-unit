@@ -9,14 +9,17 @@
                 tools:context="com.kms.alexandracentralunit.AdminActivity">
 
     <TextView
+        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world"/>
+        android:text="@string/welcome"/>
 
     <ListView
-        android:id="@+id/gadget_list"
+        android:id="@+id/home_parts_list"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/textView">
 
     </ListView>
 

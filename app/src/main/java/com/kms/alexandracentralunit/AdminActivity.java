@@ -21,22 +21,22 @@ import java.util.ArrayList;
 public class AdminActivity extends Activity {
 
     BroadcastReceiver receiver;
-    private ArrayList<String> gadgetArrayList;
+    private ArrayList<String> partsArrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_admin);
-        ListView listView = (ListView) findViewById(R.id.gadget_list);
-        gadgetArrayList = new ArrayList<String>();
-        ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, gadgetArrayList);
+        ListView listView = (ListView) findViewById(R.id.home_parts_list);
+        partsArrayList = new ArrayList<String>();
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, partsArrayList);
         listView.setAdapter(adapter);
         ConfigurationDatabaseHelper.getInstance(getApplicationContext());
         receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
-                String gadget = intent.getStringExtra(CoreService.GADGET);
-                gadgetArrayList.add(gadget);
+                String part = intent.getStringExtra(CoreService.GADGET);
+                partsArrayList.add(part);
             }
         };
     }
