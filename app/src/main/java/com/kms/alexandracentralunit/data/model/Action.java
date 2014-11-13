@@ -1,6 +1,8 @@
 package com.kms.alexandracentralunit.data.model;
 
 
+import android.util.Log;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
@@ -12,13 +14,13 @@ import java.util.TimerTask;
  */
 public class Action implements SceneComponent {
 
-    public int offset;
+    public long offset;
     private String scene;
     private Gadget gadget;
     private String action;
     private HashMap<String, String> parameters;
 
-    public Action(String scene, Gadget gadget, String action, HashMap<String, String> parameters, int offset) {
+    public Action(String scene, Gadget gadget, String action, HashMap<String, String> parameters, long offset) {
         this.scene = scene;
         this.gadget = gadget;
         this.action = action;
@@ -32,6 +34,7 @@ public class Action implements SceneComponent {
             @Override
             public void run() {
                 gadget.run(parameters);
+                Log.d("ruszyla akcja", gadget.getId().toString()+" + "+action);
             }
         };
         Timer timer = new Timer();
@@ -56,7 +59,7 @@ public class Action implements SceneComponent {
         return scene;
     }
 
-    public int getOffset() {
+    public long getOffset() {
         return offset;
     }
 

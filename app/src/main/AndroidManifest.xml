@@ -5,6 +5,7 @@
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
 
     <application
         android:allowBackup="true"
@@ -42,6 +43,16 @@
         <service
             android:name="com.kms.alexandracentralunit.data.FirebaseSyncService">
         </service>
+        <service
+            android:name="com.kms.alexandracentralunit.ScheduleManagerService">
+        </service>
+        <service
+            android:name="com.kms.alexandracentralunit.ScheduleService">
+        </service>
+
+        <receiver
+            android:name="com.kms.alexandracentralunit.ScheduleReceiver">
+        </receiver>
     </application>
 
 </manifest>

@@ -12,7 +12,11 @@ import android.content.Intent;
 public class HistorianBroadcastReceiver extends BroadcastReceiver {
 
     @Override
-    public void onReceive(Context context, Intent intent) {
+    public void onReceive(Context context, final Intent intent) {
+        new Thread(new Runnable() {
+            public void run() {
 
+            }
+        }).start();
     }
 }

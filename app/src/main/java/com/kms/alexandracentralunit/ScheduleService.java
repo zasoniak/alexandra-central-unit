@@ -4,8 +4,6 @@ package com.kms.alexandracentralunit;
 import android.app.IntentService;
 import android.content.Intent;
 
-import com.kms.alexandracentralunit.data.database.SceneRepository;
-import com.kms.alexandracentralunit.data.database.sqlite.SQLiteSceneRepository;
 import com.kms.alexandracentralunit.data.model.Scene;
 import com.kms.alexandracentralunit.data.model.ScheduledScene;
 
@@ -15,7 +13,6 @@ import com.kms.alexandracentralunit.data.model.ScheduledScene;
  */
 public class ScheduleService extends IntentService {
 
-    SceneRepository repository;
     Scene scene;
 
     public ScheduleService() {
@@ -24,9 +21,7 @@ public class ScheduleService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        //build scene
-        repository = new SQLiteSceneRepository(CoreService.getContext());
-        scene = repository.find(intent.getStringExtra(ScheduledScene.EXTRA_SCENE_ID));
+        scene = CoreService.getHome().getScene(intent.getStringExtra(ScheduledScene.EXTRA_SCENE_ID));
         //start scene
         scene.start();
         //completed

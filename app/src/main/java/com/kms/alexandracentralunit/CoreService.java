@@ -93,10 +93,14 @@ public class CoreService extends Service {
                 Log.d("ilosc urzadzen:", String.valueOf(home.getGadgets().size()));
                 Log.d("ilosc scen:", String.valueOf(home.getScenes().size()));
                 Log.d("ilosc harmonogramow:", String.valueOf(home.getSchedule().size()));
+
+                //start scheduleManagerService
+                Intent scheduleIntent = new Intent(getBaseContext(), ScheduleManagerService.class);
+                startService(scheduleIntent);
             }
         };
         Timer timer = new Timer();
-        timer.schedule(task, 5000);
+        timer.schedule(task, 10000);
     }
 
     @Override

@@ -82,36 +82,33 @@ public class FirebaseSyncService extends SyncService {
         homeReference.child("rooms").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Log.d("nowy pokoj:", dataSnapshot.getKey());
-
                 String id = dataSnapshot.getKey();
                 String name = dataSnapshot.child("name").getValue().toString();
                 int color = Integer.parseInt(dataSnapshot.child("color").getValue().toString());
                 List<Gadget> gadgets = new ArrayList<Gadget>();
-                if(dataSnapshot.child("gadgets").hasChildren())
-                {
-                    for(DataSnapshot snapshot : dataSnapshot.child("gadgets").getChildren())
-                    {
-                        // gadgets.add(CoreService.getHome().getGadget(UUID.fromString(snapshot.child("id").getValue().toString())));
-                    }
-                }
+                //                if(dataSnapshot.child("gadgets").hasChildren())
+                //                {
+                //                    for(DataSnapshot snapshot : dataSnapshot.child("gadgets").getChildren())
+                //                    {
+                //                        gadgets.add(CoreService.getHome().getGadget(UUID.fromString(snapshot.child("id").getValue().toString())));
+                //                    }
+                //                }
                 add(new Room(id, name, color, gadgets));
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
                 String id = dataSnapshot.getKey();
                 String name = dataSnapshot.child("name").getValue().toString();
                 int color = Integer.parseInt(dataSnapshot.child("color").getValue().toString());
                 List<Gadget> gadgets = new ArrayList<Gadget>();
-                if(dataSnapshot.child("gadgets").hasChildren())
-                {
-                    for(DataSnapshot snapshot : dataSnapshot.child("gadgets").getChildren())
-                    {
-                        // gadgets.add(CoreService.getHome().getGadget(UUID.fromString(snapshot.child("id").getValue().toString())));
-                    }
-                }
+                //                if(dataSnapshot.child("gadgets").hasChildren())
+                //                {
+                //                    for(DataSnapshot snapshot : dataSnapshot.child("gadgets").getChildren())
+                //                    {
+                //                        gadgets.add(CoreService.getHome().getGadget(UUID.fromString(snapshot.child("id").getValue().toString())));
+                //                    }
+                //                }
                 update(new Room(id, name, color, gadgets));
             }
 
@@ -138,7 +135,6 @@ public class FirebaseSyncService extends SyncService {
         homeReference.child("gadgets").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Log.d("nowy gadzet:", dataSnapshot.getKey());
                 UUID id = UUID.fromString(dataSnapshot.child("id").getValue().toString());
                 String systemId = CoreService.getHomeId();
                 String roomId = dataSnapshot.child("roomId").getValue().toString();
@@ -208,7 +204,7 @@ public class FirebaseSyncService extends SyncService {
                     String action = actionSnapshot.child("action").getValue().toString();
                     Gadget gadget = home.getGadget(UUID.fromString(actionSnapshot.child("gadget").getValue().toString()));
                     HashMap<String, String> parameters = new HashMap<String, String>();
-                    int offset = Integer.parseInt(actionSnapshot.child("offset").getValue().toString());
+                    long offset = Long.parseLong(actionSnapshot.child("offset").getValue().toString());
                     for(DataSnapshot parameter : actionSnapshot.child("parameters").getChildren())
                     {
                         parameters.put(parameter.child("type").getValue().toString(), parameter.child("value").getValue().toString());
@@ -219,6 +215,7 @@ public class FirebaseSyncService extends SyncService {
                 List<Scene> subscenes = new ArrayList<Scene>();
                 for(DataSnapshot subsceneSnapshot : dataSnapshot.child("subscenes").getChildren())
                 {
+                    if(home.getScene(subsceneSnapshot.child("id").getValue().toString()) != null)
                     subscenes.add(home.getScene(subsceneSnapshot.child("id").getValue().toString()));
                 }
                 builder.addSubscenes(subscenes);
@@ -252,7 +249,7 @@ public class FirebaseSyncService extends SyncService {
                     String action = actionSnapshot.child("action").getValue().toString();
                     Gadget gadget = home.getGadget(UUID.fromString(actionSnapshot.child("gadget").getValue().toString()));
                     HashMap<String, String> parameters = new HashMap<String, String>();
-                    int offset = Integer.parseInt(actionSnapshot.child("offset").getValue().toString());
+                    long offset = Long.parseLong(actionSnapshot.child("offset").getValue().toString());
                     for(DataSnapshot parameter : actionSnapshot.child("parameters").getChildren())
                     {
                         parameters.put(parameter.child("type").getValue().toString(), parameter.child("value").getValue().toString());
@@ -263,6 +260,7 @@ public class FirebaseSyncService extends SyncService {
                 List<Scene> subscenes = new ArrayList<Scene>();
                 for(DataSnapshot subsceneSnapshot : dataSnapshot.child("subscenes").getChildren())
                 {
+                    if(home.getScene(subsceneSnapshot.child("id").getValue().toString()) != null)
                     subscenes.add(home.getScene(subsceneSnapshot.child("id").getValue().toString()));
                 }
                 builder.addSubscenes(subscenes);
@@ -272,7 +270,49 @@ public class FirebaseSyncService extends SyncService {
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
+                String id = dataSnapshot.getKey();
+                String name = dataSnapshot.child("name").getValue().toString();
+                SceneBuilder builder = new SceneBuilder();
+                builder.create(id, name);
+                List<Trigger> triggers = new ArrayList<Trigger>();
+                for(DataSnapshot triggerSnapshot : dataSnapshot.child("triggers").getChildren())
+                {
+                    String action = triggerSnapshot.child("action").getValue().toString();
+                    UUID gadget = UUID.fromString(triggerSnapshot.child("gadget").getValue().toString());
+                    HashMap<String, String> parameters = new HashMap<String, String>();
+                    for(DataSnapshot parameter : triggerSnapshot.child("parameters").getChildren())
+                    {
+                        parameters.put(parameter.child("type").getValue().toString(), parameter.child("value").getValue().toString());
+                    }
+                    triggers.add(new Trigger(id, gadget, action, parameters));
+                }
+                builder.addTriggers(triggers);
 
+                List<Action> actions = new ArrayList<Action>();
+                for(DataSnapshot actionSnapshot : dataSnapshot.child("actions").getChildren())
+                {
+                    String action = actionSnapshot.child("action").getValue().toString();
+                    Gadget gadget = home.getGadget(UUID.fromString(actionSnapshot.child("gadget").getValue().toString()));
+                    HashMap<String, String> parameters = new HashMap<String, String>();
+                    long offset = Long.parseLong(actionSnapshot.child("offset").getValue().toString());
+                    for(DataSnapshot parameter : actionSnapshot.child("parameters").getChildren())
+                    {
+                        parameters.put(parameter.child("type").getValue().toString(), parameter.child("value").getValue().toString());
+                    }
+                    actions.add(new Action(id, gadget, action, parameters, offset));
+                }
+                builder.addActions(actions);
+                List<Scene> subscenes = new ArrayList<Scene>();
+                for(DataSnapshot subsceneSnapshot : dataSnapshot.child("subscenes").getChildren())
+                {
+                    if(home.getScene(subsceneSnapshot.child("id").getValue().toString()) != null)
+                    {
+                        subscenes.add(home.getScene(subsceneSnapshot.child("id").getValue().toString()));
+                    }
+                }
+                builder.addSubscenes(subscenes);
+
+                delete(builder.getScene());
             }
 
             @Override
@@ -289,7 +329,6 @@ public class FirebaseSyncService extends SyncService {
         homeReference.child("schedule").addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Log.d("nowy schedule", dataSnapshot.getKey());
                 String id = dataSnapshot.getKey();
                 String scene = dataSnapshot.child("scene").getValue().toString();
                 long time = Long.parseLong(dataSnapshot.child("time").getValue().toString());

@@ -1,6 +1,8 @@
 package com.kms.alexandracentralunit.data.model;
 
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +18,7 @@ public class Scene implements SceneComponent {
     public List<SceneComponent> children;
     public List<Trigger> triggers;
 
-    public Scene(String id, String name, int offset) {
+    public Scene(String id, String name) {
         this.id = id;
         this.name = name;
     }
@@ -30,8 +32,10 @@ public class Scene implements SceneComponent {
 
     @Override
     public void start() {
+        Log.d("ruszyla scena: "+id, "z dziecmi: "+String.valueOf(children.size()));
         for(SceneComponent child : children)
         {
+            Log.d(child.getClass().getSimpleName(), "do startu");
             child.start();
         }
 
