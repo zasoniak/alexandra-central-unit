@@ -114,7 +114,7 @@ public class CoreService extends Service {
         if(message != null)
         {
             intent.putExtra(GADGET, message);
-            broadcaster.sendBroadcast(intent);
+            this.sendBroadcast(intent);
         }
     }
 

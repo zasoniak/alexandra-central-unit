@@ -6,10 +6,9 @@ import android.app.IntentService;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.SystemClock;
 import android.util.Log;
 
-import com.kms.alexandracentralunit.data.database.ScheduleRepository;
-import com.kms.alexandracentralunit.data.database.sqlite.SQLiteScheduleRepository;
 import com.kms.alexandracentralunit.data.model.ScheduledScene;
 
 import java.util.ArrayList;
@@ -25,12 +24,10 @@ public class ScheduleManagerService extends IntentService {
     private AlarmManager alarmManager;
     private ArrayList<PendingIntent> alarmIntents = new ArrayList<PendingIntent>();
 
-    private ScheduleRepository repository;
     private List<ScheduledScene> scheduledScenes = new ArrayList<ScheduledScene>();
 
     public ScheduleManagerService() {
         super("Schedule manager");
-        repository = new SQLiteScheduleRepository(CoreService.getContext());
         alarmManager = (AlarmManager) CoreService.getContext().getSystemService(Context.ALARM_SERVICE);
     }
 
@@ -55,18 +52,22 @@ public class ScheduleManagerService extends IntentService {
             //   Calendar scheduleTime = Calendar.getInstance();
             // scheduleTime.setTimeInMillis(scheduledScene.getTime());
             Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(System.currentTimeMillis());
+            long time = -System.currentTimeMillis();
+            calendar.setTimeInMillis(time);
             //            calendar.set(Calendar.HOUR_OF_DAY, scheduleTime.get(Calendar.HOUR_OF_DAY));
             //            calendar.set(Calendar.MINUTE, scheduleTime.get(Calendar.MINUTE));
 
-            calendar.set(Calendar.HOUR_OF_DAY, 23);
-            calendar.set(Calendar.MINUTE, 11);
-
-            Log.d("obecny czas", String.valueOf(id));
+            calendar.set(Calendar.YEAR, 2014);
+            calendar.set(Calendar.HOUR_OF_DAY, 1);
+            calendar.set(Calendar.MINUTE, 39);
+            time = calendar.getTimeInMillis();
+            time += SystemClock.elapsedRealtime();
+            Log.d("czas:", String.valueOf(System.currentTimeMillis()));
             Log.d("zaplanowana scena:", scheduledScene.getId());
-            Log.d("czas wystartowania:", String.valueOf((int) calendar.getTimeInMillis()));
-            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_HOUR, alarmIntent);
-            //alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime() +5*1000, alarmIntent);
+            // alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), AlarmManager.INTERVAL_HOUR, alarmIntent);
+            //alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), AlarmManager.INTERVAL_HOUR, alarmIntent);
+            //alarmManager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime()+5*1000, AlarmManager.INTERVAL_HOUR, alarmIntent);
+            alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime()+5*1000, alarmIntent);
         }
 
     }

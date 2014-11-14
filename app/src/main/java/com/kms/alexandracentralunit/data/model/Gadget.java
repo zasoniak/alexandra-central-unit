@@ -1,6 +1,12 @@
 package com.kms.alexandracentralunit.data.model;
 
 
+import android.content.Intent;
+
+import com.kms.alexandracentralunit.CoreService;
+import com.kms.alexandracentralunit.HistorianBroadcastReceiver;
+
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -68,6 +74,24 @@ public class Gadget {
 
     public void run(HashMap<String, String> parameters) {
 
+        Intent intent = new Intent(CoreService.getContext(), HistorianBroadcastReceiver.class);
+        intent.putExtra(HistorianBroadcastReceiver.LOG_TYPE, HistorianBroadcastReceiver.LOG_ACTION);
+        intent.putExtra(HistorianBroadcastReceiver.GADGET, this.id.toString());
+        intent.putExtra(HistorianBroadcastReceiver.TIME, Calendar.getInstance().getTime().toString());
+        intent.putExtra(HistorianBroadcastReceiver.ACTION, "jakas akcja");
+        intent.putExtra(HistorianBroadcastReceiver.PARAMETERS, "jakies parametry");
+        CoreService.getContext().sendBroadcast(intent);
+
+        Intent intent2 = new Intent(CoreService.getContext(), HistorianBroadcastReceiver.class);
+        intent2.putExtra(HistorianBroadcastReceiver.LOG_TYPE, HistorianBroadcastReceiver.LOG_MEASUREMENT);
+        intent2.putExtra(HistorianBroadcastReceiver.GADGET, this.id.toString());
+        intent2.putExtra(HistorianBroadcastReceiver.TIME, Calendar.getInstance().getTime().toString());
+        intent2.putExtra(HistorianBroadcastReceiver.TYPE, "temperatura");
+        intent2.putExtra(HistorianBroadcastReceiver.VALUE, "30");
+        intent2.putExtra(HistorianBroadcastReceiver.UNIT, "st.C");
+        CoreService.getContext().sendBroadcast(intent2);
+        //        LocalBroadcastManager broadcastManager  = LocalBroadcastManager.getInstance(CoreService.getContext());
+        //        broadcastManager.sendBroadcast(intent);
     }
 
 }
