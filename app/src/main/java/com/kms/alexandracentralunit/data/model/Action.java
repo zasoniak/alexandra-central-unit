@@ -33,7 +33,7 @@ public class Action implements SceneComponent {
         TimerTask task = new TimerTask() {
             @Override
             public void run() {
-                gadget.run(parameters);
+                gadget.run(action, parameters);
                 Log.d("ruszyla akcja", gadget.getId().toString()+" + "+action);
             }
         };

@@ -20,6 +20,8 @@ public class HistorianBroadcastReceiver extends BroadcastReceiver {
     public static final String LOG_TYPE = "logType";
     public static final String LOG_ACTION = "action";
     public static final String LOG_MEASUREMENT = "measurement";
+    public static final String LOG_ERROR = "error";
+    public static final String DESCRIPTION = "description";
     public static final String GADGET = "gadget";
     public static final String TIME = "time";
     //measurement
@@ -31,12 +33,13 @@ public class HistorianBroadcastReceiver extends BroadcastReceiver {
     public static final String PARAMETERS = "parameters";
     private static final String EVENTS = "events";
     private static final String MEASUREMENTS = "measurements";
+    private static final String ERRORS = "errors";
 
     @Override
     public void onReceive(Context context, final Intent intent) {
         new Thread(new Runnable() {
             public void run() {
-                Firebase historianReference = new Firebase("https://sizzling-torch-8921.firebaseio.com/historian/systems/0/");
+                Firebase historianReference = new Firebase("https://sizzling-torch-8921.firebaseio.com/historian/"+String.valueOf(CoreService.getHomeId())+"/");
                 Map<String, String> historianLog = new HashMap<String, String>();
                 if(intent.getStringExtra(LOG_TYPE).equals(LOG_ACTION))
                 {
@@ -59,7 +62,16 @@ public class HistorianBroadcastReceiver extends BroadcastReceiver {
                     }
                     else
                     {
-                        Log.e("historian", "error");
+                        if(intent.getStringExtra(LOG_TYPE).equals(LOG_ERROR))
+                        {
+                            historianLog.put(DESCRIPTION, intent.getStringExtra(DESCRIPTION));
+                            historianLog.put(TIME, intent.getStringExtra(TIME));
+                            historianReference.child(ERRORS).push().setValue(historianLog);
+                        }
+                        else
+                        {
+                            Log.e("historian", "code error");
+                        }
                     }
                 }
 

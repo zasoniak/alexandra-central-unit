@@ -33,8 +33,7 @@ public class FirebaseSyncService extends SyncService {
 
     public FirebaseSyncService() {
         super();
-
-        Firebase homeReference = new Firebase("https://sizzling-torch-8921.firebaseio.com/systems/"+String.valueOf(CoreService.getHomeId())+"/");
+        Firebase homeReference = new Firebase("https://sizzling-torch-8921.firebaseio.com/configuration/"+String.valueOf(CoreService.getHomeId())+"/");
 
         homeReference.child("name").addValueEventListener(new ValueEventListener() {
             @Override
@@ -216,7 +215,9 @@ public class FirebaseSyncService extends SyncService {
                 for(DataSnapshot subsceneSnapshot : dataSnapshot.child("subscenes").getChildren())
                 {
                     if(home.getScene(subsceneSnapshot.child("id").getValue().toString()) != null)
-                    subscenes.add(home.getScene(subsceneSnapshot.child("id").getValue().toString()));
+                    {
+                        subscenes.add(home.getScene(subsceneSnapshot.child("id").getValue().toString()));
+                    }
                 }
                 builder.addSubscenes(subscenes);
 
@@ -261,7 +262,9 @@ public class FirebaseSyncService extends SyncService {
                 for(DataSnapshot subsceneSnapshot : dataSnapshot.child("subscenes").getChildren())
                 {
                     if(home.getScene(subsceneSnapshot.child("id").getValue().toString()) != null)
-                    subscenes.add(home.getScene(subsceneSnapshot.child("id").getValue().toString()));
+                    {
+                        subscenes.add(home.getScene(subsceneSnapshot.child("id").getValue().toString()));
+                    }
                 }
                 builder.addSubscenes(subscenes);
 

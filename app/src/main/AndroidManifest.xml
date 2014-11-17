@@ -37,26 +37,30 @@
             </intent-filter>
         </receiver>
 
-        <service
-            android:name="com.kms.alexandracentralunit.data.SyncService">
+        <service android:name="com.kms.alexandracentralunit.data.SyncService">
         </service>
-        <service
-            android:name="com.kms.alexandracentralunit.data.FirebaseSyncService">
-        </service>
-        <service
-            android:name="com.kms.alexandracentralunit.ScheduleManagerService">
-        </service>
-        <service
-            android:name="com.kms.alexandracentralunit.ScheduleService">
+        <service android:name="com.kms.alexandracentralunit.data.FirebaseSyncService">
         </service>
 
-        <receiver
-            android:name="com.kms.alexandracentralunit.ScheduleReceiver">
+
+        <service android:name="com.kms.alexandracentralunit.ScheduleManagerService">
+        </service>
+        <service android:name="com.kms.alexandracentralunit.ScheduleService">
+        </service>
+
+        <receiver android:name="com.kms.alexandracentralunit.ScheduleReceiver">
         </receiver>
 
-        <receiver
-            android:name="com.kms.alexandracentralunit.HistorianBroadcastReceiver">
+
+        <receiver android:name="com.kms.alexandracentralunit.HistorianBroadcastReceiver">
         </receiver>
+
+        <service
+            android:name="com.kms.alexandracentralunit.RemoteControlService">
+        </service>
+        <service
+            android:name="com.kms.alexandracentralunit.FirebaseRemoteControlService">
+        </service>
     </application>
 
 </manifest>

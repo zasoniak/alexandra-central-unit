@@ -97,6 +97,10 @@ public class CoreService extends Service {
                 //start scheduleManagerService
                 Intent scheduleIntent = new Intent(getBaseContext(), ScheduleManagerService.class);
                 startService(scheduleIntent);
+                //start remote control services
+                Intent remoteControlIntent = new Intent(getBaseContext(), FirebaseRemoteControlService.class);
+                startService(remoteControlIntent);
+
             }
         };
         Timer timer = new Timer();
