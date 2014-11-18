@@ -15,44 +15,40 @@ import java.util.UUID;
 /**
  * Created by Mateusz Zasoński on 2014-10-14.
  */
-public class Gadget {
+public class Gadget extends Observable {
 
-    //gadget types
-    public static final String TYPE_WALL_SOCKET = "WallSocket";
-    public static final String TYPE_EXTENSION_CORD = "ExtensionCord";
-    public static final String TYPE_LIGHT_SWITCH = "LightSwitch";
-    public static final String TYPE_DIMMER = "Dimmer";
-    public static final String TYPE_RGB_LIGHT = "RGBLight";
-
+    //gadget types  -> to be defined as list with constant numbers and included in system documentation
     public static final String TYPE = "type";
+    //gadget states
     public static final String STATE = "state";
-    protected String gadgetState;
+    protected GadgetType type;
+    protected GadgetState state;
     private UUID id;
     private String system;
     private String roomId;
     private String name;
     private String address;
-    private String type; //TODO: delete when subclasses created!!!
     private BluetoothGatt gatt;
 
     public Gadget() {
     }
-    public Gadget(UUID id, String system, String roomId, String name, String address, String type) {
+
+    public Gadget(UUID id, String system, String roomId, String name, String address, GadgetType type) {
         this.id = id;
         this.system = system;
         this.name = name;
         this.address = address;
         this.roomId = roomId;
         this.type = type;
-        this.gadgetState = "OK";
+        this.state = GadgetState.OK;
     }
 
     public UUID getId() {
         return id;
     }
 
-    public String getGadgetState() {
-        return gadgetState;
+    public GadgetState getState() {
+        return state;
     }
 
     public String getSystem() {
@@ -75,7 +71,7 @@ public class Gadget {
         return roomId;
     }
 
-    public String getType() {
+    public GadgetType getType() {
         return type;
     }
 
@@ -116,6 +112,20 @@ public class Gadget {
         intent3.putExtra(HistorianBroadcastReceiver.DESCRIPTION, "trololo, poszedl blad!");
         CoreService.getContext().sendBroadcast(intent3);
 
+    }
+
+    public static enum GadgetType {
+        WallSocket,
+        ExtensionCord,
+        LightSwitch,
+        Dimmer,
+        RGBLight
+    }
+
+    public static enum GadgetState {
+        OK,
+        Offline,
+        Error
     }
 
 }

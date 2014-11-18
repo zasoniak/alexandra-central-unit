@@ -270,7 +270,7 @@ public class SQLiteGadgetRepository implements GadgetRepository {
         values.put(SQLiteGadgetRepository.KEY_GADGET_NAME, gadget.getName());
         values.put(SQLiteGadgetRepository.KEY_GADGET_MAC_ADDRESS, gadget.getAddress());
         values.put(SQLiteGadgetRepository.KEY_GADGET_ROOM, String.valueOf(gadget.getRoom()));
-        values.put(SQLiteGadgetRepository.KEY_GADGET_TYPE, gadget.getType());
+        values.put(SQLiteGadgetRepository.KEY_GADGET_TYPE, String.valueOf(gadget.getType()));
         values.put(SQLiteGadgetRepository.KEY_GADGET_UPDATED, 0);
         return values;
     }

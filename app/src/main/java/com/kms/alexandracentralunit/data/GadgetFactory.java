@@ -12,16 +12,21 @@ import java.util.UUID;
  */
 public class GadgetFactory {
 
-    public static Gadget create(UUID id, String system_id, String roomId, String name, String address, String type) {
-
-        //TODO: different subclasses chosen by gadget type
-        if(type.equals(Gadget.TYPE_WALL_SOCKET) || type.equals(Gadget.TYPE_EXTENSION_CORD))
+    public static Gadget create(UUID id, String system_id, String roomId, String name, String address, Gadget.GadgetType type) {
+        switch(type)
         {
-            return new MultiSocket(id, system_id, roomId, name, address, type, 2);
-        }
-        else
-        {
-            return new Gadget(id, system_id, roomId, name, address, type);
+            case WallSocket:
+                return new MultiSocket(id, system_id, roomId, name, address, type, 2);
+            case ExtensionCord:
+                return new MultiSocket(id, system_id, roomId, name, address, type, 2);
+            case LightSwitch:
+                return new Gadget(id, system_id, roomId, name, address, type);
+            case Dimmer:
+                return new Gadget(id, system_id, roomId, name, address, type);
+            case RGBLight:
+                return new Gadget(id, system_id, roomId, name, address, type);
+            default:
+                return new Gadget(id, system_id, roomId, name, address, type);
         }
     }
 }

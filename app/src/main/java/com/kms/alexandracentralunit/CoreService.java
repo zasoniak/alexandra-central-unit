@@ -16,6 +16,7 @@ import com.kms.alexandracentralunit.data.FirebaseSyncService;
 import com.kms.alexandracentralunit.data.database.HomeRepository;
 import com.kms.alexandracentralunit.data.database.json.JSONHomeRepository;
 import com.kms.alexandracentralunit.data.model.Home;
+import com.kms.alexandracentralunit.data.model.MultiSocket;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -58,30 +59,24 @@ public class CoreService extends Service {
 
     @Override
     public void onCreate() {
-        firstRunSetup();
         broadcaster = LocalBroadcastManager.getInstance(this);
         context = getApplicationContext();
-        homeRepository = new JSONHomeRepository();
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        String homeId = sharedPreferences.getString(HOME_ID, "5");
-        String homeName = sharedPreferences.getString(HOME_NAME, "domek");
-        home = homeRepository.getHome(homeId, homeName);
         Firebase.setAndroidContext(getApplication());
+
+        firstRunSetup();
+        loadData();
+        initializeConfiguration();
+
         super.onCreate();
     }
 
     @Override
-    public void onStart(Intent intent, int startid) {
-
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Toast.makeText(this, "Core Service Started", Toast.LENGTH_LONG).show();
         //Intent intents = new Intent(getBaseContext(), AdminActivity.class);
         // intents.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //startActivity(intents);
 
-        Toast.makeText(this, "Core Service Started", Toast.LENGTH_LONG).show();
-
-        //start firebase sync service
-        Intent service = new Intent(getBaseContext(), FirebaseSyncService.class);
-        startService(service);
 
         Log.d(TAG, "onStart");
 
@@ -105,6 +100,16 @@ public class CoreService extends Service {
         };
         Timer timer = new Timer();
         timer.schedule(task, 10000);
+
+        TimerTask task1 = new TimerTask() {
+            @Override
+            public void run() {
+                ((MultiSocket) home.getGadgets().get(0)).setOn(true);
+            }
+        };
+        Timer timer2 = new Timer();
+        timer2.schedule(task1, 20000);
+        return super.onStartCommand(intent, flags, startId);
     }
 
     @Override
@@ -132,7 +137,16 @@ public class CoreService extends Service {
     }
 
     private void loadData() {
+        //start local repositories
+        homeRepository = new JSONHomeRepository();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String homeId = sharedPreferences.getString(HOME_ID, "5");
+        String homeName = sharedPreferences.getString(HOME_NAME, "domek");
+        home = homeRepository.getHome(homeId, homeName);
 
+        //start firebase sync service
+        Intent service = new Intent(getBaseContext(), FirebaseSyncService.class);
+        startService(service);
     }
 
     private void initializeConfiguration() {

@@ -10,6 +10,12 @@ import java.util.UUID;
  */
 public class Home {
 
+    public static final String NAME = "name";
+    public static final String USERS = "users";
+    public static final String ROOMS = "rooms";
+    public static final String GADGETS = "gadgets";
+    public static final String SCENES = "scenes";
+    public static final String SCHEDULE = "schedule";
     private final String id;
     private String name;
 

@@ -15,6 +15,7 @@ import com.kms.alexandracentralunit.CoreService;
 import com.kms.alexandracentralunit.data.database.json.JSONScheduleRepository;
 import com.kms.alexandracentralunit.data.model.Action;
 import com.kms.alexandracentralunit.data.model.Gadget;
+import com.kms.alexandracentralunit.data.model.Home;
 import com.kms.alexandracentralunit.data.model.Room;
 import com.kms.alexandracentralunit.data.model.Scene;
 import com.kms.alexandracentralunit.data.model.ScheduledScene;
@@ -35,7 +36,7 @@ public class FirebaseSyncService extends SyncService {
         super();
         Firebase homeReference = new Firebase("https://sizzling-torch-8921.firebaseio.com/configuration/"+String.valueOf(CoreService.getHomeId())+"/");
 
-        homeReference.child("name").addValueEventListener(new ValueEventListener() {
+        homeReference.child(Home.NAME).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(CoreService.getContext());
@@ -51,7 +52,7 @@ public class FirebaseSyncService extends SyncService {
             }
         });
 
-        homeReference.child("users").addChildEventListener(new ChildEventListener() {
+        homeReference.child(Home.USERS).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
@@ -78,7 +79,7 @@ public class FirebaseSyncService extends SyncService {
             }
         });
 
-        homeReference.child("rooms").addChildEventListener(new ChildEventListener() {
+        homeReference.child(Home.ROOMS).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 String id = dataSnapshot.getKey();
@@ -131,37 +132,37 @@ public class FirebaseSyncService extends SyncService {
             }
         });
 
-        homeReference.child("gadgets").addChildEventListener(new ChildEventListener() {
+        homeReference.child(Home.GADGETS).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                UUID id = UUID.fromString(dataSnapshot.child("id").getValue().toString());
+                UUID id = UUID.fromString(dataSnapshot.getKey());
                 String systemId = CoreService.getHomeId();
                 String roomId = dataSnapshot.child("roomId").getValue().toString();
                 String name = dataSnapshot.child("name").getValue().toString();
                 String MAC = dataSnapshot.child("MAC").getValue().toString();
-                String type = dataSnapshot.child("type").getValue().toString();
+                Gadget.GadgetType type = Gadget.GadgetType.valueOf(dataSnapshot.child("type").getValue().toString());
                 add(GadgetFactory.create(id, systemId, roomId, name, MAC, type));
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                UUID id = UUID.fromString(dataSnapshot.child("id").getValue().toString());
+                UUID id = UUID.fromString(dataSnapshot.getKey());
                 String systemId = CoreService.getHomeId();
                 String roomId = dataSnapshot.child("roomId").getValue().toString();
                 String name = dataSnapshot.child("name").getValue().toString();
                 String MAC = dataSnapshot.child("MAC").getValue().toString();
-                String type = dataSnapshot.child("type").getValue().toString();
+                Gadget.GadgetType type = Gadget.GadgetType.valueOf(dataSnapshot.child("type").getValue().toString());
                 update(GadgetFactory.create(id, systemId, roomId, name, MAC, type));
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                UUID id = UUID.fromString(dataSnapshot.child("id").getValue().toString());
+                UUID id = UUID.fromString(dataSnapshot.getKey());
                 String systemId = CoreService.getHomeId();
                 String roomId = dataSnapshot.child("roomId").getValue().toString();
                 String name = dataSnapshot.child("name").getValue().toString();
                 String MAC = dataSnapshot.child("MAC").getValue().toString();
-                String type = dataSnapshot.child("type").getValue().toString();
+                Gadget.GadgetType type = Gadget.GadgetType.valueOf(dataSnapshot.child("type").getValue().toString());
                 delete(GadgetFactory.create(id, systemId, roomId, name, MAC, type));
             }
 
@@ -176,7 +177,7 @@ public class FirebaseSyncService extends SyncService {
             }
         });
 
-        homeReference.child("scenes").addChildEventListener(new ChildEventListener() {
+        homeReference.child(Home.SCENES).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 String id = dataSnapshot.getKey();
@@ -329,7 +330,7 @@ public class FirebaseSyncService extends SyncService {
             }
         });
 
-        homeReference.child("schedule").addChildEventListener(new ChildEventListener() {
+        homeReference.child(Home.SCHEDULE).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 String id = dataSnapshot.getKey();

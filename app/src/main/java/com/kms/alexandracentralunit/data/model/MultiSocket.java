@@ -4,6 +4,7 @@ package com.kms.alexandracentralunit.data.model;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -13,9 +14,9 @@ import java.util.UUID;
 public class MultiSocket extends Gadget implements Switchable {
 
     protected int socketNumber;
-    protected ArrayList<Socket> sockets = new ArrayList<Socket>();
+    protected List<Socket> sockets = new ArrayList<Socket>();
 
-    public MultiSocket(UUID id, String system, String roomId, String name, String address, String type, int socketNumber) {
+    public MultiSocket(UUID id, String system, String roomId, String name, String address, GadgetType type, int socketNumber) {
         super(id, system, roomId, name, address, type);
         this.socketNumber = socketNumber;
         for(int i = 0; i < socketNumber; i++)
@@ -37,11 +38,12 @@ public class MultiSocket extends Gadget implements Switchable {
 
     @Override
     public void setOn(boolean state) {
+        Log.d("cale gniazdko", "setOn");
         for(Socket socket : sockets)
         {
             socket.setOn(state);
         }
-
+        notifyObservers("isOn", isOn());
     }
 
     public int getSocketNumber() {
@@ -51,6 +53,7 @@ public class MultiSocket extends Gadget implements Switchable {
     public void setChannelOn(int channel, boolean state) {
         Log.d("socket "+String.valueOf(channel), "ustawiono na: "+String.valueOf(state));
         sockets.get(channel).setOn(state);
+        notifyObservers("isOnChannel"+String.valueOf(channel), sockets.get(channel).isOn());
     }
 
     public boolean getChannelOn(int channel) {

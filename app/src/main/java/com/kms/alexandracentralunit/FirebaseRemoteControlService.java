@@ -7,7 +7,9 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.kms.alexandracentralunit.data.model.Gadget;
 import com.kms.alexandracentralunit.data.model.MultiSocket;
+import com.kms.alexandracentralunit.data.model.Observer;
 import com.kms.alexandracentralunit.data.model.Socket;
+import com.kms.alexandracentralunit.data.model.Switch;
 
 
 /**
@@ -32,15 +34,18 @@ public class FirebaseRemoteControlService extends RemoteControlService {
     class GadgetChildEventListener implements ChildEventListener {
 
         private Gadget gadgetReference;
+        private FirebaseGadgetObserver observer;
 
-        public GadgetChildEventListener(Gadget gadgetReference) {
-            this.gadgetReference = gadgetReference;
+        public GadgetChildEventListener(Gadget gadget) {
+            this.gadgetReference = gadget;
+            this.observer = new FirebaseGadgetObserver();
+            this.gadgetReference.registerObserver(observer);
 
             //overall gadget information
-            remoteControlReference.child(gadgetReference.getId().toString()).child(Gadget.STATE).setValue("OK");
-            remoteControlReference.child(gadgetReference.getId().toString()).child(Gadget.TYPE).setValue(gadgetReference.getType());
+            remoteControlReference.child(gadgetReference.getId().toString()).child(Gadget.STATE).setValue(gadgetReference.getState().toString());
+            remoteControlReference.child(gadgetReference.getId().toString()).child(Gadget.TYPE).setValue(gadgetReference.getType().toString());
 
-            if(gadgetReference.getType().equals(Gadget.TYPE_WALL_SOCKET) || gadgetReference.getType().equals(Gadget.TYPE_EXTENSION_CORD))
+            if(gadgetReference.getType().equals(Gadget.GadgetType.WallSocket) || gadgetReference.getType().equals(Gadget.GadgetType.ExtensionCord))
             {
                 remoteControlReference.child(gadgetReference.getId().toString()).child(Socket.IS_ON).setValue(((MultiSocket) gadgetReference).isOn());
                 for(int i = 0; i < ((MultiSocket) gadgetReference).getSocketNumber(); i++)
@@ -60,17 +65,32 @@ public class FirebaseRemoteControlService extends RemoteControlService {
         public void onChildChanged(DataSnapshot dataSnapshot, String s) {
             if(!dataSnapshot.getKey().equals(Gadget.STATE))
             {
-                if(this.gadgetReference.getType().equals(Gadget.TYPE_WALL_SOCKET) || this.gadgetReference.getType().equals(Gadget.TYPE_EXTENSION_CORD))
+                switch(gadgetReference.getType())
                 {
-                    if(dataSnapshot.getKey().equals("isOn"))
-                    {
-                        ((MultiSocket) this.gadgetReference).setOn(Boolean.parseBoolean(dataSnapshot.getValue().toString()));
-                    }
-                    else
-                    {
-                        ((MultiSocket) this.gadgetReference).setChannelOn(Integer.parseInt(dataSnapshot.getKey()), Boolean.parseBoolean(dataSnapshot.child("isOn").getValue().toString()));
+                    case WallSocket:
+                        if(dataSnapshot.getKey().equals(Switch.IS_ON))
+                        {
+                            ((MultiSocket) this.gadgetReference).setOn(Boolean.parseBoolean(dataSnapshot.getValue().toString()));
+                        }
+                        else
+                        {
+                            ((MultiSocket) this.gadgetReference).setChannelOn(Integer.parseInt(dataSnapshot.getKey()), Boolean.parseBoolean(dataSnapshot.child(Socket.IS_ON).getValue().toString()));
 
-                    }
+                        }
+                        break;
+                    case ExtensionCord:
+                        if(dataSnapshot.getKey().equals(Switch.IS_ON))
+                        {
+                            ((MultiSocket) this.gadgetReference).setOn(Boolean.parseBoolean(dataSnapshot.getValue().toString()));
+                        }
+                        else
+                        {
+                            ((MultiSocket) this.gadgetReference).setChannelOn(Integer.parseInt(dataSnapshot.getKey()), Boolean.parseBoolean(dataSnapshot.child(Socket.IS_ON).getValue().toString()));
+
+                        }
+                        break;
+                    default:
+                        break;
                 }
             }
 
@@ -89,6 +109,25 @@ public class FirebaseRemoteControlService extends RemoteControlService {
         @Override
         public void onCancelled(FirebaseError firebaseError) {
 
+        }
+
+        class FirebaseGadgetObserver implements Observer {
+
+            @Override
+            public void update(String field, Object value) {
+                if(field.equals("isOn"))
+                {
+                    remoteControlReference.child(gadgetReference.getId().toString()).child(Switch.IS_ON).setValue(value);
+
+                }
+                else
+                {
+                    if(field.equals("isOnChannel0"))
+                    {
+                        remoteControlReference.child(gadgetReference.getId().toString()).child("0").child(Socket.IS_ON).setValue(value);
+                    }
+                }
+            }
         }
     }
 
