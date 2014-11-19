@@ -8,6 +8,11 @@ import android.os.IBinder;
 import com.kms.alexandracentralunit.data.model.Home;
 
 
+/**
+ * Created by Mateusz Zasoński on 2014-11-15.
+ * RemoteControlService - entry point for system remote control
+ * provides access to Home instance for data manipulation
+ */
 public class RemoteControlService extends IntentService {
 
     Home home;

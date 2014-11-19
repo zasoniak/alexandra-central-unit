@@ -10,6 +10,7 @@ import java.util.UUID;
 
 /**
  * Created by Mateusz Zasoński on 2014-11-17.
+ * MultiSocket - class for all devices with electric sockets like Wall Sockets, Extension Cords etc.
  */
 public class MultiSocket extends Gadget implements Switchable {
 
@@ -24,6 +25,25 @@ public class MultiSocket extends Gadget implements Switchable {
             this.sockets.add(new Socket());
         }
     }
+
+    //    //TODO: pomyśleć czy tak robimy?
+    //    @Override
+    //    public void run(String action, HashMap<String, String> parameters) {
+    //        if(action.equals("setOn"))
+    //        {
+    //            if(parameters.containsKey("state"))
+    //            {
+    //                this.setOn(Boolean.parseBoolean(parameters.get("state")));
+    //            }
+    //        }
+    //        else if(action.equals("setChannelOn"))
+    //        {
+    //            if(parameters.containsKey("channel")&&parameters.containsKey("state"))
+    //            {
+    //                this.setChannelOn(Integer.parseInt(parameters.get("channel")),Boolean.parseBoolean(parameters.get("state")));
+    //            }
+    //        }
+    //    }
 
     @Override
     public boolean isOn() {
@@ -61,6 +81,6 @@ public class MultiSocket extends Gadget implements Switchable {
     }
 
     public double getChannelPowerConsuption(int channel) {
-        return sockets.get(channel).getPowerConsuption();
+        return sockets.get(channel).getPowerConsumption();
     }
 }

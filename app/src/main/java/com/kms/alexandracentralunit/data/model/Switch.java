@@ -3,6 +3,7 @@ package com.kms.alexandracentralunit.data.model;
 
 /**
  * Created by Mateusz Zasoński on 2014-11-17.
+ * Switch - base class for all providing simple on/off interface
  */
 public class Switch implements Switchable {
 

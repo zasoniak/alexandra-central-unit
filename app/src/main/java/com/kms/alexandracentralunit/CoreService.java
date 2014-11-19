@@ -22,6 +22,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
+/**
+ * Created by Mateusz Zasoński on 2014-10-29.
+ * CoreService - starting place for other parts of the system
+ */
 public class CoreService extends Service {
 
     public static final String UPDATE_MESSAGE = "com.kms.alexandracentralunit.CoreService.UPDATE_MESSAGE";

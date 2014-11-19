@@ -11,6 +11,7 @@ import com.kms.alexandracentralunit.data.model.ScheduledScene;
 
 /**
  * Created by Mateusz Zasoński on 2014-11-05.
+ * ScheduleReceiver - receives alarm broadcast from android alarm manager
  */
 public class ScheduleReceiver extends WakefulBroadcastReceiver {
 

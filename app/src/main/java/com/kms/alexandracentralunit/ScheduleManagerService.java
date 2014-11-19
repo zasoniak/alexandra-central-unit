@@ -18,6 +18,7 @@ import java.util.List;
 
 /**
  * Created by Mateusz Zasoński on 2014-11-05.
+ * ScheduleManagerService - service responsible for setting up all scheduled scene
  */
 public class ScheduleManagerService extends IntentService {
 

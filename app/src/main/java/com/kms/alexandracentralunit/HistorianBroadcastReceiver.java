@@ -14,6 +14,7 @@ import java.util.Map;
 
 /**
  * Created by Mateusz Zasoński on 2014-10-31.
+ * HistorianBroadcastReceiver  - class responsible for logging all events
  */
 public class HistorianBroadcastReceiver extends BroadcastReceiver {
 

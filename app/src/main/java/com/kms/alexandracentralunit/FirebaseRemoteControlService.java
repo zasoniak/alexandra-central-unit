@@ -14,6 +14,8 @@ import com.kms.alexandracentralunit.data.model.Switch;
 
 /**
  * Created by Mateusz Zasoński on 2014-11-15.
+ * FirebaseRemoteControlService remoteControl extension allowing remote control via Firebase platform
+ * provides remote mirror of gadgets' properties enabling changes from outside home
  */
 public class FirebaseRemoteControlService extends RemoteControlService {
 

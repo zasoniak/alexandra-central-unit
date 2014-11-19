@@ -14,6 +14,8 @@ import java.util.UUID;
 
 /**
  * Created by Mateusz Zasoński on 2014-10-14.
+ * Gadget - base class for all field devices in system
+ * provides common fields, basic functionality and logging mechanism
  */
 public class Gadget extends Observable {
 

@@ -3,19 +3,20 @@ package com.kms.alexandracentralunit.data.model;
 
 /**
  * Created by Mateusz Zasoński on 2014-11-17.
+ * Socket - base for single electric socket
  */
 public class Socket extends Switch {
 
     public static final String POWER_CONSUMPTION = "powerConsumption";
 
-    protected double powerConsuption;
+    protected double powerConsumption;
 
     public Socket() {
-        this.powerConsuption = 0;
+        this.powerConsumption = 0;
     }
 
-    public double getPowerConsuption() {
-        return powerConsuption;
+    public double getPowerConsumption() {
+        return powerConsumption;
     }
 
 }

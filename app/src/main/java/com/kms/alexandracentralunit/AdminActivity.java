@@ -18,6 +18,10 @@ import com.kms.alexandracentralunit.data.database.sqlite.ConfigurationDatabaseHe
 import java.util.ArrayList;
 
 
+/**
+ * Created by Mateusz Zasoński on 2014-11-19.
+ * AdminActivity - main activity for future administrator work
+ */
 public class AdminActivity extends Activity {
 
     BroadcastReceiver receiver;

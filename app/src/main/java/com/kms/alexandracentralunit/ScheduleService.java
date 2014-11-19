@@ -10,6 +10,7 @@ import com.kms.alexandracentralunit.data.model.ScheduledScene;
 
 /**
  * Created by Mateusz Zasoński on 2014-11-05.
+ * SchedulerService - IntentService responsible for running scheduled scene
  */
 public class ScheduleService extends IntentService {
 
