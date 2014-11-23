@@ -3,6 +3,8 @@ package com.kms.alexandracentralunit.data.model;
 
 import android.util.Log;
 
+import com.kms.alexandracentralunit.BLEController;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
@@ -29,7 +31,7 @@ public class Action implements SceneComponent {
     }
 
     @Override
-    public void start() {
+    public void start(BLEController controller) {
         TimerTask task = new TimerTask() {
             @Override
             public void run() {

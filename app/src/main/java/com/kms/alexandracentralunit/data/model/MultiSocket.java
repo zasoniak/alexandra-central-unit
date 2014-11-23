@@ -26,24 +26,30 @@ public class MultiSocket extends Gadget implements Switchable {
         }
     }
 
-    //    //TODO: pomyśleć czy tak robimy?
-    //    @Override
-    //    public void run(String action, HashMap<String, String> parameters) {
-    //        if(action.equals("setOn"))
-    //        {
-    //            if(parameters.containsKey("state"))
-    //            {
-    //                this.setOn(Boolean.parseBoolean(parameters.get("state")));
-    //            }
-    //        }
-    //        else if(action.equals("setChannelOn"))
-    //        {
-    //            if(parameters.containsKey("channel")&&parameters.containsKey("state"))
-    //            {
-    //                this.setChannelOn(Integer.parseInt(parameters.get("channel")),Boolean.parseBoolean(parameters.get("state")));
-    //            }
-    //        }
-    //    }
+    @Override
+    public BaseAction prepare(ActionMessage actionMessage) {
+
+        switch(ActionType.valueOf(actionMessage.action))
+        {
+            case SwitchAll:
+                return new ActionSwitchAll(this.gatt, actionMessage.parameter);
+            case SwitchChannelOne:
+                return new ActionSwitchChannelOne(this.gatt, actionMessage.parameter);
+            case SwitchChannelTwo:
+                break;
+            case SwitchChannelThree:
+                break;
+            case SwitchChannelFour:
+                break;
+            case SwitchChannelFive:
+                break;
+            case SwitchChannelSix:
+                break;
+            default:
+                return null;
+        }
+        return super.prepare(actionMessage);
+    }
 
     @Override
     public boolean isOn() {
@@ -82,5 +88,15 @@ public class MultiSocket extends Gadget implements Switchable {
 
     public double getChannelPowerConsuption(int channel) {
         return sockets.get(channel).getPowerConsumption();
+    }
+
+    public static enum ActionType {
+        SwitchAll,
+        SwitchChannelOne,
+        SwitchChannelTwo,
+        SwitchChannelThree,
+        SwitchChannelFour,
+        SwitchChannelFive,
+        SwitchChannelSix
     }
 }

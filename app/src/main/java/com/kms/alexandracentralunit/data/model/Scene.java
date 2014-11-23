@@ -3,6 +3,8 @@ package com.kms.alexandracentralunit.data.model;
 
 import android.util.Log;
 
+import com.kms.alexandracentralunit.BLEController;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,12 +33,12 @@ public class Scene implements SceneComponent {
     }
 
     @Override
-    public void start() {
+    public void start(BLEController controller) {
         Log.d("ruszyla scena: "+id, "z dziecmi: "+String.valueOf(children.size()));
         for(SceneComponent child : children)
         {
             Log.d(child.getClass().getSimpleName(), "do startu");
-            child.start();
+            child.start(controller);
         }
 
     }
@@ -78,13 +80,4 @@ public class Scene implements SceneComponent {
         this.triggers = triggers;
     }
 
-    public void checkTriggers(Gadget gadget, String action) {
-        for(Trigger trigger : triggers)
-        {
-            if(trigger.gadget.equals(gadget) && trigger.getAction().equals(action))
-            {
-                this.start();
-            }
-        }
-    }
 }

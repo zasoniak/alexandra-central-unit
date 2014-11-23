@@ -23,14 +23,15 @@ public class Gadget extends Observable {
     public static final String TYPE = "type";
     //gadget states
     public static final String STATE = "state";
+
     protected GadgetType type;
     protected GadgetState state;
+    protected BluetoothGatt gatt;
     private UUID id;
     private String system;
     private String roomId;
     private String name;
     private String address;
-    private BluetoothGatt gatt;
 
     public Gadget() {
     }
@@ -114,6 +115,10 @@ public class Gadget extends Observable {
         intent3.putExtra(HistorianBroadcastReceiver.DESCRIPTION, "trololo, poszedl blad!");
         CoreService.getContext().sendBroadcast(intent3);
 
+    }
+
+    public BaseAction prepare(ActionMessage actionMessage) {
+        return new ActionSwitchAll(gatt, "0");
     }
 
     public static enum GadgetType {

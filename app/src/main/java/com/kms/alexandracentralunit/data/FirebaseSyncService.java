@@ -194,7 +194,7 @@ public class FirebaseSyncService extends SyncService {
                     {
                         parameters.put(parameter.child("type").getValue().toString(), parameter.child("value").getValue().toString());
                     }
-                    triggers.add(new Trigger(id, gadget, action, parameters));
+                    //       triggers.add(new Trigger(id, gadget, action, parameters));
                 }
                 builder.addTriggers(triggers);
 
@@ -241,7 +241,7 @@ public class FirebaseSyncService extends SyncService {
                     {
                         parameters.put(parameter.child("type").getValue().toString(), parameter.child("value").getValue().toString());
                     }
-                    triggers.add(new Trigger(id, gadget, action, parameters));
+                    //       triggers.add(new Trigger(id, gadget, action, parameters));
                 }
                 builder.addTriggers(triggers);
 
@@ -288,7 +288,7 @@ public class FirebaseSyncService extends SyncService {
                     {
                         parameters.put(parameter.child("type").getValue().toString(), parameter.child("value").getValue().toString());
                     }
-                    triggers.add(new Trigger(id, gadget, action, parameters));
+                    //           triggers.add(new Trigger(id, gadget, action, parameters));
                 }
                 builder.addTriggers(triggers);
 

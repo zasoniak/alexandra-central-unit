@@ -4,7 +4,6 @@ package com.kms.alexandracentralunit;
 import android.app.IntentService;
 import android.content.Intent;
 
-import com.kms.alexandracentralunit.data.model.Scene;
 import com.kms.alexandracentralunit.data.model.ScheduledScene;
 
 
@@ -14,18 +13,13 @@ import com.kms.alexandracentralunit.data.model.ScheduledScene;
  */
 public class ScheduleService extends IntentService {
 
-    Scene scene;
-
     public ScheduleService() {
         super("Schedule service");
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        scene = CoreService.getHome().getScene(intent.getStringExtra(ScheduledScene.EXTRA_SCENE_ID));
-        //start scene
-        scene.start();
-        //completed
+        ControlService.getInstance().run(intent.getStringExtra(ScheduledScene.EXTRA_SCENE_ID));
         ScheduleReceiver.completeWakefulIntent(intent);
     }
 }
