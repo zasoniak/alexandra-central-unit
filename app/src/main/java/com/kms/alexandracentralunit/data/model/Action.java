@@ -12,7 +12,10 @@ import java.util.TimerTask;
 
 
 /**
- * Created by Mateusz Zasoński on 2014-10-31.
+ *
+ *
+ * @author Mateusz Zasoński
+ * @version 0.1
  */
 public class Action implements SceneComponent {
 

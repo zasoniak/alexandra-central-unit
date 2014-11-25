@@ -5,7 +5,10 @@ import java.util.UUID;
 
 
 /**
- * Created by Mateusz Zasoński on 2014-11-23.
+ * Structure for events driven messages.
+ *
+ * @author Mateusz Zasoński
+ * @version 0.1
  */
 public class ActionMessage {
 
