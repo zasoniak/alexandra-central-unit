@@ -58,7 +58,7 @@ public class SyncService extends IntentService {
     protected boolean update(Room room) {
         for(Room room1 : home.getRooms())
         {
-            if(room1.getId() == room.getId())
+            if(room1.getId().equals(room.getId()))
             {
                 room1.setColor(room.getColor());
                 room1.setName(room.getName());

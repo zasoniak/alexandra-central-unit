@@ -16,25 +16,25 @@ public class ScheduledScene {
     public static final String EXTRA_CONDITIONS = "com.kms.alexandracentralunit.EXTRA_CONDITIONS";
 
     public String id;
-    public String scene;
+    public String sceneID;
     public long time;
     public long repeatInterval;
     public HashMap<String, String> conditions = new HashMap<String, String>();
 
-    public ScheduledScene(String id, String scene, long time, long repeatInterval, HashMap<String, String> conditions) {
+    public ScheduledScene(String id, String sceneID, long time, long repeatInterval, HashMap<String, String> conditions) {
         this.id = id;
-        this.scene = scene;
+        this.sceneID = sceneID;
         this.time = time;
         this.repeatInterval = repeatInterval;
         this.conditions = conditions;
     }
 
     public String getId() {
-        return id;
+        return this.id;
     }
 
     public String getScene() {
-        return scene;
+        return this.sceneID;
     }
 
     public long getTime() {

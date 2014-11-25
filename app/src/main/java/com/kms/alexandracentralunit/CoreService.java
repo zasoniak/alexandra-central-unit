@@ -34,7 +34,6 @@ public class CoreService extends Service {
     public static final String HOME_ID = "home_id";
     public static final String HOME_NAME = "home_name";
 
-
     private static final String TAG = "CoreService";
 
     private static Context context;
@@ -80,7 +79,6 @@ public class CoreService extends Service {
         //Intent intents = new Intent(getBaseContext(), AdminActivity.class);
         // intents.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         //startActivity(intents);
-
 
         Log.d(TAG, "onStart");
 

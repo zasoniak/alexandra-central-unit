@@ -79,4 +79,10 @@ public class HistorianBroadcastReceiver extends BroadcastReceiver {
             }
         }).start();
     }
+
+    public static enum LogType {
+        Action,
+        Measurement,
+        Error
+    }
 }

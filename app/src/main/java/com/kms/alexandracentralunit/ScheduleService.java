@@ -8,8 +8,13 @@ import com.kms.alexandracentralunit.data.model.ScheduledScene;
 
 
 /**
- * Created by Mateusz Zasoński on 2014-11-05.
- * SchedulerService - IntentService responsible for running scheduled scene
+ * service to run scheduled scene
+ * <p/>
+ * prepared to run as WakefulService
+ * allowing to start even during sleep state
+ *
+ * @author Mateusz Zasoński
+ * @version 0.1
  */
 public class ScheduleService extends IntentService {
 
@@ -17,6 +22,9 @@ public class ScheduleService extends IntentService {
         super("Schedule service");
     }
 
+    /**
+     * @param intent contains sceneID
+     */
     @Override
     protected void onHandleIntent(Intent intent) {
         ControlService.getInstance().run(intent.getStringExtra(ScheduledScene.EXTRA_SCENE_ID));

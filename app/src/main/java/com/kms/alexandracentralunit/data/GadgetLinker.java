@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+//TODO: klasa do usuniecia?
 
 /**
  * Created by Mateusz Zasoński on 2014-10-31.

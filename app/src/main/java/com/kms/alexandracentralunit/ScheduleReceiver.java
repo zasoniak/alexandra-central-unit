@@ -18,6 +18,8 @@ public class ScheduleReceiver extends WakefulBroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d("ScheduleReceiver", "started");
+
+        //TODO: check condition
         Intent service = new Intent(context, ScheduleService.class);
         service.putExtra(ScheduledScene.EXTRA_SCENE_ID, intent.getStringExtra(ScheduledScene.EXTRA_SCENE_ID));
         startWakefulService(context, service);

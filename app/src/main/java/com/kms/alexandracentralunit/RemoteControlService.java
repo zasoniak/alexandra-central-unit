@@ -7,9 +7,13 @@ import android.os.IBinder;
 
 
 /**
- * Created by Mateusz Zasoński on 2014-11-15.
- * RemoteControlService - entry point for system remote control
- * provides access to system control
+ * entry point for system remote control
+ * <p/>
+ * provides access to system control service
+ * for different remote control ways
+ *
+ * @author Mateusz Zasoński
+ * @version 0.1
  */
 public class RemoteControlService extends IntentService {
 

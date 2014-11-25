@@ -8,10 +8,16 @@ import java.util.UUID;
 
 
 /**
- * Created by Mateusz Zasoński on 2014-10-14.
+ * provides different gadget according to its type
+ * <p/>
+ * factory method pattern, provides different outcome object according to gadget type selected
+ *
+ * @author Mateusz Zasoński
+ * @version 0.1
  */
 public class GadgetFactory {
 
+    //TODO: additional parameter, like number of channels
     public static Gadget create(UUID id, String system_id, String roomId, String name, String address, Gadget.GadgetType type) {
         switch(type)
         {

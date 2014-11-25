@@ -17,10 +17,14 @@ public class BLEController {
     private static final long MESSAGE_INTERVAL = 50;
     private DelayQueue<BaseAction> actionQueue = new DelayQueue<BaseAction>();
 
+    //TODO: sprawdzic czy nie wyrzuca go w międzyczasie z jakis względów
+    private volatile boolean isRunning;
+
     public BLEController() {
         BLEMessenger messenger = new BLEMessenger();
         messenger.setDaemon(true);
         messenger.start();
+        isRunning = true;
 
     }
 
@@ -32,7 +36,7 @@ public class BLEController {
 
         @Override
         public void run() {
-            while(true)
+            while(isRunning)
             {
                 BaseAction action = actionQueue.poll();
                 if(action != null)

@@ -7,8 +7,10 @@ import android.content.Intent;
 
 
 /**
- * Created by Mateusz Zasoński on 2014-11-19.
- * Autostart  - receiver allowing to run on device startup
+ * receiver allowing to run application on device startup
+ *
+ * @author Mateusz Zasoński
+ * @version 0.1
  */
 public class Autostart extends BroadcastReceiver {
 

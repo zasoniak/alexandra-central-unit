@@ -10,6 +10,7 @@ import com.kms.alexandracentralunit.data.model.Room;
 
 import java.util.List;
 
+//TODO: delete class?
 
 /**
  * Created by Mateusz Zasoński on 2014-11-05.

@@ -13,7 +13,10 @@ import java.util.List;
 
 
 /**
- * Created by Mateusz Zasoński on 2014-11-11.
+ * builder for entire home ecosystem object
+ *
+ * @author Mateusz Zasoński
+ * @version 0.1
  */
 public class HomeBuilder {
 
