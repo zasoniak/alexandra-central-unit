@@ -2,6 +2,7 @@ package com.kms.alexandracentralunit;
 
 
 import android.bluetooth.BluetoothGattCharacteristic;
+import android.util.Log;
 
 import com.kms.alexandracentralunit.data.model.BaseAction;
 
@@ -9,8 +10,10 @@ import java.util.concurrent.DelayQueue;
 
 
 /**
- * Created by Mateusz Zasoński on 2014-11-23.
- * BLEController - class allowing safe-thread
+ * allows thread-safe BLE communication
+ *
+ * @author Mateusz Zasoński
+ * @version 0.1
  */
 public class BLEController {
 
@@ -41,9 +44,14 @@ public class BLEController {
                 BaseAction action = actionQueue.poll();
                 if(action != null)
                 {
-                    BluetoothGattCharacteristic characteristic = action.getGatt().getService(action.getService()).getCharacteristic(action.getCharacteristic());
-                    characteristic.setValue(action.getParameter());
-                    action.getGatt().writeCharacteristic(characteristic);
+                    Log.d("BLEController, akcja: ", action.getService().toString());
+                    if(action.getGatt() != null)
+                    {
+                        BluetoothGattCharacteristic characteristic = action.getGatt().getService(action.getService()).getCharacteristic(action.getCharacteristic());
+                        characteristic.setValue(action.getParameter());
+                        action.getGatt().writeCharacteristic(characteristic);
+                    }
+
                 }
                 try
                 {

@@ -213,7 +213,7 @@ public class FirebaseSyncService extends SyncService {
                     String action = actionSnapshot.child("action").getValue().toString();
                     UUID gadget = UUID.fromString(actionSnapshot.child("gadget").getValue().toString());
                     String parameter = actionSnapshot.child("parameter").getValue().toString();
-                    long delay = Long.parseLong(actionSnapshot.child("delay").getValue().toString());
+                    long delay = Long.parseLong(actionSnapshot.child("offset").getValue().toString());
                     actions.add(new ActionMessage(gadget, action, parameter, delay));
                 }
                 builder.addActions(actions);

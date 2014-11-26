@@ -4,7 +4,6 @@ package com.kms.alexandracentralunit;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import com.firebase.client.Firebase;
 
@@ -22,6 +21,7 @@ public class HistorianBroadcastReceiver extends BroadcastReceiver {
     public static final String LOG_ACTION = "action";
     public static final String LOG_MEASUREMENT = "measurement";
     public static final String LOG_ERROR = "error";
+    public static final String LOG_SCENE = "scene";
     public static final String DESCRIPTION = "description";
     public static final String GADGET = "gadget";
     public static final String TIME = "time";
@@ -29,12 +29,15 @@ public class HistorianBroadcastReceiver extends BroadcastReceiver {
     public static final String TYPE = "type";
     public static final String VALUE = "value";
     public static final String UNIT = "unit";
-    //event
+    //action
     public static final String ACTION = "action";
     public static final String PARAMETERS = "parameters";
-    private static final String EVENTS = "events";
+    //scene
+    public static final String SCENE = "scene";
+    private static final String ACTIONS = "actions";
     private static final String MEASUREMENTS = "measurements";
     private static final String ERRORS = "errors";
+    private static final String SCENES = "scenes";
 
     @Override
     public void onReceive(Context context, final Intent intent) {
@@ -42,39 +45,56 @@ public class HistorianBroadcastReceiver extends BroadcastReceiver {
             public void run() {
                 Firebase historianReference = new Firebase("https://sizzling-torch-8921.firebaseio.com/historian/"+String.valueOf(CoreService.getHomeId())+"/");
                 Map<String, String> historianLog = new HashMap<String, String>();
-                if(intent.getStringExtra(LOG_TYPE).equals(LOG_ACTION))
+
+                switch((LogType) intent.getSerializableExtra(LOG_TYPE))
                 {
-                    historianLog.put(GADGET, intent.getStringExtra(GADGET));
-                    historianLog.put(TIME, intent.getStringExtra(TIME));
-                    historianLog.put(ACTION, intent.getStringExtra(ACTION));
-                    historianLog.put(PARAMETERS, intent.getStringExtra(PARAMETERS));
-                    historianReference.child(EVENTS).push().setValue(historianLog);
-                }
-                else
-                {
-                    if(intent.getStringExtra(LOG_TYPE).equals(LOG_MEASUREMENT))
-                    {
-                        historianLog.put(GADGET, intent.getStringExtra(GADGET));
+                    case Action:
+                        break;
+                    case Scene:
+                        historianLog.put(SCENE, intent.getStringExtra(SCENE));
                         historianLog.put(TIME, intent.getStringExtra(TIME));
-                        historianLog.put(TYPE, intent.getStringExtra(TYPE));
-                        historianLog.put(VALUE, intent.getStringExtra(VALUE));
-                        historianLog.put(UNIT, intent.getStringExtra(UNIT));
-                        historianReference.child(MEASUREMENTS).push().setValue(historianLog);
-                    }
-                    else
-                    {
-                        if(intent.getStringExtra(LOG_TYPE).equals(LOG_ERROR))
-                        {
-                            historianLog.put(DESCRIPTION, intent.getStringExtra(DESCRIPTION));
-                            historianLog.put(TIME, intent.getStringExtra(TIME));
-                            historianReference.child(ERRORS).push().setValue(historianLog);
-                        }
-                        else
-                        {
-                            Log.e("historian", "code error");
-                        }
-                    }
+                        historianReference.child(SCENES).push().setValue(historianLog);
+                    case Measurement:
+                        break;
+                    case ConfiguratioChange:
+                        break;
+                    case Error:
+                        break;
                 }
+
+                //                if(intent.getStringExtra(LOG_TYPE).equals(LOG_ACTION))
+                //                {
+                //                    historianLog.put(GADGET, intent.getStringExtra(GADGET));
+                //                    historianLog.put(TIME, intent.getStringExtra(TIME));
+                //                    historianLog.put(ACTION, intent.getStringExtra(ACTION));
+                //                    historianLog.put(PARAMETERS, intent.getStringExtra(PARAMETERS));
+                //                    historianReference.child(ACTIONS).push().setValue(historianLog);
+                //                }
+                //                else
+                //                {
+                //                    if(intent.getStringExtra(LOG_TYPE).equals(LOG_MEASUREMENT))
+                //                    {
+                //                        historianLog.put(GADGET, intent.getStringExtra(GADGET));
+                //                        historianLog.put(TIME, intent.getStringExtra(TIME));
+                //                        historianLog.put(TYPE, intent.getStringExtra(TYPE));
+                //                        historianLog.put(VALUE, intent.getStringExtra(VALUE));
+                //                        historianLog.put(UNIT, intent.getStringExtra(UNIT));
+                //                        historianReference.child(MEASUREMENTS).push().setValue(historianLog);
+                //                    }
+                //                    else
+                //                    {
+                //                        if(intent.getStringExtra(LOG_TYPE).equals(LOG_ERROR))
+                //                        {
+                //                            historianLog.put(DESCRIPTION, intent.getStringExtra(DESCRIPTION));
+                //                            historianLog.put(TIME, intent.getStringExtra(TIME));
+                //                            historianReference.child(ERRORS).push().setValue(historianLog);
+                //                        }
+                //                        else
+                //                        {
+                //                            Log.e("historian", "code error");
+                //                        }
+                //                    }
+                //                }
 
             }
         }).start();
@@ -82,7 +102,9 @@ public class HistorianBroadcastReceiver extends BroadcastReceiver {
 
     public static enum LogType {
         Action,
+        Scene,
         Measurement,
+        ConfiguratioChange,
         Error
     }
 }

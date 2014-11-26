@@ -1,16 +1,22 @@
 package com.kms.alexandracentralunit.data.model;
 
 
-import android.util.Log;
+import android.content.Intent;
 
 import com.kms.alexandracentralunit.BLEController;
+import com.kms.alexandracentralunit.CoreService;
+import com.kms.alexandracentralunit.HistorianBroadcastReceiver;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 
 /**
  * Created by Mateusz Zasoński on 2014-10-31.
+ *
+ * @author Mateusz Zasoński
+ * @version 0.1
  */
 public class Scene implements SceneComponent {
 
@@ -32,12 +38,23 @@ public class Scene implements SceneComponent {
         this.children = children;
     }
 
+    /**
+     * starts scene execution
+     * sends info to historian
+     *
+     * @param controller reference to bluetooth messages queue control
+     */
     @Override
     public void start(BLEController controller) {
-        Log.d("ruszyla scena: "+id, "z dziecmi: "+String.valueOf(children.size()));
+
+        Intent intent = new Intent(CoreService.getContext(), HistorianBroadcastReceiver.class);
+        intent.putExtra(HistorianBroadcastReceiver.LOG_TYPE, HistorianBroadcastReceiver.LogType.Scene);
+        intent.putExtra(HistorianBroadcastReceiver.TIME, Calendar.getInstance().getTime().toString());
+        intent.putExtra(HistorianBroadcastReceiver.SCENE, this.getId());
+        CoreService.getContext().sendBroadcast(intent);
+
         for(SceneComponent child : children)
         {
-            Log.d(child.getClass().getSimpleName(), "do startu");
             child.start(controller);
         }
 
