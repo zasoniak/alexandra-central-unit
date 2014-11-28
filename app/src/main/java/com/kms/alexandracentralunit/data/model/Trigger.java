@@ -3,8 +3,8 @@ package com.kms.alexandracentralunit.data.model;
 
 import com.kms.alexandracentralunit.ControlService;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -20,29 +20,46 @@ import java.util.UUID;
  */
 public class Trigger {
 
+    public static final String SCENE = "scene";
+    public static final String CONDITIONS = "conditions";
+    public static final String CONDITION_GADGET = "gadget";
+    public static final String CONDITION_PARAMETER = "parameter";
+    public static final String CONDITION_VALUE = "value";
+
     private String sceneID;
-    private UUID gadgetID;
-    private Map<String, String> conditions;
 
-    private GadgetObserver gadgetObserver;
+    private List<GadgetObserver> gadgetObservers = new ArrayList<GadgetObserver>();
 
-    public Trigger(String scene, UUID gadget, HashMap<String, String> conditions) {
+    public Trigger(String scene) {
         this.sceneID = scene;
-        this.gadgetID = gadget;
-        this.conditions = conditions;
     }
 
     public String getScene() {
         return sceneID;
     }
 
-    public UUID getGadget() {
-        return gadgetID;
+    public void addObserver(UUID gadgetID, String parameter, String value) {
+        this.gadgetObservers.add(new GadgetObserver(gadgetID, parameter, value));
     }
 
-    public void registerObserver(Gadget gadget) {
-        this.gadgetObserver = new GadgetObserver(gadget);
-        gadget.registerObserver(this.gadgetObserver);
+    public void registerObservers(Home home) {
+        for(GadgetObserver observer : gadgetObservers)
+        {
+            home.getGadget(observer.gadgetID).registerObserver(observer);
+        }
+    }
+
+    private void checkConditions() {
+        boolean flag = true;
+        for(GadgetObserver observer : gadgetObservers)
+        {
+            flag &= observer.getFlag();
+        }
+
+        if(flag)
+        {
+            ControlService.getInstance().run(sceneID);
+        }
     }
 
     /**
@@ -54,21 +71,32 @@ public class Trigger {
      */
     class GadgetObserver implements Observer {
 
-        Gadget gadget;
+        public final UUID gadgetID;
+        public String parameter;
+        public String value;
+        private boolean flag = false;
 
-        GadgetObserver(Gadget gadget) {
-            this.gadget = gadget;
+        GadgetObserver(UUID gadgetID, String parameter, String value) {
+            this.gadgetID = gadgetID;
+            this.parameter = parameter;
+            this.value = value;
         }
 
         @Override
         public void update(String field, Object value) {
-
-            //TODO: przemyslec co w przypadku gdy chcemy kilka warunkow miec spelnionych
-            //TODO: check conditions required
-            if(conditions.containsKey(field) && conditions.get(field).equals(value))
+            if(this.parameter.equals(field) && this.value.equals(value))
             {
-                ControlService.getInstance().run(sceneID);
+                flag = true;
+                checkConditions();
             }
+            else
+            {
+                flag = false;
+            }
+        }
+
+        public boolean getFlag() {
+            return flag;
         }
     }
 }

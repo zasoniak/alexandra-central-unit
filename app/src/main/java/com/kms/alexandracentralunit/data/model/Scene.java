@@ -20,6 +20,12 @@ import java.util.List;
  */
 public class Scene implements SceneComponent {
 
+    public static final String ID = "id";
+    public static final String NAME = "name";
+    public static final String TRIGGERS = "triggers";
+    public static final String ACTIONS = "actions";
+    public static final String SUBSCENES = "subscenes";
+
     public String id;
     public String name;
 

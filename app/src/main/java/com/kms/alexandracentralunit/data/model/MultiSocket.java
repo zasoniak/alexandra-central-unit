@@ -15,14 +15,14 @@ import java.util.UUID;
 public class MultiSocket extends Gadget implements Switchable {
 
     protected int socketNumber;
-    protected List<Socket> sockets = new ArrayList<Socket>();
+    protected List<Socket> channels = new ArrayList<Socket>();
 
     public MultiSocket(UUID id, String system, String roomId, String name, String address, GadgetType type, int socketNumber) {
         super(id, system, roomId, name, address, type);
         this.socketNumber = socketNumber;
         for(int i = 0; i < socketNumber; i++)
         {
-            this.sockets.add(new Socket());
+            this.channels.add(new Socket());
         }
     }
 
@@ -55,7 +55,7 @@ public class MultiSocket extends Gadget implements Switchable {
     public boolean isOn() {
 
         boolean state = false;
-        for(Socket socket : sockets)
+        for(Socket socket : channels)
         {
             state |= socket.isOn();
         }
@@ -65,7 +65,7 @@ public class MultiSocket extends Gadget implements Switchable {
     @Override
     public void setOn(boolean state) {
         Log.d("cale gniazdko", "setOn");
-        for(Socket socket : sockets)
+        for(Socket socket : channels)
         {
             socket.setOn(state);
         }
@@ -78,16 +78,16 @@ public class MultiSocket extends Gadget implements Switchable {
 
     public void setChannelOn(int channel, boolean state) {
         Log.d("socket "+String.valueOf(channel), "ustawiono na: "+String.valueOf(state));
-        sockets.get(channel).setOn(state);
-        notifyObservers("isOnChannel"+String.valueOf(channel), sockets.get(channel).isOn());
+        channels.get(channel).setOn(state);
+        notifyObservers("isOnChannel"+String.valueOf(channel), channels.get(channel).isOn());
     }
 
     public boolean getChannelOn(int channel) {
-        return sockets.get(channel).isOn();
+        return channels.get(channel).isOn();
     }
 
     public double getChannelPowerConsuption(int channel) {
-        return sockets.get(channel).getPowerConsumption();
+        return channels.get(channel).getPowerConsumption();
     }
 
     public static enum ActionType {

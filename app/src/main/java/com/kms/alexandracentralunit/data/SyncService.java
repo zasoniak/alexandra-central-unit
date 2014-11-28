@@ -15,6 +15,15 @@ import com.kms.alexandracentralunit.data.model.ScheduledScene;
 import com.kms.alexandracentralunit.data.model.User;
 
 
+/**
+ * provides system synchronization with remote data repositories
+ * <p/>
+ * base class for remote synchronization services,
+ * providing add/update/delete methods for working system and local repositories
+ *
+ * @author Mateusz Zasoński
+ * @version 0.1
+ */
 public class SyncService extends IntentService {
 
     protected Home home;

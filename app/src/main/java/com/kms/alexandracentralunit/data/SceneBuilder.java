@@ -1,7 +1,6 @@
 package com.kms.alexandracentralunit.data;
 
 
-import com.kms.alexandracentralunit.CoreService;
 import com.kms.alexandracentralunit.data.model.ActionMessage;
 import com.kms.alexandracentralunit.data.model.BaseAction;
 import com.kms.alexandracentralunit.data.model.Home;
@@ -24,11 +23,13 @@ public class SceneBuilder {
 
     private String id;
     private String name;
+    private Home home;
 
     private List<SceneComponent> children = new ArrayList<SceneComponent>();
     private List<Trigger> triggers = new ArrayList<Trigger>();
 
-    public SceneBuilder() {
+    public SceneBuilder(Home home) {
+        this.home = home;
     }
 
     public void create(String id, String name) {
@@ -37,32 +38,28 @@ public class SceneBuilder {
     }
 
     public void addTriggers(List<Trigger> triggers) {
-        Home home = CoreService.getHome();
         for(Trigger trigger : triggers)
         {
-            trigger.registerObserver(home.getGadget(trigger.getGadget()));
+            trigger.registerObservers(this.home);
             this.triggers.add(trigger);
         }
     }
 
     public void addActions(List<ActionMessage> actionMessages) {
-        Home home = CoreService.getHome();
         for(ActionMessage actionMessage : actionMessages)
         {
-            BaseAction action = home.getGadget(actionMessage.gadgetID).prepare(actionMessage);
+            BaseAction action = this.home.getGadget(actionMessage.gadgetID).prepare(actionMessage);
             action.setDelay(actionMessage.delay);
             this.children.add(action);
         }
     }
 
     public void addSubscenes(List<String> subsceneIDs) {
-
-        Home home = CoreService.getHome();
         for(String subsceneID : subsceneIDs)
         {
-            if(home.getScene(subsceneID) != null)
+            if(this.home.getScene(subsceneID) != null)
             {
-                this.children.add(home.getScene(subsceneID));
+                this.children.add(this.home.getScene(subsceneID));
             }
         }
     }

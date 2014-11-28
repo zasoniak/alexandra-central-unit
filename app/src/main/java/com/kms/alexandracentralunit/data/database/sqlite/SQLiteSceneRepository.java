@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 
+import com.kms.alexandracentralunit.CoreService;
 import com.kms.alexandracentralunit.data.SceneBuilder;
 import com.kms.alexandracentralunit.data.database.SceneRepository;
 import com.kms.alexandracentralunit.data.model.Scene;
@@ -134,7 +135,7 @@ public class SQLiteSceneRepository implements SceneRepository {
                 null); // h. limit
 
         // prepare structured data
-        SceneBuilder builder = new SceneBuilder();
+        SceneBuilder builder = new SceneBuilder(CoreService.getHome());
         ContentValues values = new ContentValues();
         if(cursor != null)
         {
@@ -169,7 +170,7 @@ public class SQLiteSceneRepository implements SceneRepository {
         {
             do
             {
-                SceneBuilder builder = new SceneBuilder();
+                SceneBuilder builder = new SceneBuilder(CoreService.getHome());
                 ContentValues values = new ContentValues();
                 values.put(KEY_SCENE_ID, cursor.getString(0));
                 values.put(KEY_SCENE_SYSTEM, cursor.getLong(1));
@@ -213,7 +214,7 @@ public class SQLiteSceneRepository implements SceneRepository {
         {
             do
             {
-                SceneBuilder builder = new SceneBuilder();
+                SceneBuilder builder = new SceneBuilder(CoreService.getHome());
                 ContentValues values = new ContentValues();
                 values.put(KEY_SCENE_ID, cursor.getString(0));
                 values.put(KEY_SCENE_SYSTEM, cursor.getLong(1));

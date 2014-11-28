@@ -17,6 +17,7 @@ import com.kms.alexandracentralunit.data.model.ActionMessage;
 import com.kms.alexandracentralunit.data.model.Gadget;
 import com.kms.alexandracentralunit.data.model.Home;
 import com.kms.alexandracentralunit.data.model.Room;
+import com.kms.alexandracentralunit.data.model.Scene;
 import com.kms.alexandracentralunit.data.model.ScheduledScene;
 import com.kms.alexandracentralunit.data.model.Trigger;
 
@@ -27,7 +28,10 @@ import java.util.UUID;
 
 
 /**
- * Created by Mateusz Zasoński on 2014-11-11.
+ *
+ *
+ * @author Mateusz Zasoński
+ * @version 0.1
  */
 public class FirebaseSyncService extends SyncService {
     //TODO: constants!!!!
@@ -181,8 +185,8 @@ public class FirebaseSyncService extends SyncService {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 String id = dataSnapshot.getKey();
-                String name = dataSnapshot.child("name").getValue().toString();
-                SceneBuilder builder = new SceneBuilder();
+                String name = dataSnapshot.child(Scene.NAME).getValue().toString();
+                SceneBuilder builder = new SceneBuilder(home);
                 builder.create(id, name);
                 List<Trigger> triggers = new ArrayList<Trigger>();
 
@@ -190,16 +194,18 @@ public class FirebaseSyncService extends SyncService {
                  * first step of trigger creation
                  * for next step passing triggers list to scene builder
                  */
-                for(DataSnapshot triggerSnapshot : dataSnapshot.child("triggers").getChildren())
+                for(DataSnapshot triggerSnapshot : dataSnapshot.child(Scene.TRIGGERS).getChildren())
                 {
-                    String action = triggerSnapshot.child("action").getValue().toString();
-                    UUID gadget = UUID.fromString(triggerSnapshot.child("gadget").getValue().toString());
-                    HashMap<String, String> parameters = new HashMap<String, String>();
-                    for(DataSnapshot parameter : triggerSnapshot.child("parameters").getChildren())
+                    Trigger trigger = new Trigger(id);
+
+                    for(DataSnapshot condition : triggerSnapshot.child(Trigger.CONDITIONS).getChildren())
                     {
-                        parameters.put(parameter.child("type").getValue().toString(), parameter.child("value").getValue().toString());
+                        UUID gadgetID = UUID.fromString(condition.child(Trigger.CONDITION_GADGET).getValue().toString());
+                        String parameter = condition.child(Trigger.CONDITION_PARAMETER).getValue().toString();
+                        String value = condition.child(Trigger.CONDITION_VALUE).getValue().toString();
+                        trigger.addObserver(gadgetID, parameter, value);
                     }
-                    triggers.add(new Trigger(id, gadget, parameters));
+                    triggers.add(trigger);
                 }
                 builder.addTriggers(triggers);
 
@@ -208,12 +214,12 @@ public class FirebaseSyncService extends SyncService {
                  * and passing it to scene builder
                  */
                 List<ActionMessage> actions = new ArrayList<ActionMessage>();
-                for(DataSnapshot actionSnapshot : dataSnapshot.child("actions").getChildren())
+                for(DataSnapshot actionSnapshot : dataSnapshot.child(Scene.ACTIONS).getChildren())
                 {
-                    String action = actionSnapshot.child("action").getValue().toString();
-                    UUID gadget = UUID.fromString(actionSnapshot.child("gadget").getValue().toString());
-                    String parameter = actionSnapshot.child("parameter").getValue().toString();
-                    long delay = Long.parseLong(actionSnapshot.child("offset").getValue().toString());
+                    String action = actionSnapshot.child(ActionMessage.ACTION).getValue().toString();
+                    UUID gadget = UUID.fromString(actionSnapshot.child(ActionMessage.GADGET).getValue().toString());
+                    String parameter = actionSnapshot.child(ActionMessage.PARAMETER).getValue().toString();
+                    long delay = Long.parseLong(actionSnapshot.child(ActionMessage.DELAY).getValue().toString());
                     actions.add(new ActionMessage(gadget, action, parameter, delay));
                 }
                 builder.addActions(actions);
@@ -223,107 +229,122 @@ public class FirebaseSyncService extends SyncService {
                  * and passing it to scene builder
                  */
                 List<String> subscenes = new ArrayList<String>();
-                for(DataSnapshot subsceneSnapshot : dataSnapshot.child("subscenes").getChildren())
+                for(DataSnapshot subsceneSnapshot : dataSnapshot.child(Scene.SUBSCENES).getChildren())
                 {
-                    subscenes.add(subsceneSnapshot.child("id").toString());
+                    subscenes.add(subsceneSnapshot.child(Scene.ID).toString());
                 }
                 builder.addSubscenes(subscenes);
-
                 add(builder.getScene());
             }
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                //                String id = dataSnapshot.getKey();
-                //                String name = dataSnapshot.child("name").getValue().toString();
-                //                SceneBuilder builder = new SceneBuilder();
-                //                builder.create(id, name);
-                //                List<Trigger> triggers = new ArrayList<Trigger>();
-                //                for(DataSnapshot triggerSnapshot : dataSnapshot.child("triggers").getChildren())
-                //                {
-                //                    String action = triggerSnapshot.child("action").getValue().toString();
-                //                    UUID gadget = UUID.fromString(triggerSnapshot.child("gadget").getValue().toString());
-                //                    HashMap<String, String> parameters = new HashMap<String, String>();
-                //                    for(DataSnapshot parameter : triggerSnapshot.child("parameters").getChildren())
-                //                    {
-                //                        parameters.put(parameter.child("type").getValue().toString(), parameter.child("value").getValue().toString());
-                //                    }
-                //                    //       triggers.add(new Trigger(id, gadget, action, parameters));
-                //                }
-                //                builder.addTriggers(triggers);
-                //
-                //                List<Action> actions = new ArrayList<Action>();
-                //                for(DataSnapshot actionSnapshot : dataSnapshot.child("actions").getChildren())
-                //                {
-                //                    String action = actionSnapshot.child("action").getValue().toString();
-                //                    Gadget gadget = home.getGadget(UUID.fromString(actionSnapshot.child("gadget").getValue().toString()));
-                //                    HashMap<String, String> parameters = new HashMap<String, String>();
-                //                    long offset = Long.parseLong(actionSnapshot.child("offset").getValue().toString());
-                //                    for(DataSnapshot parameter : actionSnapshot.child("parameters").getChildren())
-                //                    {
-                //                        parameters.put(parameter.child("type").getValue().toString(), parameter.child("value").getValue().toString());
-                //                    }
-                //                    actions.add(new Action(id, gadget, action, parameters, offset));
-                //                }
-                //                builder.addActions(actions);
-                //                List<Scene> subscenes = new ArrayList<Scene>();
-                //                for(DataSnapshot subsceneSnapshot : dataSnapshot.child("subscenes").getChildren())
-                //                {
-                //                    if(home.getScene(subsceneSnapshot.child("id").getValue().toString()) != null)
-                //                    {
-                //                        subscenes.add(home.getScene(subsceneSnapshot.child("id").getValue().toString()));
-                //                    }
-                //                }
-                //                builder.addSubscenes(subscenes);
-                //
-                //                update(builder.getScene());
+                String id = dataSnapshot.getKey();
+                String name = dataSnapshot.child(Scene.NAME).getValue().toString();
+                SceneBuilder builder = new SceneBuilder(home);
+                builder.create(id, name);
+                List<Trigger> triggers = new ArrayList<Trigger>();
+
+                /**
+                 * first step of trigger creation
+                 * for next step passing triggers list to scene builder
+                 */
+                for(DataSnapshot triggerSnapshot : dataSnapshot.child(Scene.TRIGGERS).getChildren())
+                {
+                    Trigger trigger = new Trigger(id);
+
+                    for(DataSnapshot condition : triggerSnapshot.child(Trigger.CONDITIONS).getChildren())
+                    {
+                        UUID gadgetID = UUID.fromString(condition.child(Trigger.CONDITION_GADGET).getValue().toString());
+                        String parameter = condition.child(Trigger.CONDITION_PARAMETER).getValue().toString();
+                        String value = condition.child(Trigger.CONDITION_VALUE).getValue().toString();
+                        trigger.addObserver(gadgetID, parameter, value);
+                    }
+                    triggers.add(trigger);
+                }
+                builder.addTriggers(triggers);
+
+                /**
+                 * essential action data encapsulation
+                 * and passing it to scene builder
+                 */
+                List<ActionMessage> actions = new ArrayList<ActionMessage>();
+                for(DataSnapshot actionSnapshot : dataSnapshot.child(Scene.ACTIONS).getChildren())
+                {
+                    String action = actionSnapshot.child(ActionMessage.ACTION).getValue().toString();
+                    UUID gadget = UUID.fromString(actionSnapshot.child(ActionMessage.GADGET).getValue().toString());
+                    String parameter = actionSnapshot.child(ActionMessage.PARAMETER).getValue().toString();
+                    long delay = Long.parseLong(actionSnapshot.child(ActionMessage.DELAY).getValue().toString());
+                    actions.add(new ActionMessage(gadget, action, parameter, delay));
+                }
+                builder.addActions(actions);
+
+                /**
+                 * getting subscenes' ID list
+                 * and passing it to scene builder
+                 */
+                List<String> subscenes = new ArrayList<String>();
+                for(DataSnapshot subsceneSnapshot : dataSnapshot.child(Scene.SUBSCENES).getChildren())
+                {
+                    subscenes.add(subsceneSnapshot.child(Scene.ID).toString());
+                }
+                builder.addSubscenes(subscenes);
+                update(builder.getScene());
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                //                String id = dataSnapshot.getKey();
-                //                String name = dataSnapshot.child("name").getValue().toString();
-                //                SceneBuilder builder = new SceneBuilder();
-                //                builder.create(id, name);
-                //                List<Trigger> triggers = new ArrayList<Trigger>();
-                //                for(DataSnapshot triggerSnapshot : dataSnapshot.child("triggers").getChildren())
-                //                {
-                //                    String action = triggerSnapshot.child("action").getValue().toString();
-                //                    UUID gadget = UUID.fromString(triggerSnapshot.child("gadget").getValue().toString());
-                //                    HashMap<String, String> parameters = new HashMap<String, String>();
-                //                    for(DataSnapshot parameter : triggerSnapshot.child("parameters").getChildren())
-                //                    {
-                //                        parameters.put(parameter.child("type").getValue().toString(), parameter.child("value").getValue().toString());
-                //                    }
-                //                    //           triggers.add(new Trigger(id, gadget, action, parameters));
-                //                }
-                //                builder.addTriggers(triggers);
-                //
-                //                List<Action> actions = new ArrayList<Action>();
-                //                for(DataSnapshot actionSnapshot : dataSnapshot.child("actions").getChildren())
-                //                {
-                //                    String action = actionSnapshot.child("action").getValue().toString();
-                //                    Gadget gadget = home.getGadget(UUID.fromString(actionSnapshot.child("gadget").getValue().toString()));
-                //                    HashMap<String, String> parameters = new HashMap<String, String>();
-                //                    long offset = Long.parseLong(actionSnapshot.child("offset").getValue().toString());
-                //                    for(DataSnapshot parameter : actionSnapshot.child("parameters").getChildren())
-                //                    {
-                //                        parameters.put(parameter.child("type").getValue().toString(), parameter.child("value").getValue().toString());
-                //                    }
-                //                    actions.add(new Action(id, gadget, action, parameters, offset));
-                //                }
-                //                builder.addActions(actions);
-                //                List<Scene> subscenes = new ArrayList<Scene>();
-                //                for(DataSnapshot subsceneSnapshot : dataSnapshot.child("subscenes").getChildren())
-                //                {
-                //                    if(home.getScene(subsceneSnapshot.child("id").getValue().toString()) != null)
-                //                    {
-                //                        subscenes.add(home.getScene(subsceneSnapshot.child("id").getValue().toString()));
-                //                    }
-                //                }
-                //                builder.addSubscenes(subscenes);
-                //
-                //                delete(builder.getScene());
+                String id = dataSnapshot.getKey();
+                String name = dataSnapshot.child(Scene.NAME).getValue().toString();
+                SceneBuilder builder = new SceneBuilder(home);
+                builder.create(id, name);
+                List<Trigger> triggers = new ArrayList<Trigger>();
+
+                /**
+                 * first step of trigger creation
+                 * for next step passing triggers list to scene builder
+                 */
+                for(DataSnapshot triggerSnapshot : dataSnapshot.child(Scene.TRIGGERS).getChildren())
+                {
+                    Trigger trigger = new Trigger(id);
+
+                    for(DataSnapshot condition : triggerSnapshot.child(Trigger.CONDITIONS).getChildren())
+                    {
+                        UUID gadgetID = UUID.fromString(condition.child(Trigger.CONDITION_GADGET).getValue().toString());
+                        String parameter = condition.child(Trigger.CONDITION_PARAMETER).getValue().toString();
+                        String value = condition.child(Trigger.CONDITION_VALUE).getValue().toString();
+                        trigger.addObserver(gadgetID, parameter, value);
+                    }
+                    triggers.add(trigger);
+                }
+                builder.addTriggers(triggers);
+
+                /**
+                 * essential action data encapsulation
+                 * and passing it to scene builder
+                 */
+                List<ActionMessage> actions = new ArrayList<ActionMessage>();
+                for(DataSnapshot actionSnapshot : dataSnapshot.child(Scene.ACTIONS).getChildren())
+                {
+                    String action = actionSnapshot.child(ActionMessage.ACTION).getValue().toString();
+                    UUID gadget = UUID.fromString(actionSnapshot.child(ActionMessage.GADGET).getValue().toString());
+                    String parameter = actionSnapshot.child(ActionMessage.PARAMETER).getValue().toString();
+                    long delay = Long.parseLong(actionSnapshot.child(ActionMessage.DELAY).getValue().toString());
+                    actions.add(new ActionMessage(gadget, action, parameter, delay));
+                }
+                builder.addActions(actions);
+
+                /**
+                 * getting subscenes' ID list
+                 * and passing it to scene builder
+                 */
+                List<String> subscenes = new ArrayList<String>();
+                for(DataSnapshot subsceneSnapshot : dataSnapshot.child(Scene.SUBSCENES).getChildren())
+                {
+                    subscenes.add(subsceneSnapshot.child(Scene.ID).toString());
+                }
+                builder.addSubscenes(subscenes);
+                delete(builder.getScene());
             }
 
             @Override
