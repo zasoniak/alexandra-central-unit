@@ -18,7 +18,7 @@ public class ActionMessage {
     public static final String GADGET = "gadget";
     public static final String ACTION = "action";
     public static final String PARAMETER = "parameter";
-    public static final String DELAY = "offset";
+    public static final String DELAY = "delay";
     public UUID gadgetID;
     public String action;
     public String parameter;
