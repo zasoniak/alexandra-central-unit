@@ -56,10 +56,10 @@
         </receiver>
 
         <service
-            android:name="com.kms.alexandracentralunit.RemoteControlService">
+            android:name=".ControlMessageDispatcher">
         </service>
         <service
-            android:name="com.kms.alexandracentralunit.FirebaseRemoteControlService">
+            android:name=".FirebaseControlMessageDispatcher">
         </service>
     </application>
 

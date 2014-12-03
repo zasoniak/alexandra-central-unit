@@ -16,7 +16,6 @@ import com.kms.alexandracentralunit.data.FirebaseSyncService;
 import com.kms.alexandracentralunit.data.database.HomeRepository;
 import com.kms.alexandracentralunit.data.database.json.JSONHomeRepository;
 import com.kms.alexandracentralunit.data.model.Home;
-import com.kms.alexandracentralunit.data.model.MultiSocket;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -95,22 +94,15 @@ public class CoreService extends Service {
                 Intent scheduleIntent = new Intent(getBaseContext(), ScheduleManagerService.class);
                 startService(scheduleIntent);
                 //start remote control services
-                Intent remoteControlIntent = new Intent(getBaseContext(), FirebaseRemoteControlService.class);
+                Intent remoteControlIntent = new Intent(getBaseContext(), FirebaseControlMessageDispatcher.class);
                 startService(remoteControlIntent);
+                CurrentStateObserver currentStateObserver = new FirebaseCurrentStateObserver();
 
             }
         };
         Timer timer = new Timer();
         timer.schedule(task, 10000);
 
-        TimerTask task1 = new TimerTask() {
-            @Override
-            public void run() {
-                ((MultiSocket) home.getGadgets().get(0)).setOn(true);
-            }
-        };
-        Timer timer2 = new Timer();
-        timer2.schedule(task1, 20000);
         return super.onStartCommand(intent, flags, startId);
     }
 

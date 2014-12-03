@@ -15,11 +15,11 @@ import android.os.IBinder;
  * @author Mateusz Zasoński
  * @version 0.1
  */
-public class RemoteControlService extends IntentService {
+public class ControlMessageDispatcher extends IntentService {
 
     ControlService control;
 
-    public RemoteControlService() {
+    public ControlMessageDispatcher() {
         super("Remote Control");
         control = ControlService.getInstance();
     }

@@ -13,8 +13,6 @@ import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.kms.alexandracentralunit.data.database.sqlite.ConfigurationDatabaseHelper;
-
 import java.util.ArrayList;
 
 
@@ -35,7 +33,6 @@ public class AdminActivity extends Activity {
         partsArrayList = new ArrayList<String>();
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, partsArrayList);
         listView.setAdapter(adapter);
-        ConfigurationDatabaseHelper.getInstance(getApplicationContext());
         receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {

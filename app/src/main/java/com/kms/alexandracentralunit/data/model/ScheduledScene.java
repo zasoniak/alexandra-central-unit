@@ -6,6 +6,8 @@ import java.util.HashMap;
 
 /**
  * Created by Mateusz Zasoński on 2014-11-05.
+ *
+ * @author Mateusz Zasoński
  */
 public class ScheduledScene {
 

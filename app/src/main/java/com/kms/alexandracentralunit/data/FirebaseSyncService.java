@@ -28,8 +28,6 @@ import java.util.UUID;
 
 
 /**
- *
- *
  * @author Mateusz Zasoński
  * @version 0.1
  */
@@ -379,7 +377,7 @@ public class FirebaseSyncService extends SyncService {
                 String id = dataSnapshot.getKey();
                 String scene = dataSnapshot.child("scene").getValue().toString();
                 long time = Long.parseLong(dataSnapshot.child("time").getValue().toString());
-                long repeatInterval = Long.parseLong(dataSnapshot.child("repeatInterval").toString());
+                long repeatInterval = Long.parseLong(dataSnapshot.child("repeatInterval").getValue().toString());
                 HashMap<String, String> conditions = new HashMap<String, String>();
                 for(DataSnapshot snapshot : dataSnapshot.child("conditions").getChildren())
                 {
