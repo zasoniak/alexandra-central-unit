@@ -3,8 +3,13 @@ package com.kms.alexandracentralunit.data.model;
 
 import android.util.Log;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 
@@ -24,6 +29,41 @@ public class MultiSocket extends Gadget implements Switchable {
         {
             this.channels.add(new Socket());
         }
+    }
+
+    @Override
+    public JSONObject toJSON() {
+        JSONObject jsonObject = new JSONObject();
+        try
+        {
+            jsonObject.put("type", GadgetType.WallSocket.toString());
+            jsonObject.put("socketNumber", this.socketNumber);
+            jsonObject.put(Switch.ON, this.isOn());
+
+            for(int i = 0; i < channels.size(); i++)
+            {
+                jsonObject.put(String.valueOf(i), channels.get(i).toJSON());
+            }
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Map<String, Object> getCurrentState() {
+        Map<String, Object> currentState = new HashMap<String, Object>();
+        currentState.put("type", GadgetType.WallSocket.toString());
+        currentState.put("socketNumber", this.socketNumber);
+        currentState.put("state", this.state);
+        currentState.put("on", this.isOn());
+
+        for(int i = 0; i < channels.size(); i++)
+        {
+            currentState.put(String.valueOf(i), channels.get(i).getCurrentState());
+        }
+        return currentState;
     }
 
     @Override

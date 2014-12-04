@@ -48,9 +48,12 @@ public class SceneBuilder {
     public void addActions(List<ActionMessage> actionMessages) {
         for(ActionMessage actionMessage : actionMessages)
         {
-            BaseAction action = this.home.getGadget(actionMessage.gadgetID).prepare(actionMessage);
-            action.setDelay(actionMessage.delay);
-            this.children.add(action);
+            if(this.home.getGadget(actionMessage.gadgetID) != null)
+            {
+                BaseAction action = this.home.getGadget(actionMessage.gadgetID).prepare(actionMessage);
+                action.setDelay(actionMessage.delay);
+                this.children.add(action);
+            }
         }
     }
 

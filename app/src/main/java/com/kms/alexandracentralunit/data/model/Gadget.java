@@ -7,8 +7,11 @@ import android.content.Intent;
 import com.kms.alexandracentralunit.CoreService;
 import com.kms.alexandracentralunit.HistorianBroadcastReceiver;
 
+import org.json.JSONObject;
+
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 
@@ -17,12 +20,18 @@ import java.util.UUID;
  * Gadget - base class for all field devices in system
  * provides common fields, basic functionality and logging mechanism
  */
-public class Gadget extends Observable {
+public abstract class Gadget extends Observable {
 
     //gadget types  -> to be defined as list with constant numbers and included in system documentation
     public static final String TYPE = "type";
     //gadget states
     public static final String STATE = "state";
+
+    public static final String ID = "id";
+    public static final String SYSTEM = "system";
+    public static final String ROOM_ID = "roomId";
+    public static final String NAME = "name";
+    public static final String MAC_ADDRESS = "MAC";
 
     protected GadgetType type;
     protected GadgetState state;
@@ -31,20 +40,23 @@ public class Gadget extends Observable {
     private String system;
     private String roomId;
     private String name;
-    private String address;
+    private String MAC;
 
     public Gadget() {
     }
 
-    public Gadget(UUID id, String system, String roomId, String name, String address, GadgetType type) {
+    public Gadget(UUID id, String system, String roomId, String name, String MAC, GadgetType type) {
         this.id = id;
         this.system = system;
         this.name = name;
-        this.address = address;
+        this.MAC = MAC;
         this.roomId = roomId;
         this.type = type;
         this.state = GadgetState.OK;
     }
+
+    public abstract JSONObject toJSON();
+    public abstract Map<String, Object> getCurrentState();
 
     public UUID getId() {
         return id;
@@ -66,8 +78,8 @@ public class Gadget extends Observable {
         this.name = name;
     }
 
-    public String getAddress() {
-        return address;
+    public String getMAC() {
+        return MAC;
     }
 
     public String getRoom() {

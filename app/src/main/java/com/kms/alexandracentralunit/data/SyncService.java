@@ -57,14 +57,18 @@ public class SyncService extends IntentService {
     }
 
     protected boolean delete(Room room) {
-        Room temp = home.getRoom(room.getId());
-        home.getRooms().remove(temp);
+        Room temp;
+        if((temp = home.getRoom(room.getId())) != null)
+        {
+            home.getRooms().remove(temp);
+        }
 
         return homeRepository.delete(temp);
 
     }
 
     protected boolean update(Room room) {
+
         for(Room room1 : home.getRooms())
         {
             if(room1.getId().equals(room.getId()))
@@ -85,7 +89,7 @@ public class SyncService extends IntentService {
         }
         if(home.getRoom(newGadget.getRoom()) != null)
         {
-            home.getRoom(newGadget.getRoom()).getGadgets().add(newGadget);
+            home.getRoom(newGadget.getRoom()).getGadgets().add(newGadget.getId());
         }
         return homeRepository.add(newGadget);
 
@@ -105,8 +109,8 @@ public class SyncService extends IntentService {
                 gadget.setName(newGadget.getName());
                 if(!newGadget.getRoom().equals(gadget.getRoom()))
                 {
-                    home.getRoom(gadget.getRoom()).getGadgets().remove(gadget);
-                    home.getRoom(newGadget.getRoom()).getGadgets().add(newGadget);
+                    home.getRoom(gadget.getRoom()).getGadgets().remove(gadget.getId());
+                    home.getRoom(newGadget.getRoom()).getGadgets().add(newGadget.getId());
                     gadget.setRoomId(newGadget.getRoom());
                 }
                 return homeRepository.update(gadget);

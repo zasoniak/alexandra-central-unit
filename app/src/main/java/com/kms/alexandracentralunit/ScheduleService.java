@@ -23,7 +23,7 @@ public class ScheduleService extends IntentService {
     }
 
     /**
-     * @param intent contains sceneID
+     * @param intent contains sceneId
      */
     @Override
     protected void onHandleIntent(Intent intent) {

@@ -1,13 +1,17 @@
 package com.kms.alexandracentralunit.data.model;
 
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+
 /**
  * Created by Mateusz Zasoński on 2014-11-17.
  * Switch - base class for all providing simple on/off interface
  */
 public class Switch implements Switchable {
 
-    public static final String IS_ON = "isOn";
+    public static final String ON = "on";
     protected boolean on;
 
     public Switch() {
@@ -24,4 +28,16 @@ public class Switch implements Switchable {
         this.on = state;
     }
 
+    public JSONObject toJSON() {
+        JSONObject jsonObject = new JSONObject();
+        try
+        {
+            jsonObject.put(ON, this.on);
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        return jsonObject;
+    }
 }

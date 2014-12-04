@@ -26,13 +26,13 @@ public class GadgetFactory {
             case ExtensionCord:
                 return new MultiSocket(id, system_id, roomId, name, address, type, 2);
             case LightSwitch:
-                return new Gadget(id, system_id, roomId, name, address, type);
+                return new MultiSocket(id, system_id, roomId, name, address, type, 2);
             case Dimmer:
-                return new Gadget(id, system_id, roomId, name, address, type);
+                return new MultiSocket(id, system_id, roomId, name, address, type, 2);
             case RGBLight:
-                return new Gadget(id, system_id, roomId, name, address, type);
+                return new MultiSocket(id, system_id, roomId, name, address, type, 2);
             default:
-                return new Gadget(id, system_id, roomId, name, address, type);
+                return new MultiSocket(id, system_id, roomId, name, address, type, 2);
         }
     }
 }

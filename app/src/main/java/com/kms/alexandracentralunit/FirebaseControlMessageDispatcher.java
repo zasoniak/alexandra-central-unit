@@ -14,12 +14,12 @@ import java.util.UUID;
 
 
 /**
- * Created by Mateusz Zasoński on 2014-11-15.
- * FirebaseRemoteControlService remoteControl extension allowing remote control via Firebase platform
- * provides remote mirror of gadgets' properties enabling changes from outside home
+ * Dispatches control messages from Firebase
+ * <p/>
+ * Encapsulate data if needed and passes it to internal control for further processing
  *
  * @author Mateusz Zasoński
- * @versio 0.1
+ * @version 0.1
  */
 public class FirebaseControlMessageDispatcher extends ControlMessageDispatcher {
 
@@ -80,7 +80,7 @@ public class FirebaseControlMessageDispatcher extends ControlMessageDispatcher {
                                 long delay = Long.parseLong(dataSnapshot.child(ActionMessage.DELAY).getValue().toString());
                                 message = new ActionMessage(gadgetID, action, parameter, delay);
                             }
-                            catch (Exception ex)
+                            catch (NumberFormatException ex)
                             {
                                 message = new ActionMessage(gadgetID, action, parameter);
                                 Log.e(ACTIONS, "delay - long parse error");

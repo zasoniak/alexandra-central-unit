@@ -45,7 +45,10 @@ public class Trigger {
     public void registerObservers(Home home) {
         for(GadgetObserver observer : gadgetObservers)
         {
-            home.getGadget(observer.gadgetID).registerObserver(observer);
+            if(home.getGadget(observer.gadgetID) != null)
+            {
+                home.getGadget(observer.gadgetID).registerObserver(observer);
+            }
         }
     }
 

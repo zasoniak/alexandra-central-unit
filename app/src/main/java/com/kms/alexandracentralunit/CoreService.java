@@ -17,8 +17,11 @@ import com.kms.alexandracentralunit.data.database.HomeRepository;
 import com.kms.alexandracentralunit.data.database.json.JSONHomeRepository;
 import com.kms.alexandracentralunit.data.model.Home;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.UUID;
 
 
 /**
@@ -27,11 +30,13 @@ import java.util.TimerTask;
  */
 public class CoreService extends Service {
 
+    public static final UUID CENTRAL_UNIT = UUID.fromString("f000aa20-0451-4000-b000-000000000000");
     public static final String UPDATE_MESSAGE = "com.kms.alexandracentralunit.CoreService.UPDATE_MESSAGE";
     public static final String GADGET = "gadgetName";
 
     public static final String HOME_ID = "home_id";
     public static final String HOME_NAME = "home_name";
+    public static final String CONFIGURED = "configured";
 
     private static final String TAG = "CoreService";
 
@@ -65,7 +70,11 @@ public class CoreService extends Service {
         context = getApplicationContext();
         Firebase.setAndroidContext(getApplication());
 
-        firstRunSetup();
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        if(!(sharedPreferences.getBoolean(CONFIGURED, false)))
+        {
+            firstRunSetup();
+        }
         loadData();
         initializeConfiguration();
 
@@ -136,6 +145,8 @@ public class CoreService extends Service {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String homeId = sharedPreferences.getString(HOME_ID, "5");
         String homeName = sharedPreferences.getString(HOME_NAME, "domek");
+
+        Log.d("dane domu:", homeId+"   "+homeName);
         home = homeRepository.getHome(homeId, homeName);
 
         //start firebase sync service
@@ -144,15 +155,32 @@ public class CoreService extends Service {
     }
 
     private void initializeConfiguration() {
+        //TODO: inicjalizacja komunikacji między urządzeniami
+        //TODO: wszystkie inne ustawienia
 
     }
 
     private void firstRunSetup() {
+
+        //TODO: wprowadzić oczekiwanie na dane od uzytkownika
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putString(HOME_ID, "0");
+
+        //TODO: connect to WIFI
+
+        Map<String, Object> newHome = new HashMap<String, Object>();
+        newHome.put("centralUnit", CENTRAL_UNIT);
+        Firebase rootReference = new Firebase("https://sizzling-torch-8921.firebaseio.com/configuration/");
+        Firebase homeID = rootReference.push();
+
+        homeID.setValue(newHome);
+        Log.d("homeID", homeID.getKey());
+        editor.putString(HOME_ID, homeID.getKey());
         editor.putString(HOME_NAME, "Dom Krola Artura");
+        editor.putBoolean(CONFIGURED, true);
         editor.apply();
+        Log.d("sharedPref", "zapisano");
+
     }
 
 }
