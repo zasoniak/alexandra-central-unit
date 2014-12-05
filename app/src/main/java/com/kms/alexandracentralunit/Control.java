@@ -15,9 +15,9 @@ import com.kms.alexandracentralunit.data.model.Home;
  * @author Mateusz Zasoński
  * @version 0.1
  */
-public class ControlService {
+public class Control {
 
-    private static ControlService instance;
+    private static Control instance;
 
     private Home home;
     private BLEController controller;
@@ -25,7 +25,7 @@ public class ControlService {
     /**
      * private singleton constructor
      */
-    private ControlService() {
+    private Control() {
         this.home = CoreService.getHome();
         this.controller = new BLEController();
     }
@@ -36,10 +36,10 @@ public class ControlService {
      *
      * @return ControlService instance
      */
-    public static synchronized ControlService getInstance() {
+    public static synchronized Control getInstance() {
         if(instance == null)
         {
-            instance = new ControlService();
+            instance = new Control();
         }
         return instance;
     }

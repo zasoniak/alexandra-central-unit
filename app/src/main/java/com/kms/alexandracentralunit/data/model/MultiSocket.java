@@ -1,8 +1,6 @@
 package com.kms.alexandracentralunit.data.model;
 
 
-import android.util.Log;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -24,10 +22,12 @@ public class MultiSocket extends Gadget implements Switchable {
 
     protected int socketNumber;
     protected List<Socket> channels = new ArrayList<Socket>();
+    protected boolean on;
 
     public MultiSocket(UUID id, String system, String roomId, String name, String address, GadgetType type, int socketNumber) {
         super(id, system, roomId, name, address, type);
         this.socketNumber = socketNumber;
+        this.on = false;
         for(int i = 0; i < socketNumber; i++)
         {
             this.channels.add(new Socket());
@@ -95,18 +95,21 @@ public class MultiSocket extends Gadget implements Switchable {
 
     @Override
     public boolean isOn() {
-
         boolean state = false;
         for(Socket socket : channels)
         {
             state |= socket.isOn();
         }
-        return state;
+        if(this.on != state)
+        {
+            this.on = state;
+            notifyObservers("isOn", this.on);
+        }
+        return this.on;
     }
 
     @Override
     public void setOn(boolean state) {
-        Log.d("cale gniazdko", "setOn");
         for(Socket socket : channels)
         {
             socket.setOn(state);
@@ -115,12 +118,12 @@ public class MultiSocket extends Gadget implements Switchable {
     }
 
     public int getSocketNumber() {
-        return socketNumber;
+        return this.socketNumber;
     }
 
     public void setChannelOn(int channel, boolean state) {
-        Log.d("socket "+String.valueOf(channel), "ustawiono na: "+String.valueOf(state));
         channels.get(channel).setOn(state);
+        isOn();
         notifyObservers("isOnChannel"+String.valueOf(channel), channels.get(channel).isOn());
     }
 

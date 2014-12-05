@@ -154,7 +154,7 @@ public class CoreService extends Service {
 
     private void loadData() {
         //start local repositories
-        homeRepository = new JSONHomeRepository();
+        homeRepository = new JSONHomeRepository(getApplicationContext());
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         String homeId = sharedPreferences.getString(HOME_ID, "5");
         String homeName = sharedPreferences.getString(HOME_NAME, "domek");

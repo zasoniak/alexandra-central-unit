@@ -17,11 +17,11 @@ import android.os.IBinder;
  */
 public class ControlMessageDispatcher extends IntentService {
 
-    protected ControlService control;
+    protected Control control;
 
     public ControlMessageDispatcher() {
         super("Remote Control");
-        control = ControlService.getInstance();
+        control = Control.getInstance();
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.kms.alexandracentralunit.data.model;
 
 
-import com.kms.alexandracentralunit.ControlService;
+import com.kms.alexandracentralunit.Control;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +61,7 @@ public class Trigger {
 
         if(flag)
         {
-            ControlService.getInstance().run(sceneID);
+            Control.getInstance().run(sceneID);
         }
     }
 

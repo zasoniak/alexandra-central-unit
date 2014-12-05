@@ -27,7 +27,7 @@ public class ScheduleService extends IntentService {
      */
     @Override
     protected void onHandleIntent(Intent intent) {
-        ControlService.getInstance().run(intent.getStringExtra(ScheduledScene.EXTRA_SCENE_ID));
+        Control.getInstance().run(intent.getStringExtra(ScheduledScene.EXTRA_SCENE_ID));
         ScheduleReceiver.completeWakefulIntent(intent);
     }
 }

@@ -25,12 +25,12 @@ public class FirebaseControlMessageDispatcher extends ControlMessageDispatcher {
 
     private static final String SCENES = "scenes";
     private static final String ACTIONS = "actions";
-    private ControlService control;
+    private Control control;
 
     public FirebaseControlMessageDispatcher() {
         super();
         final Firebase remoteControlReference = new Firebase("https://sizzling-torch-8921.firebaseio.com/control/"+String.valueOf(CoreService.getHomeId())+"/");
-        this.control = ControlService.getInstance();
+        this.control = Control.getInstance();
         remoteControlReference.child(SCENES).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {

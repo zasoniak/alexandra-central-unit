@@ -1,6 +1,9 @@
 package com.kms.alexandracentralunit.data.database.json;
 
 
+import android.content.Context;
+import android.util.Log;
+
 import com.kms.alexandracentralunit.data.HomeBuilder;
 import com.kms.alexandracentralunit.data.database.GadgetRepository;
 import com.kms.alexandracentralunit.data.database.HomeRepository;
@@ -29,8 +32,8 @@ public class JSONHomeRepository implements HomeRepository {
     private ScheduleRepository scheduleRepository;
     private UserRepository userRepository;
 
-    public JSONHomeRepository() {
-        roomRepository = new JSONRoomRepository();
+    public JSONHomeRepository(Context context) {
+        roomRepository = new JSONRoomRepository(context);
         gadgetRepository = new JSONGadgetRepository();
         sceneRepository = new JSONSceneRepository();
         scheduleRepository = new JSONScheduleRepository();
@@ -43,18 +46,13 @@ public class JSONHomeRepository implements HomeRepository {
         HomeBuilder builder = new HomeBuilder();
         builder.create(id, name);
         builder.addGadgets(new ArrayList<Gadget>());
-        builder.addRooms(new ArrayList<Room>());
+        ArrayList<Room> rooms = new ArrayList<Room>();
+        rooms.addAll(roomRepository.getAll());
+        Log.d("pokoje z bazy", String.valueOf(rooms.size()));
+        builder.addRooms(rooms);
         builder.addUsers(new ArrayList<User>());
         builder.addScenes(new ArrayList<Scene>());
         builder.addSchedule(new ArrayList<ScheduledScene>());
-
-        //        builder.create(2, "domek");
-        //        builder.addUsers(userRepository.getAll());
-        //        builder.addGadgets(gadgetRepository.getAll());
-        //        builder.addRooms(roomRepository.getAll());
-        //        builder.addScenes(sceneRepository.getAll());
-        //        builder.addSchedule(scheduleRepository.getAll());
-
         return builder.getHome();
     }
 
