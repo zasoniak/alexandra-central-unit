@@ -34,10 +34,13 @@ public class HistorianBroadcastReceiver extends BroadcastReceiver {
     public static final String PARAMETERS = "parameters";
     //scene
     public static final String SCENE = "scene";
+    public static final String MESSAGE = "message";
     private static final String ACTIONS = "actions";
     private static final String MEASUREMENTS = "measurements";
     private static final String ERRORS = "errors";
     private static final String SCENES = "scenes";
+    //system
+    private static final String SYSTEM = "system";
 
     @Override
     public void onReceive(Context context, final Intent intent) {
@@ -48,63 +51,36 @@ public class HistorianBroadcastReceiver extends BroadcastReceiver {
 
                 switch((LogType) intent.getSerializableExtra(LOG_TYPE))
                 {
+                    case System:
+                        historianLog.put(TYPE, intent.getStringExtra(TYPE));
+                        historianLog.put(MESSAGE, intent.getStringExtra(MESSAGE));
+                        historianLog.put(TIME, intent.getStringExtra(TIME));
+                        historianReference.child(SYSTEM).push().setValue(historianLog);
+                        break;
                     case Action:
                         break;
                     case Scene:
                         historianLog.put(SCENE, intent.getStringExtra(SCENE));
                         historianLog.put(TIME, intent.getStringExtra(TIME));
                         historianReference.child(SCENES).push().setValue(historianLog);
+                        break;
                     case Measurement:
                         break;
-                    case ConfiguratioChange:
+                    case ConfigurationChange:
                         break;
                     case Error:
                         break;
                 }
-
-                //                if(intent.getStringExtra(LOG_TYPE).equals(LOG_ACTION))
-                //                {
-                //                    historianLog.put(GADGET, intent.getStringExtra(GADGET));
-                //                    historianLog.put(TIME, intent.getStringExtra(TIME));
-                //                    historianLog.put(ACTION, intent.getStringExtra(ACTION));
-                //                    historianLog.put(PARAMETERS, intent.getStringExtra(PARAMETERS));
-                //                    historianReference.child(ACTIONS).push().setValue(historianLog);
-                //                }
-                //                else
-                //                {
-                //                    if(intent.getStringExtra(LOG_TYPE).equals(LOG_MEASUREMENT))
-                //                    {
-                //                        historianLog.put(GADGET, intent.getStringExtra(GADGET));
-                //                        historianLog.put(TIME, intent.getStringExtra(TIME));
-                //                        historianLog.put(TYPE, intent.getStringExtra(TYPE));
-                //                        historianLog.put(VALUE, intent.getStringExtra(VALUE));
-                //                        historianLog.put(UNIT, intent.getStringExtra(UNIT));
-                //                        historianReference.child(MEASUREMENTS).push().setValue(historianLog);
-                //                    }
-                //                    else
-                //                    {
-                //                        if(intent.getStringExtra(LOG_TYPE).equals(LOG_ERROR))
-                //                        {
-                //                            historianLog.put(DESCRIPTION, intent.getStringExtra(DESCRIPTION));
-                //                            historianLog.put(TIME, intent.getStringExtra(TIME));
-                //                            historianReference.child(ERRORS).push().setValue(historianLog);
-                //                        }
-                //                        else
-                //                        {
-                //                            Log.e("historian", "code error");
-                //                        }
-                //                    }
-                //                }
-
             }
         }).start();
     }
 
     public static enum LogType {
+        System,
         Action,
         Scene,
         Measurement,
-        ConfiguratioChange,
+        ConfigurationChange,
         Error
     }
 }

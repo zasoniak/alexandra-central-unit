@@ -22,7 +22,7 @@ import java.util.ArrayList;
  */
 public class AdminActivity extends Activity {
 
-    BroadcastReceiver receiver;
+    private BroadcastReceiver receiver;
     private ArrayList<String> partsArrayList;
 
     @Override

@@ -18,21 +18,21 @@ import java.util.UUID;
 public class GadgetFactory {
 
     //TODO: additional parameter, like number of channels
-    public static Gadget create(UUID id, String system_id, String roomId, String name, String address, Gadget.GadgetType type) {
+    public static Gadget create(UUID id, String system_id, String roomId, String name, String address, Gadget.GadgetType type, int channels) {
         switch(type)
         {
             case WallSocket:
-                return new MultiSocket(id, system_id, roomId, name, address, type, 2);
+                return new MultiSocket(id, system_id, roomId, name, address, type, channels);
             case ExtensionCord:
-                return new MultiSocket(id, system_id, roomId, name, address, type, 2);
+                return new MultiSocket(id, system_id, roomId, name, address, type, channels);
             case LightSwitch:
-                return new MultiSocket(id, system_id, roomId, name, address, type, 2);
+                return new MultiSocket(id, system_id, roomId, name, address, type, channels);
             case Dimmer:
-                return new MultiSocket(id, system_id, roomId, name, address, type, 2);
+                return new MultiSocket(id, system_id, roomId, name, address, type, channels);
             case RGBLight:
-                return new MultiSocket(id, system_id, roomId, name, address, type, 2);
+                return new MultiSocket(id, system_id, roomId, name, address, type, channels);
             default:
-                return new MultiSocket(id, system_id, roomId, name, address, type, 2);
+                return new MultiSocket(id, system_id, roomId, name, address, type, channels);
         }
     }
 }

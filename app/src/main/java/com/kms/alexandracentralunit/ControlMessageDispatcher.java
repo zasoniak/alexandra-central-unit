@@ -17,7 +17,7 @@ import android.os.IBinder;
  */
 public class ControlMessageDispatcher extends IntentService {
 
-    ControlService control;
+    protected ControlService control;
 
     public ControlMessageDispatcher() {
         super("Remote Control");

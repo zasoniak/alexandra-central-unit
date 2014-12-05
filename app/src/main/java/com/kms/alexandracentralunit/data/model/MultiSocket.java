@@ -15,7 +15,10 @@ import java.util.UUID;
 
 /**
  * Created by Mateusz Zasoński on 2014-11-17.
- * MultiSocket - class for all devices with electric sockets like Wall Sockets, Extension Cords etc.
+ * MultiSocket - class for all devices with electric sockets like Wall Sockets, Extension Cords etc.'
+ *
+ * @author Mateusz Zasoński
+ * @version 0.1
  */
 public class MultiSocket extends Gadget implements Switchable {
 
@@ -76,19 +79,18 @@ public class MultiSocket extends Gadget implements Switchable {
             case SwitchChannelOne:
                 return new ActionSwitchChannelOne(this.gatt, actionMessage.parameter);
             case SwitchChannelTwo:
-                break;
+                return null;
             case SwitchChannelThree:
-                break;
+                return null;
             case SwitchChannelFour:
-                break;
+                return null;
             case SwitchChannelFive:
-                break;
+                return null;
             case SwitchChannelSix:
-                break;
+                return null;
             default:
                 return null;
         }
-        return super.prepare(actionMessage);
     }
 
     @Override

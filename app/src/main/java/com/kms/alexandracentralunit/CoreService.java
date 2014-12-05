@@ -5,6 +5,8 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiManager;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
@@ -17,6 +19,7 @@ import com.kms.alexandracentralunit.data.database.HomeRepository;
 import com.kms.alexandracentralunit.data.database.json.JSONHomeRepository;
 import com.kms.alexandracentralunit.data.model.Home;
 
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
@@ -30,20 +33,19 @@ import java.util.UUID;
  */
 public class CoreService extends Service {
 
-    public static final UUID CENTRAL_UNIT = UUID.fromString("f000aa20-0451-4000-b000-000000000000");
     public static final String UPDATE_MESSAGE = "com.kms.alexandracentralunit.CoreService.UPDATE_MESSAGE";
     public static final String GADGET = "gadgetName";
-
     public static final String HOME_ID = "home_id";
     public static final String HOME_NAME = "home_name";
     public static final String CONFIGURED = "configured";
-
+    private static final UUID CENTRAL_UNIT = UUID.fromString("f000aa20-0451-4000-b000-000000000000");
     private static final String TAG = "CoreService";
 
     private static Context context;
     private static Home home;
     private static HomeRepository homeRepository;
-    public LocalBroadcastManager broadcaster;
+    private LocalBroadcastManager broadcaster;
+    private boolean connectedToWifi = false;
 
     public CoreService() {
     }
@@ -74,6 +76,15 @@ public class CoreService extends Service {
         if(!(sharedPreferences.getBoolean(CONFIGURED, false)))
         {
             firstRunSetup();
+            if(connectedToWifi)
+            {
+                logEvent("firstRunSetup", "success");
+            }
+            else
+            {
+                logEvent("firstRunSetup", "cannot establish connection");
+            }
+
         }
         loadData();
         initializeConfiguration();
@@ -105,8 +116,7 @@ public class CoreService extends Service {
                 //start remote control services
                 Intent remoteControlIntent = new Intent(getBaseContext(), FirebaseControlMessageDispatcher.class);
                 startService(remoteControlIntent);
-                CurrentStateObserver currentStateObserver = new FirebaseCurrentStateObserver();
-
+                CurrentStateObserver currentStateObserver = FirebaseCurrentStateObserver.getInstance();
             }
         };
         Timer timer = new Timer();
@@ -133,9 +143,12 @@ public class CoreService extends Service {
     /**
      * log data
      */
-    private void logData() {
+    private void logEvent(String type, String message) {
         Intent intent = new Intent(getBaseContext(), HistorianBroadcastReceiver.class);
-        //TODO:
+        intent.putExtra(HistorianBroadcastReceiver.LOG_TYPE, HistorianBroadcastReceiver.LogType.System);
+        intent.putExtra(HistorianBroadcastReceiver.TYPE, type);
+        intent.putExtra(HistorianBroadcastReceiver.MESSAGE, message);
+        intent.putExtra(HistorianBroadcastReceiver.TIME, Calendar.getInstance().getTime().toString());
         sendBroadcast(intent);
     }
 
@@ -160,27 +173,118 @@ public class CoreService extends Service {
 
     }
 
+    /**
+     * first run configuration
+     * <p/>
+     * includes:
+     * - passing WiFi credentials and establishing connection
+     * - creating Home directory on server
+     * - saving data essential for proper work
+     */
     private void firstRunSetup() {
+        /**
+         * receiving data from main user
+         */
 
-        //TODO: wprowadzić oczekiwanie na dane od uzytkownika
+        /**
+         * connecting to WiFi network
+         */
+        connectedToWifi = connectToWifi("Livebox-D69B", "2E62120CE85F61E6C402CE9E72");
+
+        if(connectedToWifi)
+        {
+
+            Map<String, Object> newHome = new HashMap<String, Object>();
+            newHome.put("centralUnit", CENTRAL_UNIT);
+            Firebase rootReference = new Firebase("https://sizzling-torch-8921.firebaseio.com/configuration/");
+            Firebase homeID = rootReference.push();
+            homeID.setValue(newHome);
+            Log.d("homeID", homeID.getKey());
+        }
+        else
+        {
+            //TODO: obsługa ponownego podania hasła przez użytkownika
+            Log.e("firstRunSetup", "cannot connect to wifi network");
+        }
+
+        /**
+         * saving data into SharedPreferences
+         */
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
         SharedPreferences.Editor editor = sharedPref.edit();
-
-        //TODO: connect to WIFI
-
-        Map<String, Object> newHome = new HashMap<String, Object>();
-        newHome.put("centralUnit", CENTRAL_UNIT);
-        Firebase rootReference = new Firebase("https://sizzling-torch-8921.firebaseio.com/configuration/");
-        Firebase homeID = rootReference.push();
-
-        homeID.setValue(newHome);
-        Log.d("homeID", homeID.getKey());
-        editor.putString(HOME_ID, homeID.getKey());
+        editor.putString(HOME_ID, "-JcMyexVThw7PEv2Z2PL");
+        //    editor.putString(HOME_ID, homeID.getKey());
         editor.putString(HOME_NAME, "Dom Krola Artura");
         editor.putBoolean(CONFIGURED, true);
         editor.apply();
         Log.d("sharedPref", "zapisano");
+    }
 
+    /**
+     * connecting to wifi with provided credentials
+     *
+     * @param ssid     - network identificator
+     * @param password - network password
+     * @return flag indicating wifi connection state
+     */
+    private boolean connectToWifi(String ssid, String password) {
+
+        final String TAG_WIFI_CONNECTING = "connectingToWiFi";
+        WifiManager wifi = (WifiManager) this.getSystemService(Context.WIFI_SERVICE);
+
+        if(!wifi.isWifiEnabled())
+        {
+            if(!wifi.setWifiEnabled(true))
+            {
+                Log.e("WiFi", "without WiFi won't work");
+                return false;
+            }
+        }
+
+        WifiConfiguration conf = new WifiConfiguration();
+        conf.SSID = "\""+ssid+"\"";
+        conf.preSharedKey = "\""+password+"\"";
+        conf.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+        conf.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
+        conf.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
+        conf.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
+        conf.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
+        conf.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
+        conf.status = WifiConfiguration.Status.ENABLED;
+        int networkId = wifi.addNetwork(conf);
+        wifi.disconnect();
+        wifi.enableNetwork(networkId, true);
+        boolean completed = wifi.reconnect();
+
+        if(!completed)
+        {
+            Log.d(TAG_WIFI_CONNECTING, "repeat wifi connection attempt");
+            try
+            {
+                Thread.sleep(5000);
+            }
+            catch (InterruptedException e)
+            {
+                e.printStackTrace();
+            }
+            wifi.disconnect();
+            wifi.enableNetwork(networkId, true);
+            completed = wifi.reconnect();
+        }
+
+        /**
+         * delay introduced in order to wait for establishing connection
+         * (flag from reconnect() is set before network is really working)
+         */
+        try
+        {
+            Thread.sleep(5000);
+        }
+        catch (InterruptedException e)
+        {
+            e.printStackTrace();
+        }
+        return completed;
     }
 
 }

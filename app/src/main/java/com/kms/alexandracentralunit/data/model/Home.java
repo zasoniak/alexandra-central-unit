@@ -6,7 +6,12 @@ import java.util.UUID;
 
 
 /**
- * Created by Mateusz Zasoński on 2014-11-11.
+ * root object for business data
+ * <p/>
+ * provides access to all necessary items collections
+ *
+ * @author Mateusz Zasoński
+ * @version 0.1
  */
 public class Home {
 
@@ -70,7 +75,9 @@ public class Home {
         for(Scene scene : this.scenes)
         {
             if(scene.getId().equals(id))
-            return scene;
+            {
+                return scene;
+            }
         }
         return null;
     }
@@ -79,7 +86,9 @@ public class Home {
         for(Room room : this.rooms)
         {
             if(room.getId().equals(id))
-            return room;
+            {
+                return room;
+            }
         }
         return null;
     }
@@ -88,7 +97,9 @@ public class Home {
         for(ScheduledScene scheduledScene : this.schedule)
         {
             if(scheduledScene.getId().equals(id))
-            return scheduledScene;
+            {
+                return scheduledScene;
+            }
         }
         return null;
     }
@@ -97,7 +108,9 @@ public class Home {
         for(User user : this.users)
         {
             if(user.getId().equals(id))
-            return user;
+            {
+                return user;
+            }
         }
         return null;
     }

@@ -3,9 +3,9 @@ package com.kms.alexandracentralunit.data;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.util.Log;
 
 import com.kms.alexandracentralunit.CoreService;
+import com.kms.alexandracentralunit.FirebaseCurrentStateObserver;
 import com.kms.alexandracentralunit.data.database.HomeRepository;
 import com.kms.alexandracentralunit.data.model.Gadget;
 import com.kms.alexandracentralunit.data.model.Home;
@@ -35,15 +35,8 @@ public class SyncService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        Log.d("syncservice", "started");
         home = CoreService.getHome();
         homeRepository = CoreService.getHomeRepository();
-
-    }
-
-    public boolean sync() {
-        //TODO: sync on demand?
-        return false;
     }
 
     protected boolean add(Room room) {
@@ -51,9 +44,7 @@ public class SyncService extends IntentService {
         {
             home.getRooms().add(room);
         }
-
         return homeRepository.add(room);
-
     }
 
     protected boolean delete(Room room) {
@@ -62,13 +53,10 @@ public class SyncService extends IntentService {
         {
             home.getRooms().remove(temp);
         }
-
         return homeRepository.delete(temp);
-
     }
 
     protected boolean update(Room room) {
-
         for(Room room1 : home.getRooms())
         {
             if(room1.getId().equals(room.getId()))
@@ -86,19 +74,18 @@ public class SyncService extends IntentService {
         if(home.getGadget(newGadget.getId()) == null)
         {
             home.getGadgets().add(newGadget);
+            FirebaseCurrentStateObserver.getInstance().addGadget(newGadget);
         }
         if(home.getRoom(newGadget.getRoom()) != null)
         {
             home.getRoom(newGadget.getRoom()).getGadgets().add(newGadget.getId());
         }
         return homeRepository.add(newGadget);
-
     }
 
     protected boolean delete(Gadget gadget) {
         home.getGadgets().remove(gadget);
         return homeRepository.delete(gadget);
-
     }
 
     protected boolean update(Gadget newGadget) {
@@ -124,15 +111,12 @@ public class SyncService extends IntentService {
         {
             home.getScenes().add(scene);
         }
-
         return homeRepository.add(scene);
-
     }
 
     protected boolean delete(Scene scene) {
         home.getScenes().remove(scene);
         return homeRepository.delete(scene);
-
     }
 
     protected boolean update(Scene newScene) {
@@ -154,15 +138,12 @@ public class SyncService extends IntentService {
         {
             home.getSchedule().add(scheduledscene);
         }
-
         return homeRepository.add(scheduledscene);
-
     }
 
     protected boolean delete(ScheduledScene scheduledscene) {
         home.getSchedule().remove(scheduledscene);
         return homeRepository.delete(scheduledscene);
-
     }
 
     protected boolean update(ScheduledScene scheduledscene) {
@@ -182,15 +163,12 @@ public class SyncService extends IntentService {
         {
             home.getUsers().add(user);
         }
-
         return homeRepository.add(user);
-
     }
 
     protected boolean delete(User user) {
         home.getUsers().remove(user);
         return homeRepository.delete(user);
-
     }
 
     protected boolean update(User user) {

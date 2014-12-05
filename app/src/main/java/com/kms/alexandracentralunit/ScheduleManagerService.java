@@ -62,7 +62,7 @@ public class ScheduleManagerService extends IntentService {
             Log.d("czas:", String.valueOf(System.currentTimeMillis()));
             Log.d("zaplanowana scena:", scheduledScene.getId()+" czas: "+scheduleTime.getTimeInMillis()+"slownie: "+scheduleTime.getTime().toString());
             //            alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, scheduleTime.getTimeInMillis(), AlarmManager.INTERVAL_HOUR, alarmIntent);
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+60*1000, alarmIntent);
+            //   alarmManager.setExact(AlarmManager.RTC_WAKEUP, System.currentTimeMillis()+60*1000, alarmIntent);
         }
 
     }

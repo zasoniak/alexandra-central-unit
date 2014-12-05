@@ -196,7 +196,7 @@ public class FirebaseSyncService extends SyncService {
                         String name = dataSnapshot.child(Gadget.NAME).getValue().toString();
                         String MAC = dataSnapshot.child(Gadget.MAC_ADDRESS).getValue().toString();
                         Gadget.GadgetType type = Gadget.GadgetType.valueOf(dataSnapshot.child(Gadget.TYPE).getValue().toString());
-                        add(GadgetFactory.create(id, systemId, roomId, name, MAC, type));
+                        add(GadgetFactory.create(id, systemId, roomId, name, MAC, type, 2));
                     }
                     catch (IllegalArgumentException ex)
                     {
@@ -221,7 +221,7 @@ public class FirebaseSyncService extends SyncService {
                         String name = dataSnapshot.child(Gadget.NAME).getValue().toString();
                         String MAC = dataSnapshot.child(Gadget.MAC_ADDRESS).getValue().toString();
                         Gadget.GadgetType type = Gadget.GadgetType.valueOf(dataSnapshot.child(Gadget.TYPE).getValue().toString());
-                        update(GadgetFactory.create(id, systemId, roomId, name, MAC, type));
+                        update(GadgetFactory.create(id, systemId, roomId, name, MAC, type, 2));
                     }
                     catch (IllegalArgumentException ex)
                     {
@@ -246,7 +246,7 @@ public class FirebaseSyncService extends SyncService {
                         String name = dataSnapshot.child(Gadget.NAME).getValue().toString();
                         String MAC = dataSnapshot.child(Gadget.MAC_ADDRESS).getValue().toString();
                         Gadget.GadgetType type = Gadget.GadgetType.valueOf(dataSnapshot.child(Gadget.TYPE).getValue().toString());
-                        delete(GadgetFactory.create(id, systemId, roomId, name, MAC, type));
+                        delete(GadgetFactory.create(id, systemId, roomId, name, MAC, type, 2));
                     }
                     catch (IllegalArgumentException ex)
                     {
@@ -311,7 +311,7 @@ public class FirebaseSyncService extends SyncService {
                             List<String> subscenes = new ArrayList<String>();
                             for(DataSnapshot subsceneSnapshot : dataSnapshot.child(Scene.SUBSCENES).getChildren())
                             {
-                                subscenes.add(subsceneSnapshot.child(Scene.ID).toString());
+                                subscenes.add(subsceneSnapshot.child(Scene.ID).getValue().toString());
                             }
                             builder.addSubscenes(subscenes);
 
@@ -386,7 +386,7 @@ public class FirebaseSyncService extends SyncService {
                             List<String> subscenes = new ArrayList<String>();
                             for(DataSnapshot subsceneSnapshot : dataSnapshot.child(Scene.SUBSCENES).getChildren())
                             {
-                                subscenes.add(subsceneSnapshot.child(Scene.ID).toString());
+                                subscenes.add(subsceneSnapshot.child(Scene.ID).getValue().toString());
                             }
                             builder.addSubscenes(subscenes);
 
@@ -461,7 +461,7 @@ public class FirebaseSyncService extends SyncService {
                             List<String> subscenes = new ArrayList<String>();
                             for(DataSnapshot subsceneSnapshot : dataSnapshot.child(Scene.SUBSCENES).getChildren())
                             {
-                                subscenes.add(subsceneSnapshot.child(Scene.ID).toString());
+                                subscenes.add(subsceneSnapshot.child(Scene.ID).getValue().toString());
                             }
                             builder.addSubscenes(subscenes);
 

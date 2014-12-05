@@ -2,7 +2,10 @@ package com.kms.alexandracentralunit.data.model;
 
 
 /**
- * Created by Mateusz Zasoński on 2014-11-18.
+ * basic interface for Observer classes
+ *
+ * @author Mateusz Zasoński
+ * @version 0.1
  */
 public interface Observer {
 

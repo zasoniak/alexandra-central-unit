@@ -129,9 +129,7 @@ public abstract class Gadget extends Observable {
 
     }
 
-    public BaseAction prepare(ActionMessage actionMessage) {
-        return new ActionSwitchAll(gatt, "0");
-    }
+    public abstract BaseAction prepare(ActionMessage actionMessage);
 
     public static enum GadgetType {
         WallSocket,

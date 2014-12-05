@@ -7,6 +7,7 @@ import android.util.Log;
 import com.kms.alexandracentralunit.data.model.BaseAction;
 
 import java.util.concurrent.DelayQueue;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -28,14 +29,16 @@ public class BLEController {
         messenger.setDaemon(true);
         messenger.start();
         isRunning = true;
-
     }
 
     public synchronized void queue(BaseAction action) {
+        action.setSubmissionTime(System.currentTimeMillis());
         actionQueue.put(action);
+        long delay = action.getDelay(TimeUnit.MILLISECONDS);
+        Log.d("BLEController", "zakolejkowano akcje "+action.getParameter()+" czas: "+String.valueOf(action.getDelay(TimeUnit.MILLISECONDS)));
     }
 
-    class BLEMessenger extends Thread {
+    private class BLEMessenger extends Thread {
 
         @Override
         public void run() {
@@ -51,7 +54,6 @@ public class BLEController {
                         characteristic.setValue(action.getParameter());
                         action.getGatt().writeCharacteristic(characteristic);
                     }
-
                 }
                 try
                 {
@@ -64,5 +66,4 @@ public class BLEController {
             }
         }
     }
-
 }

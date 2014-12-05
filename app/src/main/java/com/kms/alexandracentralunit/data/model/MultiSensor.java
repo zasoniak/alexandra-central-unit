@@ -23,4 +23,9 @@ public class MultiSensor extends Gadget {
     public Map<String, Object> getCurrentState() {
         return null;
     }
+
+    @Override
+    public BaseAction prepare(ActionMessage actionMessage) {
+        return null;
+    }
 }

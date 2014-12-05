@@ -50,7 +50,10 @@ public class ControlService {
      * @param sceneID id of scene to be executed
      */
     public void run(String sceneID) {
-        home.getScene(sceneID).start(controller);
+        if(home.getScene(sceneID) != null)
+        {
+            home.getScene(sceneID).start(controller);
+        }
     }
 
     /**
@@ -59,7 +62,11 @@ public class ControlService {
      * @param actionMessage structure providing essential information about action to be executed
      */
     public void run(ActionMessage actionMessage) {
-        BaseAction action = home.getGadget(actionMessage.gadgetID).prepare(actionMessage);
-        action.start(controller);
+        if(home.getGadget(actionMessage.gadgetID) != null)
+        {
+            BaseAction action = home.getGadget(actionMessage.gadgetID).prepare(actionMessage);
+            action.setDelay(actionMessage.delay);
+            action.start(controller);
+        }
     }
 }

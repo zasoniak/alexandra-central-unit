@@ -12,15 +12,22 @@ import java.util.concurrent.TimeUnit;
 
 
 /**
- * Created by Mateusz Zasoński on 2014-11-23.
  * Base action implementation providing basic functionality and interfaces coverage
  * To be extended for device-specific actions
+ *
+ * @author Mateusz Zasoński
+ * @version 0.1
  */
 public class BaseAction implements SceneComponent, BLEAction, Delayed {
 
     protected BluetoothGatt gatt;
     protected String parameter;
     protected long delay = 0;
+    protected long submissionTime = 0;
+
+    public void setSubmissionTime(long submissionTime) {
+        this.submissionTime = submissionTime;
+    }
 
     public void setDelay(long delay) {
         this.delay = delay;
@@ -58,11 +65,16 @@ public class BaseAction implements SceneComponent, BLEAction, Delayed {
 
     @Override
     public long getDelay(TimeUnit timeUnit) {
-        return 0;
+        return timeUnit.convert(delay-(System.currentTimeMillis()-submissionTime), TimeUnit.MILLISECONDS);
     }
 
     @Override
     public int compareTo(Delayed delayed) {
-        return 0;
+        if(delayed == this)
+        {
+            return 0;
+        }
+        return Long.valueOf(getDelay(TimeUnit.MILLISECONDS)).compareTo(delayed.getDelay(TimeUnit.MILLISECONDS));
+
     }
 }

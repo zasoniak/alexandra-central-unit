@@ -2,6 +2,7 @@ package com.kms.alexandracentralunit.data.model;
 
 
 import android.content.Intent;
+import android.util.Log;
 
 import com.kms.alexandracentralunit.BLEController;
 import com.kms.alexandracentralunit.CoreService;
@@ -53,6 +54,7 @@ public class Scene implements SceneComponent {
     @Override
     public void start(BLEController controller) {
 
+        Log.d("scene", id+" ruszyła, dzieci: "+String.valueOf(children.size()));
         Intent intent = new Intent(CoreService.getContext(), HistorianBroadcastReceiver.class);
         intent.putExtra(HistorianBroadcastReceiver.LOG_TYPE, HistorianBroadcastReceiver.LogType.Scene);
         intent.putExtra(HistorianBroadcastReceiver.TIME, Calendar.getInstance().getTime().toString());

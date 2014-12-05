@@ -19,10 +19,10 @@ public class ActionMessage {
     public static final String ACTION = "action";
     public static final String PARAMETER = "parameter";
     public static final String DELAY = "delay";
-    public UUID gadgetID;
-    public String action;
-    public String parameter;
-    public long delay;
+    public final UUID gadgetID;
+    public final String action;
+    public final String parameter;
+    public final long delay;
 
     public ActionMessage(UUID gadgetID, String action, String parameter) {
         this.gadgetID = gadgetID;

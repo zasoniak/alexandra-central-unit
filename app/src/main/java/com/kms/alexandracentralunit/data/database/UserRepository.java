@@ -7,7 +7,8 @@ import java.util.List;
 
 
 /**
- * Created by Mateusz Zasoński on 2014-10-31.
+ * @author Mateusz Zasoński
+ * @version 0.1
  */
 public interface UserRepository {
 
