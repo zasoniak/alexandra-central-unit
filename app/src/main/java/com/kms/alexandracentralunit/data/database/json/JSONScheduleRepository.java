@@ -4,6 +4,7 @@ package com.kms.alexandracentralunit.data.database.json;
 import com.kms.alexandracentralunit.data.database.ScheduleRepository;
 import com.kms.alexandracentralunit.data.model.ScheduledScene;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -37,6 +38,7 @@ public class JSONScheduleRepository implements ScheduleRepository {
 
     @Override
     public List<ScheduledScene> getAll() {
-        return null;
+        List<ScheduledScene> scheduledScenes = new ArrayList<ScheduledScene>();
+        return scheduledScenes;
     }
 }

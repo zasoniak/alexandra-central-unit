@@ -54,11 +54,15 @@ public class JSONConfigurationDatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(JSONRoomRepository.SQL_CREATE_TABLE);
+        sqLiteDatabase.execSQL(JSONGadgetRepository.SQL_CREATE_TABLE);
+        sqLiteDatabase.execSQL(JSONSceneRepository.SQL_CREATE_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i2) {
         sqLiteDatabase.execSQL(JSONRoomRepository.SQL_DROP_TABLE);
+        sqLiteDatabase.execSQL(JSONGadgetRepository.SQL_DROP_TABLE);
+        sqLiteDatabase.execSQL(JSONSceneRepository.SQL_DROP_TABLE);
         onCreate(sqLiteDatabase);
     }
 }

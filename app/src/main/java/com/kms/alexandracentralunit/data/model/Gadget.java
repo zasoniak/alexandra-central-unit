@@ -28,31 +28,35 @@ public abstract class Gadget extends Observable {
     public static final String STATE = "state";
 
     public static final String ID = "id";
-    public static final String SYSTEM = "system";
     public static final String ROOM_ID = "roomId";
     public static final String NAME = "name";
     public static final String MAC_ADDRESS = "MAC";
+    public static final String CHANNELS = "channels";
 
     protected GadgetType type;
     protected GadgetState state;
     protected BluetoothGatt gatt;
     private UUID id;
-    private String system;
     private String roomId;
     private String name;
     private String MAC;
+    private int channels;
 
     public Gadget() {
     }
 
-    public Gadget(UUID id, String system, String roomId, String name, String MAC, GadgetType type) {
+    public Gadget(UUID id, String roomId, String name, String MAC, GadgetType type, int channels) {
         this.id = id;
-        this.system = system;
         this.name = name;
         this.MAC = MAC;
         this.roomId = roomId;
         this.type = type;
-        this.state = GadgetState.OK;
+        this.state = GadgetState.Offline;
+        this.channels = channels;
+    }
+
+    public int getChannels() {
+        return this.channels;
     }
 
     public abstract JSONObject toJSON();
@@ -64,10 +68,6 @@ public abstract class Gadget extends Observable {
 
     public GadgetState getState() {
         return state;
-    }
-
-    public String getSystem() {
-        return system;
     }
 
     public String getName() {

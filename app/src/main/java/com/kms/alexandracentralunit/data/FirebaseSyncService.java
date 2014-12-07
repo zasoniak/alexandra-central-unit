@@ -191,12 +191,11 @@ public class FirebaseSyncService extends SyncService {
                     try
                     {
                         UUID id = UUID.fromString(dataSnapshot.getKey());
-                        String systemId = CoreService.getHomeId();
                         String roomId = dataSnapshot.child(Gadget.ROOM_ID).getValue().toString();
                         String name = dataSnapshot.child(Gadget.NAME).getValue().toString();
                         String MAC = dataSnapshot.child(Gadget.MAC_ADDRESS).getValue().toString();
                         Gadget.GadgetType type = Gadget.GadgetType.valueOf(dataSnapshot.child(Gadget.TYPE).getValue().toString());
-                        add(GadgetFactory.create(id, systemId, roomId, name, MAC, type, 2));
+                        add(GadgetFactory.create(id, roomId, name, MAC, type, 2));
                     }
                     catch (IllegalArgumentException ex)
                     {
@@ -216,12 +215,11 @@ public class FirebaseSyncService extends SyncService {
                     try
                     {
                         UUID id = UUID.fromString(dataSnapshot.getKey());
-                        String systemId = CoreService.getHomeId();
                         String roomId = dataSnapshot.child(Gadget.ROOM_ID).getValue().toString();
                         String name = dataSnapshot.child(Gadget.NAME).getValue().toString();
                         String MAC = dataSnapshot.child(Gadget.MAC_ADDRESS).getValue().toString();
                         Gadget.GadgetType type = Gadget.GadgetType.valueOf(dataSnapshot.child(Gadget.TYPE).getValue().toString());
-                        update(GadgetFactory.create(id, systemId, roomId, name, MAC, type, 2));
+                        update(GadgetFactory.create(id, roomId, name, MAC, type, 2));
                     }
                     catch (IllegalArgumentException ex)
                     {
@@ -241,12 +239,11 @@ public class FirebaseSyncService extends SyncService {
                     try
                     {
                         UUID id = UUID.fromString(dataSnapshot.getKey());
-                        String systemId = CoreService.getHomeId();
                         String roomId = dataSnapshot.child(Gadget.ROOM_ID).getValue().toString();
                         String name = dataSnapshot.child(Gadget.NAME).getValue().toString();
                         String MAC = dataSnapshot.child(Gadget.MAC_ADDRESS).getValue().toString();
                         Gadget.GadgetType type = Gadget.GadgetType.valueOf(dataSnapshot.child(Gadget.TYPE).getValue().toString());
-                        delete(GadgetFactory.create(id, systemId, roomId, name, MAC, type, 2));
+                        delete(GadgetFactory.create(id, roomId, name, MAC, type, 2));
                     }
                     catch (IllegalArgumentException ex)
                     {

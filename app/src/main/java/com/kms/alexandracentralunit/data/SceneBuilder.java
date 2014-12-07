@@ -30,6 +30,7 @@ public class SceneBuilder {
 
     public SceneBuilder(Home home) {
         this.home = home;
+
     }
 
     public void create(String id, String name) {

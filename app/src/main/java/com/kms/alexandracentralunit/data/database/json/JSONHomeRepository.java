@@ -2,7 +2,6 @@ package com.kms.alexandracentralunit.data.database.json;
 
 
 import android.content.Context;
-import android.util.Log;
 
 import com.kms.alexandracentralunit.data.HomeBuilder;
 import com.kms.alexandracentralunit.data.database.GadgetRepository;
@@ -34,8 +33,8 @@ public class JSONHomeRepository implements HomeRepository {
 
     public JSONHomeRepository(Context context) {
         roomRepository = new JSONRoomRepository(context);
-        gadgetRepository = new JSONGadgetRepository();
-        sceneRepository = new JSONSceneRepository();
+        gadgetRepository = new JSONGadgetRepository(context);
+        sceneRepository = new JSONSceneRepository(context);
         scheduleRepository = new JSONScheduleRepository();
         userRepository = new JSONUserRepository();
     }
@@ -43,17 +42,26 @@ public class JSONHomeRepository implements HomeRepository {
     @Override
     public Home getHome(String id, String name) {
 
+        Home home;
         HomeBuilder builder = new HomeBuilder();
         builder.create(id, name);
-        builder.addGadgets(new ArrayList<Gadget>());
         ArrayList<Room> rooms = new ArrayList<Room>();
         rooms.addAll(roomRepository.getAll());
-        Log.d("pokoje z bazy", String.valueOf(rooms.size()));
         builder.addRooms(rooms);
+        ArrayList<Gadget> gadgets = new ArrayList<Gadget>();
+        gadgets.addAll(gadgetRepository.getAll());
+        builder.addGadgets(gadgets);
         builder.addUsers(new ArrayList<User>());
         builder.addScenes(new ArrayList<Scene>());
-        builder.addSchedule(new ArrayList<ScheduledScene>());
-        return builder.getHome();
+        ArrayList<ScheduledScene> scheduledScenes = new ArrayList<ScheduledScene>();
+        scheduledScenes.addAll(scheduleRepository.getAll());
+        builder.addSchedule(scheduledScenes);
+        home = builder.getHome();
+
+        sceneRepository.setHome(home);
+        ArrayList<Scene> scenes = home.getScenes();
+        scenes.addAll(sceneRepository.getAll());
+        return home;
     }
 
     @Override

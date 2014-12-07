@@ -1,6 +1,7 @@
 package com.kms.alexandracentralunit.data.database;
 
 
+import com.kms.alexandracentralunit.data.model.Home;
 import com.kms.alexandracentralunit.data.model.Scene;
 
 import java.util.List;
@@ -17,5 +18,6 @@ public interface SceneRepository {
     public Scene find(String id);
     public List<Scene> getAll();
     public List<Scene> getAllByRoom(String roomId);
-    public List<Scene> getAllSubscenes(String id);
+
+    public void setHome(Home home);
 }

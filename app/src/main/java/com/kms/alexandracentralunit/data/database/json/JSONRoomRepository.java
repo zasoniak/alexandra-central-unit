@@ -18,7 +18,12 @@ import java.util.UUID;
 
 
 /**
- * Created by Konrad Kowalewski <k.j.kowalewski@gmail.com> on 08.11.14.
+ * JSON implementation of room repository
+ * <p/>
+ * provides add / delete / update / find / getAll methods
+ *
+ * @author Mateusz Zasoński
+ * @version 0.1
  */
 public class JSONRoomRepository implements RoomRepository {
 
@@ -38,7 +43,6 @@ public class JSONRoomRepository implements RoomRepository {
     public JSONRoomRepository(Context context) {
         databaseHelper = JSONConfigurationDatabaseHelper.getInstance(context);
     }
-
 
     @Override
     public boolean add(Room room) {
