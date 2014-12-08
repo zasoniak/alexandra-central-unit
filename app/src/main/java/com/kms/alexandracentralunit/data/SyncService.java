@@ -39,11 +39,16 @@ public class SyncService extends IntentService {
         homeRepository = CoreService.getHomeRepository();
     }
 
+    //TODO: po zgonie program wczytuje wsio jako added!!! co z tymi się zmieniły w tym czasie? (powinny być potraktowane jako updated)
     protected boolean add(Room room) {
         if(home.getRoom(room.getId()) == null)
         {
             home.getRooms().add(room);
             return homeRepository.add(room);
+        }
+        else
+        {
+            update(room);
         }
         return false;
     }
@@ -83,6 +88,10 @@ public class SyncService extends IntentService {
             }
             return homeRepository.add(newGadget);
         }
+        else
+        {
+            update(newGadget);
+        }
         return false;
     }
 
@@ -115,6 +124,10 @@ public class SyncService extends IntentService {
             home.getScenes().add(scene);
             return homeRepository.add(scene);
         }
+        else
+        {
+            update(scene);
+        }
         return false;
     }
 
@@ -143,6 +156,10 @@ public class SyncService extends IntentService {
             home.getSchedule().add(scheduledscene);
             return homeRepository.add(scheduledscene);
         }
+        else
+        {
+            update(scheduledscene);
+        }
         return false;
     }
 
@@ -168,6 +185,10 @@ public class SyncService extends IntentService {
         {
             home.getUsers().add(user);
             return homeRepository.add(user);
+        }
+        else
+        {
+            update(user);
         }
         return false;
     }

@@ -79,8 +79,8 @@ public class JSONGadgetRepository implements GadgetRepository {
         SQLiteDatabase sqLiteDatabase = databaseHelper.openDatabase();
 
         String query = "UPDATE "+TABLE_NAME+" SET "+
-                KEY_GADGET_OBJECT+" = "+object.toString()+
-                " WHERE "+KEY_GADGET_ID+" = "+"\'"+gadget.getId()+"\'"+");";
+                KEY_GADGET_OBJECT+" = "+"\'"+object.toString()+"\'"+
+                " WHERE "+KEY_GADGET_ID+" = "+"\'"+gadget.getId()+"\'"+";";
 
         sqLiteDatabase.execSQL(query);
         databaseHelper.closeDatabase();

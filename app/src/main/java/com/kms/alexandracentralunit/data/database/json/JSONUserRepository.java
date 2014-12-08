@@ -77,8 +77,8 @@ public class JSONUserRepository implements UserRepository {
         SQLiteDatabase sqLiteDatabase = databaseHelper.openDatabase();
 
         String query = "UPDATE "+TABLE_NAME+" SET "+
-                KEY_USER_OBJECT+" = "+object.toString()+
-                " WHERE "+KEY_USER_OBJECT+" = "+"\'"+user.getId()+"\'"+");";
+                KEY_USER_OBJECT+" = "+"\'"+object.toString()+"\'"+
+                " WHERE "+KEY_USER_OBJECT+" = "+"\'"+user.getId()+"\'"+";";
 
         sqLiteDatabase.execSQL(query);
         databaseHelper.closeDatabase();

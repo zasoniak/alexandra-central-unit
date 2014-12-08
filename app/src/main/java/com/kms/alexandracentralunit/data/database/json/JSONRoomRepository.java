@@ -78,8 +78,8 @@ public class JSONRoomRepository implements RoomRepository {
         SQLiteDatabase sqLiteDatabase = databaseHelper.openDatabase();
 
         String query = "UPDATE "+TABLE_NAME+" SET "+
-                KEY_ROOM_OBJECT+" = "+object.toString()+
-                " WHERE "+KEY_ROOM_ID+" = "+"\'"+room.getId()+"\'"+");";
+                KEY_ROOM_OBJECT+" = "+"\'"+object.toString()+"\'"+
+                " WHERE "+KEY_ROOM_ID+" = "+"\'"+room.getId()+"\'"+";";
 
         sqLiteDatabase.execSQL(query);
         databaseHelper.closeDatabase();

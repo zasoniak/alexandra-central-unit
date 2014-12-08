@@ -81,8 +81,8 @@ public class JSONScheduleRepository implements ScheduleRepository {
         SQLiteDatabase sqLiteDatabase = databaseHelper.openDatabase();
 
         String query = "UPDATE "+TABLE_NAME+" SET "+
-                KEY_SCHEDULE_OBJECT+" = "+object.toString()+
-                " WHERE "+KEY_SCHEDULE_OBJECT+" = "+"\'"+scheduledScene.getId()+"\'"+");";
+                KEY_SCHEDULE_OBJECT+" = "+"\'"+object.toString()+"\'"+
+                " WHERE "+KEY_SCHEDULE_OBJECT+" = "+"\'"+scheduledScene.getId()+"\'"+";";
 
         sqLiteDatabase.execSQL(query);
         databaseHelper.closeDatabase();

@@ -91,8 +91,8 @@ public class JSONSceneRepository implements SceneRepository {
         SQLiteDatabase sqLiteDatabase = databaseHelper.openDatabase();
 
         String query = "UPDATE "+TABLE_NAME+" SET "+
-                KEY_SCENE_OBJECT+" = "+object.toString()+
-                " WHERE "+KEY_SCENE_ID+" = "+"\'"+scene.getId()+"\'"+");";
+                KEY_SCENE_OBJECT+" = "+"\'"+object.toString()+"\'"+
+                " WHERE "+KEY_SCENE_ID+" = "+"\'"+scene.getId()+"\'"+";";
 
         sqLiteDatabase.execSQL(query);
         databaseHelper.closeDatabase();
