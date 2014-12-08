@@ -1,6 +1,8 @@
 package com.kms.alexandracentralunit.data.model;
 
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -96,8 +98,11 @@ public class Home {
     public ScheduledScene getScheduledScene(String id) {
         for(ScheduledScene scheduledScene : this.schedule)
         {
+            Log.d("szukamy schedule", id);
+            Log.d("obecny", scheduledScene.getId());
             if(scheduledScene.getId().equals(id))
             {
+                Log.d("poszlo", scheduledScene.getId());
                 return scheduledScene;
             }
         }

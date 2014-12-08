@@ -5,6 +5,9 @@ import android.bluetooth.BluetoothGatt;
 
 import com.kms.alexandracentralunit.BLEController;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Delayed;
@@ -20,6 +23,12 @@ import java.util.concurrent.TimeUnit;
  */
 public class BaseAction implements SceneComponent, BLEAction, Delayed {
 
+    public static final String GADGET_ID = "gadgetId";
+    public static final String ACTION = "action";
+    public static final String PARAMETER = "parameter";
+    public static final String DELAY = "delay";
+    protected UUID gadgetID;
+    protected String action;
     protected BluetoothGatt gatt;
     protected String parameter;
     protected long delay = 0;
@@ -76,5 +85,22 @@ public class BaseAction implements SceneComponent, BLEAction, Delayed {
         }
         return Long.valueOf(getDelay(TimeUnit.MILLISECONDS)).compareTo(delayed.getDelay(TimeUnit.MILLISECONDS));
 
+    }
+
+    public JSONObject toJSONObject() {
+        JSONObject result = new JSONObject();
+        try
+        {
+            result.put(BaseAction.GADGET_ID, this.gadgetID.toString());
+            result.put(BaseAction.ACTION, this.action);
+            result.put(BaseAction.DELAY, this.delay);
+            result.put(BaseAction.PARAMETER, this.parameter);
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+
+        return result;
     }
 }

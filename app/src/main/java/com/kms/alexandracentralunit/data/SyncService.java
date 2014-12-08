@@ -43,8 +43,9 @@ public class SyncService extends IntentService {
         if(home.getRoom(room.getId()) == null)
         {
             home.getRooms().add(room);
+            return homeRepository.add(room);
         }
-        return homeRepository.add(room);
+        return false;
     }
 
     protected boolean delete(Room room) {
@@ -52,8 +53,9 @@ public class SyncService extends IntentService {
         if((temp = home.getRoom(room.getId())) != null)
         {
             home.getRooms().remove(temp);
+            return homeRepository.delete(temp);
         }
-        return homeRepository.delete(temp);
+        return false;
     }
 
     protected boolean update(Room room) {
@@ -75,12 +77,13 @@ public class SyncService extends IntentService {
         {
             home.getGadgets().add(newGadget);
             FirebaseCurrentStateObserver.getInstance().addGadget(newGadget);
+            if(home.getRoom(newGadget.getRoom()) != null)
+            {
+                home.getRoom(newGadget.getRoom()).addGadget(newGadget.getId());
+            }
+            return homeRepository.add(newGadget);
         }
-        if(home.getRoom(newGadget.getRoom()) != null)
-        {
-            home.getRoom(newGadget.getRoom()).getGadgets().add(newGadget.getId());
-        }
-        return homeRepository.add(newGadget);
+        return false;
     }
 
     protected boolean delete(Gadget gadget) {
@@ -110,8 +113,9 @@ public class SyncService extends IntentService {
         if(home.getScene(scene.getId()) == null)
         {
             home.getScenes().add(scene);
+            return homeRepository.add(scene);
         }
-        return homeRepository.add(scene);
+        return false;
     }
 
     protected boolean delete(Scene scene) {
@@ -137,8 +141,9 @@ public class SyncService extends IntentService {
         if(home.getScheduledScene(scheduledscene.getId()) == null)
         {
             home.getSchedule().add(scheduledscene);
+            return homeRepository.add(scheduledscene);
         }
-        return homeRepository.add(scheduledscene);
+        return false;
     }
 
     protected boolean delete(ScheduledScene scheduledscene) {
@@ -162,8 +167,9 @@ public class SyncService extends IntentService {
         if(home.getUser(user.getId()) == null)
         {
             home.getUsers().add(user);
+            return homeRepository.add(user);
         }
-        return homeRepository.add(user);
+        return false;
     }
 
     protected boolean delete(User user) {

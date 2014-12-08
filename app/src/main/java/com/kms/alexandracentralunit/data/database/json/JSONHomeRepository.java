@@ -2,6 +2,7 @@ package com.kms.alexandracentralunit.data.database.json;
 
 
 import android.content.Context;
+import android.util.Log;
 
 import com.kms.alexandracentralunit.data.HomeBuilder;
 import com.kms.alexandracentralunit.data.database.GadgetRepository;
@@ -35,8 +36,8 @@ public class JSONHomeRepository implements HomeRepository {
         roomRepository = new JSONRoomRepository(context);
         gadgetRepository = new JSONGadgetRepository(context);
         sceneRepository = new JSONSceneRepository(context);
-        scheduleRepository = new JSONScheduleRepository();
-        userRepository = new JSONUserRepository();
+        scheduleRepository = new JSONScheduleRepository(context);
+        userRepository = new JSONUserRepository(context);
     }
 
     @Override
@@ -47,20 +48,23 @@ public class JSONHomeRepository implements HomeRepository {
         builder.create(id, name);
         ArrayList<Room> rooms = new ArrayList<Room>();
         rooms.addAll(roomRepository.getAll());
+        Log.d("rooms baza", String.valueOf(rooms.size()));
         builder.addRooms(rooms);
         ArrayList<Gadget> gadgets = new ArrayList<Gadget>();
         gadgets.addAll(gadgetRepository.getAll());
+        Log.d("gadgets baza", String.valueOf(gadgets.size()));
         builder.addGadgets(gadgets);
         builder.addUsers(new ArrayList<User>());
         builder.addScenes(new ArrayList<Scene>());
         ArrayList<ScheduledScene> scheduledScenes = new ArrayList<ScheduledScene>();
         scheduledScenes.addAll(scheduleRepository.getAll());
+        Log.d("scheduledScenes baza", String.valueOf(scheduledScenes.size()));
         builder.addSchedule(scheduledScenes);
         home = builder.getHome();
 
-        sceneRepository.setHome(home);
-        ArrayList<Scene> scenes = home.getScenes();
-        scenes.addAll(sceneRepository.getAll());
+        //     sceneRepository.setHome(home);
+        //     ArrayList<Scene> scenes = home.getScenes();
+        //    scenes.addAll(sceneRepository.getAll());
         return home;
     }
 

@@ -75,9 +75,9 @@ public class MultiSocket extends Gadget implements Switchable {
         switch(ActionType.valueOf(actionMessage.action))
         {
             case SwitchAll:
-                return new ActionSwitchAll(this.gatt, actionMessage.parameter);
+                return new ActionSwitchAll(this.id, this.gatt, actionMessage.parameter);
             case SwitchChannelOne:
-                return new ActionSwitchChannelOne(this.gatt, actionMessage.parameter);
+                return new ActionSwitchChannelOne(this.id, this.gatt, actionMessage.parameter);
             case SwitchChannelTwo:
                 return null;
             case SwitchChannelThree:

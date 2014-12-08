@@ -4,17 +4,24 @@ package com.kms.alexandracentralunit.data.database.json;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.kms.alexandracentralunit.data.SceneBuilder;
 import com.kms.alexandracentralunit.data.database.SceneRepository;
+import com.kms.alexandracentralunit.data.model.ActionMessage;
+import com.kms.alexandracentralunit.data.model.BaseAction;
 import com.kms.alexandracentralunit.data.model.Home;
 import com.kms.alexandracentralunit.data.model.Scene;
+import com.kms.alexandracentralunit.data.model.SceneComponent;
+import com.kms.alexandracentralunit.data.model.Trigger;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 /**
@@ -32,12 +39,12 @@ public class JSONSceneRepository implements SceneRepository {
     public static final String KEY_SCENE_CREATION_TIMESTAMP = "created_at";
     private static final String[] TABLE_COLUMNS = {KEY_SCENE_ID, KEY_SCENE_OBJECT,
                                                    KEY_SCENE_CREATION_TIMESTAMP};
-    private static final String TABLE_NAME = "gadgets";
+    private static final String TABLE_NAME = "scenes";
     public static final String SQL_DROP_TABLE = "DROP TABLE IF EXISTS "+TABLE_NAME;
     private static final String COMMA_SEP = ", ";
     private static final String KEY_GADGET_ID_TYPE = "TEXT";
     private static final String KEY_GADGET_OBJECT_TYPE = "TEXT";
-    private static final String KEY_SCENE_CREATION_TIMESTAMP_TYPE = "DATETIME DEFAULT CURRENT_TIMESTAMP";
+    private static final String KEY_SCENE_CREATION_TIMESTAMP_TYPE = "TEXT";
     public static final String SQL_CREATE_TABLE = "CREATE TABLE "+TABLE_NAME+" ("+
             KEY_SCENE_ID+" "+KEY_GADGET_ID_TYPE+COMMA_SEP+
             KEY_SCENE_OBJECT+" "+KEY_GADGET_OBJECT_TYPE+COMMA_SEP+
@@ -195,20 +202,116 @@ public class JSONSceneRepository implements SceneRepository {
         return scenes;
     }
 
-    //TODO - wywalic?
-
     public void setHome(Home home) {
         this.home = home;
     }
 
     private JSONObject toJSONObject(Scene scene) {
         JSONObject result = new JSONObject();
+        try
+        {
+            result.put(Scene.ID, scene.getId());
+            result.put(Scene.NAME, scene.getName());
+            JSONArray triggersArray = new JSONArray();
+            for(Trigger trigger : scene.getTriggers())
+            {
+                triggersArray.put(trigger.toJSONObject());
+            }
+            result.put(Scene.TRIGGERS, triggersArray);
+            Log.d("trigger", triggersArray.toString());
+            JSONArray actionsArray = new JSONArray();
+            JSONArray subscenesArray = new JSONArray();
+            for(SceneComponent sceneComponent : scene.getChildren())
+            {
+                if(sceneComponent instanceof Scene)
+                {
+                    subscenesArray.put(((Scene) sceneComponent).getId());
+                }
+                else
+                {
+                    actionsArray.put(((BaseAction) sceneComponent).toJSONObject());
+                }
+            }
+            result.put(Scene.ACTIONS, actionsArray);
+            result.put(Scene.SUBSCENES, subscenesArray);
+
+            return result;
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+
         return result;
     }
 
     private Scene fromJSONObject(JSONObject object) {
         SceneBuilder builder = new SceneBuilder(home);
+        try
+        {
+            String id = object.getString(Scene.ID);
+            String name = object.getString(Scene.NAME);
+            builder.create(id, name);
+            List<Trigger> triggers = new ArrayList<Trigger>();
 
-        return null;
+            /**
+             * essential action data encapsulation
+             * and passing it to scene builder
+             */
+            List<ActionMessage> actions = new ArrayList<ActionMessage>();
+            JSONArray actionsList = object.getJSONArray(Scene.ACTIONS);
+
+            for(int i = 0; i < actionsList.length(); i++)
+            {
+                JSONObject actionObject = actionsList.getJSONObject(i);
+                UUID gadgetId = UUID.fromString(actionObject.getString(BaseAction.GADGET_ID));
+                String action = actionObject.getString(BaseAction.ACTION);
+                String parameter = actionObject.getString(BaseAction.PARAMETER);
+                long delay = actionObject.getLong(BaseAction.DELAY);
+                actions.add(new ActionMessage(gadgetId, action, parameter, delay));
+            }
+            builder.addActions(actions);
+
+            /**
+             * getting subscenes' ID list
+             * and passing it to scene builder
+             */
+            List<String> subscenes = new ArrayList<String>();
+            JSONArray subscenesList = object.getJSONArray(Scene.SUBSCENES);
+            for(int i = 0; i < subscenesList.length(); i++)
+            {
+                subscenes.add(subscenesList.getString(i));
+            }
+            builder.addSubscenes(subscenes);
+
+            /**
+             * first step of trigger creation
+             * for next step passing triggers list to scene builder
+             */
+            JSONArray triggersList = object.getJSONArray(Scene.TRIGGERS);
+            for(int i = 0; i < triggersList.length(); i++)
+            {
+                Trigger trigger = new Trigger(id);
+                JSONArray conditionsList = triggersList.getJSONArray(i);
+                for(int j = 0; j < conditionsList.length(); j++)
+                {
+                    JSONObject triggerObject = conditionsList.getJSONObject(j);
+                    UUID gadgetID = UUID.fromString(triggerObject.getString(Trigger.CONDITION_GADGET));
+                    String parameter = triggerObject.getString(Trigger.CONDITION_PARAMETER);
+                    String value = triggerObject.getString(Trigger.CONDITION_VALUE);
+                    trigger.addObserver(gadgetID, parameter, value);
+                }
+            }
+            builder.addTriggers(triggers);
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        catch (IllegalArgumentException e)
+        {
+            e.printStackTrace();
+        }
+        return builder.getScene();
     }
 }

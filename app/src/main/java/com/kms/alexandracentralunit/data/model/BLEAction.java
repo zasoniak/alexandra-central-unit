@@ -7,7 +7,10 @@ import java.util.UUID;
 
 
 /**
- * Created by Mateusz Zasoński on 2014-11-23.
+ * interface for actions performed via BLE technology
+ *
+ * @author Mateusz Zasoński
+ * @version 0.1
  */
 public interface BLEAction {
 

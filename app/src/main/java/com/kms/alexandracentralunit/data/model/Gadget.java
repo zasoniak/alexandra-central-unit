@@ -36,11 +36,11 @@ public abstract class Gadget extends Observable {
     protected GadgetType type;
     protected GadgetState state;
     protected BluetoothGatt gatt;
-    private UUID id;
-    private String roomId;
-    private String name;
-    private String MAC;
-    private int channels;
+    protected UUID id;
+    protected String roomId;
+    protected String name;
+    protected String MAC;
+    protected int channels;
 
     public Gadget() {
     }

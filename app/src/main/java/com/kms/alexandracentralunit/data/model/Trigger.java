@@ -3,6 +3,10 @@ package com.kms.alexandracentralunit.data.model;
 
 import com.kms.alexandracentralunit.Control;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -63,6 +67,28 @@ public class Trigger {
         {
             Control.getInstance().run(sceneID);
         }
+    }
+
+    public JSONObject toJSONObject() {
+        JSONObject result = new JSONObject();
+        JSONArray conditons = new JSONArray();
+        try
+        {
+            for(GadgetObserver gadgetObserver : this.gadgetObservers)
+            {
+                JSONObject condition = new JSONObject();
+                condition.put(Trigger.CONDITION_GADGET, gadgetObserver.gadgetID);
+                condition.put(Trigger.CONDITION_PARAMETER, gadgetObserver.parameter);
+                condition.put(Trigger.CONDITION_VALUE, gadgetObserver.value);
+            }
+
+            result.put(Trigger.CONDITIONS, conditons);
+        }
+        catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     /**
