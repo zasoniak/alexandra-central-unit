@@ -277,7 +277,6 @@ public class FirebaseSyncService extends SyncService {
                             String name = dataSnapshot.child(Scene.NAME).getValue().toString();
                             SceneBuilder builder = new SceneBuilder(home);
                             builder.create(id, name);
-                            List<Trigger> triggers = new ArrayList<Trigger>();
 
                             /**
                              * essential action data encapsulation
@@ -316,6 +315,7 @@ public class FirebaseSyncService extends SyncService {
                              * first step of trigger creation
                              * for next step passing triggers list to scene builder
                              */
+                            List<Trigger> triggers = new ArrayList<Trigger>();
                             for(DataSnapshot triggerSnapshot : dataSnapshot.child(Scene.TRIGGERS).getChildren())
                             {
                                 Trigger trigger = new Trigger(id);

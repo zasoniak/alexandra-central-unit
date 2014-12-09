@@ -23,14 +23,6 @@ public class FirebaseCurrentStateObserver extends CurrentStateObserver {
 
         String FIREBASE_ROOT = "https://sizzling-torch-8921.firebaseio.com/currentState/"+String.valueOf(CoreService.getHomeId())+"/";
         currentStateReference = new Firebase(FIREBASE_ROOT);
-
-        for(Gadget gadget : CoreService.getHome().getGadgets())
-        {
-            FirebaseGadgetObserver observer = new FirebaseGadgetObserver(gadget);
-            observer.register();
-            observer.pushCurrentState();
-            observers.add(observer);
-        }
     }
 
     public static synchronized FirebaseCurrentStateObserver getInstance() {
@@ -65,11 +57,12 @@ public class FirebaseCurrentStateObserver extends CurrentStateObserver {
         }
 
         @Override
-        public void update(final String field, Object value) {
+        public void update(final String field, String value) {
+            currentStateReference.child(gadgetReference.getId().toString()).setValue(gadgetReference.getCurrentState());
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    currentStateReference.child(gadgetReference.getId().toString()).setValue(gadgetReference.toJSON());
+                    currentStateReference.child(gadgetReference.getId().toString()).setValue(gadgetReference.getCurrentState());
                 }
             });
 

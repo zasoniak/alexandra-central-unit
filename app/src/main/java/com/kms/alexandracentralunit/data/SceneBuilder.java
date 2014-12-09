@@ -41,7 +41,6 @@ public class SceneBuilder {
     public void addTriggers(List<Trigger> triggers) {
         for(Trigger trigger : triggers)
         {
-            trigger.registerObservers(this.home);
             this.triggers.add(trigger);
         }
     }

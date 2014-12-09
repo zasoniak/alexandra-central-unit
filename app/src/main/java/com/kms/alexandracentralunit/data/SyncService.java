@@ -122,6 +122,7 @@ public class SyncService extends IntentService {
         if(home.getScene(scene.getId()) == null)
         {
             home.getScenes().add(scene);
+            scene.registerTriggers(home);
             return homeRepository.add(scene);
         }
         else
@@ -142,7 +143,9 @@ public class SyncService extends IntentService {
             if(scene.getId().equals(newScene.getId()))
             {
                 scene.setName(newScene.getName());
+                scene.unregisterTriggers(home);
                 scene.setTriggers(newScene.getTriggers());
+                scene.registerTriggers(home);
                 scene.setChildren(newScene.getChildren());
                 return homeRepository.update(scene);
             }

@@ -1,6 +1,8 @@
 package com.kms.alexandracentralunit.data.model;
 
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 
@@ -16,13 +18,14 @@ public class Observable {
 
     public void registerObserver(Observer observer) {
         this.observers.add(observer);
+        Log.d("gadget obserwatorzy", String.valueOf(observers.size()));
     }
 
     public void removeObserver(Observer observer) {
         this.observers.remove(observer);
     }
 
-    public void notifyObservers(String field, Object value) {
+    public void notifyObservers(String field, String value) {
         for(Observer observer : observers)
         {
             observer.update(field, value);

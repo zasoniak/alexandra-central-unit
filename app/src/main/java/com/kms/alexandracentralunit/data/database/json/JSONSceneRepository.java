@@ -4,7 +4,6 @@ package com.kms.alexandracentralunit.data.database.json;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.kms.alexandracentralunit.data.SceneBuilder;
 import com.kms.alexandracentralunit.data.database.SceneRepository;
@@ -185,7 +184,7 @@ public class JSONSceneRepository implements SceneRepository {
             {
                 try
                 {
-                    Scene newSCene = fromJSONObject(new JSONObject(cursor.getString(1)));
+                    //    Scene newSCene = fromJSONObject(new JSONObject(cursor.getString(1)));
                     scenes.add(fromJSONObject(new JSONObject(cursor.getString(1))));
                 }
                 catch (JSONException e)
@@ -218,7 +217,6 @@ public class JSONSceneRepository implements SceneRepository {
                 triggersArray.put(trigger.toJSONObject());
             }
             result.put(Scene.TRIGGERS, triggersArray);
-            Log.d("trigger", triggersArray.toString());
             JSONArray actionsArray = new JSONArray();
             JSONArray subscenesArray = new JSONArray();
             for(SceneComponent sceneComponent : scene.getChildren())
@@ -252,7 +250,6 @@ public class JSONSceneRepository implements SceneRepository {
             String id = object.getString(Scene.ID);
             String name = object.getString(Scene.NAME);
             builder.create(id, name);
-            List<Trigger> triggers = new ArrayList<Trigger>();
 
             /**
              * essential action data encapsulation
@@ -288,11 +285,12 @@ public class JSONSceneRepository implements SceneRepository {
              * first step of trigger creation
              * for next step passing triggers list to scene builder
              */
+            List<Trigger> triggers = new ArrayList<Trigger>();
             JSONArray triggersList = object.getJSONArray(Scene.TRIGGERS);
             for(int i = 0; i < triggersList.length(); i++)
             {
                 Trigger trigger = new Trigger(id);
-                JSONArray conditionsList = triggersList.getJSONArray(i);
+                JSONArray conditionsList = triggersList.getJSONObject(i).getJSONArray(Trigger.CONDITIONS);
                 for(int j = 0; j < conditionsList.length(); j++)
                 {
                     JSONObject triggerObject = conditionsList.getJSONObject(j);
@@ -301,6 +299,7 @@ public class JSONSceneRepository implements SceneRepository {
                     String value = triggerObject.getString(Trigger.CONDITION_VALUE);
                     trigger.addObserver(gadgetID, parameter, value);
                 }
+                triggers.add(trigger);
             }
             builder.addTriggers(triggers);
         }

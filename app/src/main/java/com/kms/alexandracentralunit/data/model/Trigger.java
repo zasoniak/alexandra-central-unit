@@ -1,6 +1,8 @@
 package com.kms.alexandracentralunit.data.model;
 
 
+import android.util.Log;
+
 import com.kms.alexandracentralunit.Control;
 
 import org.json.JSONArray;
@@ -62,7 +64,7 @@ public class Trigger {
         {
             flag &= observer.getFlag();
         }
-
+        Log.d("trigger flaga", String.valueOf(flag));
         if(flag)
         {
             Control.getInstance().run(sceneID);
@@ -71,7 +73,7 @@ public class Trigger {
 
     public JSONObject toJSONObject() {
         JSONObject result = new JSONObject();
-        JSONArray conditons = new JSONArray();
+        JSONArray conditions = new JSONArray();
         try
         {
             for(GadgetObserver gadgetObserver : this.gadgetObservers)
@@ -80,15 +82,26 @@ public class Trigger {
                 condition.put(Trigger.CONDITION_GADGET, gadgetObserver.gadgetID);
                 condition.put(Trigger.CONDITION_PARAMETER, gadgetObserver.parameter);
                 condition.put(Trigger.CONDITION_VALUE, gadgetObserver.value);
+                conditions.put(condition);
             }
 
-            result.put(Trigger.CONDITIONS, conditons);
+            result.put(Trigger.CONDITIONS, conditions);
         }
         catch (JSONException e)
         {
             e.printStackTrace();
         }
         return result;
+    }
+
+    public void unregisterObservers(Home home) {
+        for(GadgetObserver observer : gadgetObservers)
+        {
+            if(home.getGadget(observer.gadgetID) != null)
+            {
+                home.getGadget(observer.gadgetID).removeObserver(observer);
+            }
+        }
     }
 
     /**
@@ -112,7 +125,7 @@ public class Trigger {
         }
 
         @Override
-        public void update(String field, Object value) {
+        public void update(String field, String value) {
             if(this.parameter.equals(field) && this.value.equals(value))
             {
                 flag = true;

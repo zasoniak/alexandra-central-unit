@@ -62,9 +62,9 @@ public class JSONHomeRepository implements HomeRepository {
         builder.addSchedule(scheduledScenes);
         home = builder.getHome();
 
-        //     sceneRepository.setHome(home);
-        //     ArrayList<Scene> scenes = home.getScenes();
-        //    scenes.addAll(sceneRepository.getAll());
+        sceneRepository.setHome(home);
+        ArrayList<Scene> scenes = home.getScenes();
+        scenes.addAll(sceneRepository.getAll());
         return home;
     }
 

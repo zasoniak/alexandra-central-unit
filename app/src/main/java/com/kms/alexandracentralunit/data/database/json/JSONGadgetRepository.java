@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.kms.alexandracentralunit.FirebaseCurrentStateObserver;
 import com.kms.alexandracentralunit.data.GadgetFactory;
 import com.kms.alexandracentralunit.data.database.GadgetRepository;
 import com.kms.alexandracentralunit.data.model.Gadget;
@@ -19,7 +20,7 @@ import java.util.UUID;
 
 /**
  * JSON implementation of gadget repository
- *
+ * <p/>
  * provides add / delete / update / find / getAll methods
  *
  * @author Mateusz Zasoński
@@ -112,6 +113,7 @@ public class JSONGadgetRepository implements GadgetRepository {
                 gadget = fromJSONObject(new JSONObject(cursor.getString(1)));
                 databaseHelper.closeDatabase();
                 cursor.close();
+                FirebaseCurrentStateObserver.getInstance().addGadget(gadget);
                 return gadget;
             }
             catch (JSONException e)
@@ -140,7 +142,9 @@ public class JSONGadgetRepository implements GadgetRepository {
             {
                 try
                 {
-                    gadgets.add(fromJSONObject(new JSONObject(cursor.getString(1))));
+                    Gadget gadget = fromJSONObject(new JSONObject(cursor.getString(1)));
+                    FirebaseCurrentStateObserver.getInstance().addGadget(gadget);
+                    gadgets.add(gadget);
                 }
                 catch (JSONException e)
                 {

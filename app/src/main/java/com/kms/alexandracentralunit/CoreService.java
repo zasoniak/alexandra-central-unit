@@ -43,6 +43,7 @@ public class CoreService extends Service {
 
     private static Context context;
     private static Home home;
+    private static String homeID;
     private static HomeRepository homeRepository;
     private LocalBroadcastManager broadcaster;
     private boolean connectedToWifi = false;
@@ -59,7 +60,7 @@ public class CoreService extends Service {
     }
 
     public static String getHomeId() {
-        return home.getId();
+        return homeID;
     }
 
     public static HomeRepository getHomeRepository() {
@@ -85,6 +86,10 @@ public class CoreService extends Service {
                 logEvent("firstRunSetup", "cannot establish connection");
             }
 
+        }
+        else
+        {
+            homeID = sharedPreferences.getString(HOME_ID, "0");
         }
         loadData();
         initializeConfiguration();
@@ -116,7 +121,7 @@ public class CoreService extends Service {
                 //start remote control services
                 Intent remoteControlIntent = new Intent(getBaseContext(), FirebaseControlMessageDispatcher.class);
                 startService(remoteControlIntent);
-                CurrentStateObserver currentStateObserver = FirebaseCurrentStateObserver.getInstance();
+
             }
         };
         Timer timer = new Timer();
@@ -168,6 +173,7 @@ public class CoreService extends Service {
     }
 
     private void initializeConfiguration() {
+        // CurrentStateObserver currentStateObserver = FirebaseCurrentStateObserver.getInstance();
         //TODO: inicjalizacja komunikacji między urządzeniami
         //TODO: wszystkie inne ustawienia
 
@@ -197,9 +203,11 @@ public class CoreService extends Service {
             Map<String, Object> newHome = new HashMap<String, Object>();
             newHome.put("centralUnit", CENTRAL_UNIT);
             Firebase rootReference = new Firebase("https://sizzling-torch-8921.firebaseio.com/configuration/");
-            Firebase homeID = rootReference.push();
-            homeID.setValue(newHome);
-            Log.d("homeID", homeID.getKey());
+            Firebase homeIdRef = rootReference.push();
+            homeIdRef.setValue(newHome);
+            //CoreService.homeID=homeIdRef.getKey();
+            CoreService.homeID = "-JcMyexVThw7PEv2Z2PL";
+            Log.d("homeID", homeIdRef.getKey());
         }
         else
         {

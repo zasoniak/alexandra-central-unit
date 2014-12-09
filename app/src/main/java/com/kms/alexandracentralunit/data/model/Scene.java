@@ -77,6 +77,22 @@ public class Scene implements SceneComponent {
         return new ArrayList<SceneComponent>();
     }
 
+    public void registerTriggers(Home home) {
+        for(Trigger trigger : this.triggers)
+        {
+            Log.d("zarejestrowano trigger", trigger.getScene());
+            trigger.registerObservers(home);
+        }
+    }
+
+    public void unregisterTriggers(Home home) {
+        for(Trigger trigger : this.triggers)
+        {
+            Log.d("odrejestrowano trigger", trigger.getScene());
+            trigger.unregisterObservers(home);
+        }
+    }
+
     public String getId() {
         return id;
     }

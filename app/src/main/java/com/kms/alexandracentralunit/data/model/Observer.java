@@ -9,5 +9,5 @@ package com.kms.alexandracentralunit.data.model;
  */
 public interface Observer {
 
-    public void update(String field, Object value);
+    public void update(String field, String value);
 }
