@@ -43,7 +43,7 @@ public class HistorianBroadcastReceiver extends BroadcastReceiver {
     private static final String SYSTEM = "system";
 
     @Override
-    public void onReceive(Context context, final Intent intent) {
+    public void onReceive(final Context context, final Intent intent) {
         new Thread(new Runnable() {
             public void run() {
                 Firebase historianReference = new Firebase("https://sizzling-torch-8921.firebaseio.com/historian/"+String.valueOf(CoreService.getHomeId())+"/");
@@ -56,19 +56,25 @@ public class HistorianBroadcastReceiver extends BroadcastReceiver {
                         historianLog.put(MESSAGE, intent.getStringExtra(MESSAGE));
                         historianLog.put(TIME, intent.getStringExtra(TIME));
                         historianReference.child(SYSTEM).push().setValue(historianLog);
+                        JSONHistorianRepository.getInstance(context).log(LogType.System, historianLog);
                         break;
                     case Action:
+                        JSONHistorianRepository.getInstance(context).log(LogType.Action, historianLog);
                         break;
                     case Scene:
                         historianLog.put(SCENE, intent.getStringExtra(SCENE));
                         historianLog.put(TIME, intent.getStringExtra(TIME));
                         historianReference.child(SCENES).push().setValue(historianLog);
+                        JSONHistorianRepository.getInstance(context).log(LogType.Scene, historianLog);
                         break;
                     case Measurement:
+                        JSONHistorianRepository.getInstance(context).log(LogType.Measurement, historianLog);
                         break;
                     case ConfigurationChange:
+                        JSONHistorianRepository.getInstance(context).log(LogType.ConfigurationChange, historianLog);
                         break;
                     case Error:
+                        JSONHistorianRepository.getInstance(context).log(LogType.Error, historianLog);
                         break;
                 }
             }
