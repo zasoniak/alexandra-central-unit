@@ -2,13 +2,15 @@ package com.kms.alexandracentralunit;
 
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -18,6 +20,10 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author Mateusz Zasoński
  */
 public class JSONHistorianRepository extends SQLiteOpenHelper implements HistorianRepository {
+
+    public static final String TYPE = "type";
+    public static final String TIMESTAMP = "timestamp";
+    public static final String LOG = "log";
 
     public static final String KEY_HISTORIAN_ID = "_id";
     public static final String KEY_HISTORIAN_TYPE = "type";
@@ -102,16 +108,112 @@ public class JSONHistorianRepository extends SQLiteOpenHelper implements Histori
 
     @Override
     public List<JSONObject> getAll() {
-        return null;
+        // obtain thread-safe database access
+        SQLiteDatabase sqLiteDatabase = this.openDatabase();
+
+        // build a query
+        String query = "SELECT * FROM "+TABLE_NAME+" ORDER BY "+KEY_HISTORIAN_TIMESTAMP;
+        Cursor cursor = sqLiteDatabase.rawQuery(query, null);
+
+        // prepare structured data
+        ArrayList<JSONObject> logs = new ArrayList<JSONObject>();
+        if(cursor.moveToFirst())
+        {
+            do
+            {
+                try
+                {
+                    JSONObject newLog = new JSONObject();
+                    newLog.put(TYPE, cursor.getString(1));
+                    newLog.put(TIMESTAMP, cursor.getString(3));
+                    newLog.put(LOG, new JSONObject(cursor.getString(2)));
+                    logs.add(newLog);
+                }
+                catch (JSONException e)
+                {
+                    e.printStackTrace();
+                    return logs;
+                }
+            } while(cursor.moveToNext());
+        }
+        // close database connection and release resources
+        this.closeDatabase();
+        cursor.close();
+        // return rooms
+        return logs;
     }
 
     @Override
-    public List<JSONObject> getAllByDate(Date from, Date to) {
-        return null;
+    public List<JSONObject> getAllByDate(String from, String to) {
+        // obtain thread-safe database access
+        SQLiteDatabase sqLiteDatabase = this.openDatabase();
+
+        // build a query
+        String query = "SELECT * FROM "+TABLE_NAME+"WHERE "+KEY_HISTORIAN_TIMESTAMP+" BETWEEN "+from+" AND "+to+" ORDER BY "+KEY_HISTORIAN_TIMESTAMP;
+        Cursor cursor = sqLiteDatabase.rawQuery(query, null);
+
+        // prepare structured data
+        ArrayList<JSONObject> logs = new ArrayList<JSONObject>();
+        if(cursor.moveToFirst())
+        {
+            do
+            {
+                try
+                {
+                    JSONObject newLog = new JSONObject();
+                    newLog.put(TYPE, cursor.getString(1));
+                    newLog.put(TIMESTAMP, cursor.getString(3));
+                    newLog.put(LOG, new JSONObject(cursor.getString(2)));
+                    logs.add(newLog);
+                }
+                catch (JSONException e)
+                {
+                    e.printStackTrace();
+                    return logs;
+                }
+            } while(cursor.moveToNext());
+        }
+        // close database connection and release resources
+        this.closeDatabase();
+        cursor.close();
+        // return rooms
+        return logs;
     }
 
     @Override
-    public List<JSONObject> getAllByDateAndType(Date from, Date to, HistorianBroadcastReceiver.LogType type) {
-        return null;
+    public List<JSONObject> getAllByDateAndType(String from, String to, HistorianBroadcastReceiver.LogType type) {
+        // obtain thread-safe database access
+        SQLiteDatabase sqLiteDatabase = this.openDatabase();
+
+        // build a query
+        String query = "SELECT * FROM "+TABLE_NAME+"WHERE "+KEY_HISTORIAN_TYPE+" = "+type.toString()+" AND "+" BETWEEN "+from+" AND "+to+" ORDER BY "+KEY_HISTORIAN_TIMESTAMP;
+        Cursor cursor = sqLiteDatabase.rawQuery(query, null);
+
+        // prepare structured data
+        ArrayList<JSONObject> logs = new ArrayList<JSONObject>();
+        if(cursor.moveToFirst())
+        {
+            do
+            {
+                try
+                {
+                    JSONObject newLog = new JSONObject();
+                    newLog.put(TYPE, cursor.getString(1));
+                    newLog.put(TIMESTAMP, cursor.getString(3));
+                    newLog.put(LOG, new JSONObject(cursor.getString(2)));
+                    logs.add(newLog);
+                }
+                catch (JSONException e)
+                {
+                    e.printStackTrace();
+                    return logs;
+                }
+            } while(cursor.moveToNext());
+        }
+        // close database connection and release resources
+        this.closeDatabase();
+        cursor.close();
+        // return rooms
+        return logs;
     }
 }
