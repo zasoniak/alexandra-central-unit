@@ -17,10 +17,16 @@ public class Room {
     public static final String GADGETS = "gadgets";
     public static final String NAME = "name";
     public static final String COLOR = "color";
-    final private String id;
     List<UUID> gadgets;
+    private String id;
     private String name;
     private int color;
+
+    public Room(List<UUID> gadgets, String name, int color) {
+        this.gadgets = gadgets;
+        this.name = name;
+        this.color = color;
+    }
 
     public Room(String id, String name, int color, List<UUID> gadgets) {
         this.id = id;

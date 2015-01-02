@@ -40,6 +40,13 @@ public class ScheduledScene {
         this.conditions = conditions;
     }
 
+    public ScheduledScene(String sceneId, long time, long repeatInterval, HashMap<String, String> conditions) {
+        this.sceneId = sceneId;
+        this.time = time;
+        this.repeatInterval = repeatInterval;
+        this.conditions = conditions;
+    }
+
     public String getId() {
         return this.id;
     }

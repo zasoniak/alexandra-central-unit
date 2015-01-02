@@ -45,6 +45,12 @@ public class Scene implements SceneComponent {
         this.children = children;
     }
 
+    public Scene(String name, List<SceneComponent> children, List<Trigger> triggers) {
+        this.name = name;
+        this.children = children;
+        this.triggers = triggers;
+    }
+
     /**
      * starts scene execution
      * sends info to historian
