@@ -190,6 +190,7 @@ public class FirebaseSyncService extends SyncService {
                 {
                     try
                     {
+                        Log.d(TAG, "newRoom");
                         UUID id = UUID.fromString(dataSnapshot.getKey());
                         String roomId = dataSnapshot.child(Gadget.ROOM_ID).getValue().toString();
                         String name = dataSnapshot.child(Gadget.NAME).getValue().toString();

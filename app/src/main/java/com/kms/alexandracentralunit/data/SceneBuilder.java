@@ -38,6 +38,11 @@ public class SceneBuilder {
         this.name = name;
     }
 
+    public void create(String name) {
+        this.id = "0";
+        this.name = name;
+    }
+
     public void addTriggers(List<Trigger> triggers) {
         for(Trigger trigger : triggers)
         {
