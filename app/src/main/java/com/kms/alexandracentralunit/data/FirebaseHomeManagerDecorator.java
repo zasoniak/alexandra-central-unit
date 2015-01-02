@@ -30,7 +30,6 @@ public class FirebaseHomeManagerDecorator extends HomeManagerDecorator {
 
     }
 
-    //zapis do firebase i dodanie id do obiektow
     @Override
     public boolean add(Room room) {
         super.add(room);
@@ -39,12 +38,14 @@ public class FirebaseHomeManagerDecorator extends HomeManagerDecorator {
 
     @Override
     public boolean delete(Room room) {
-        return super.delete(room);
+        super.delete(room);
+        return deleteAndSync(room);
     }
 
     @Override
     public boolean update(Room room) {
-        return super.update(room);
+        super.update(room);
+        return updateAndSync(room);
     }
 
     @Override
@@ -124,11 +125,24 @@ public class FirebaseHomeManagerDecorator extends HomeManagerDecorator {
     }
 
     private boolean deleteAndSync(Room room) {
+        firebaseRoot.child("rooms").child(room.getId()).removeValue();
         return homeManager.delete(room);
     }
 
     private boolean updateAndSync(Room room) {
-        return homeManager.update(room);
+        Firebase roomIdRef = firebaseRoot.child("rooms").child(room.getId());
+        room.setName(roomIdRef.getKey());
+        Map<String, Object> hashMap = new HashMap<String, Object>();
+        hashMap.put(Room.NAME, room.getName());
+        hashMap.put(Room.COLOR, room.getColor());
+        roomIdRef.setValue(hashMap);
+        roomIdRef.child(Room.GADGETS).removeValue();
+        for(UUID uuid : room.getGadgets())
+        {
+            roomIdRef.child(Room.GADGETS).push().child(Room.ID).setValue(uuid.toString());
+        }
+        Log.d("newRoomSynced", roomIdRef.getKey());
+        return true;
     }
 
     private boolean addAndSync(Gadget newGadget) {

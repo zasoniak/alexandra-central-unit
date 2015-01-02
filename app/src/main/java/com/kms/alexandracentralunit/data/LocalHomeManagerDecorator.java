@@ -1,8 +1,6 @@
 package com.kms.alexandracentralunit.data;
 
 
-import android.util.Log;
-
 import com.kms.alexandracentralunit.FirebaseCurrentStateObserver;
 import com.kms.alexandracentralunit.data.model.Gadget;
 import com.kms.alexandracentralunit.data.model.Room;
@@ -22,7 +20,6 @@ public class LocalHomeManagerDecorator extends HomeManagerDecorator {
 
     @Override
     public boolean add(Room room) {
-        Log.d("localDecoratorAdd", "newRoom");
         super.add(room);
         return addAndSave(room);
     }
@@ -112,7 +109,6 @@ public class LocalHomeManagerDecorator extends HomeManagerDecorator {
     }
 
     private boolean addAndSave(Room room) {
-        Log.d("localDecorator save", "newRoom");
         if(home.getRoom(room.getId()) == null)
         {
             home.getRooms().add(room);
