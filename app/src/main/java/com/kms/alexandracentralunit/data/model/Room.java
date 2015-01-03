@@ -39,6 +39,10 @@ public class Room {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
@@ -65,5 +69,9 @@ public class Room {
 
     public void addGadget(UUID gadget) {
         this.gadgets.add(gadget);
+    }
+
+    public String toString() {
+        return this.name+": "+this.id;
     }
 }

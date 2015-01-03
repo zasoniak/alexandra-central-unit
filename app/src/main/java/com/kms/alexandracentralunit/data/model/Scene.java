@@ -127,4 +127,7 @@ public class Scene implements SceneComponent {
         this.triggers = triggers;
     }
 
+    public String toString() {
+        return this.name+": "+this.id;
+    }
 }

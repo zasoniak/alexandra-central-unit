@@ -111,7 +111,7 @@ public class FirebaseHomeManagerDecorator extends HomeManagerDecorator {
     private boolean addAndSync(Room room) {
         Firebase roomRoot = firebaseRoot.child("rooms");
         Firebase roomIdRef = roomRoot.push();
-        room.setName(roomIdRef.getKey());
+        room.setId(roomIdRef.getKey());
         Map<String, Object> hashMap = new HashMap<String, Object>();
         hashMap.put(Room.NAME, room.getName());
         hashMap.put(Room.COLOR, room.getColor());
@@ -126,7 +126,7 @@ public class FirebaseHomeManagerDecorator extends HomeManagerDecorator {
 
     private boolean deleteAndSync(Room room) {
         firebaseRoot.child("rooms").child(room.getId()).removeValue();
-        return homeManager.delete(room);
+        return true;
     }
 
     private boolean updateAndSync(Room room) {
@@ -145,16 +145,38 @@ public class FirebaseHomeManagerDecorator extends HomeManagerDecorator {
         return true;
     }
 
-    private boolean addAndSync(Gadget newGadget) {
-        return homeManager.add(newGadget);
+    private boolean addAndSync(Gadget gadget) {
+        Firebase gadgetsRoot = firebaseRoot.child("gadgets");
+        Firebase gadgetRef = gadgetsRoot.child(gadget.getId().toString());
+        Map<String, Object> hashMap = new HashMap<String, Object>();
+        hashMap.put(Gadget.ROOM_ID, gadget.getRoom());
+        hashMap.put(Gadget.NAME, gadget.getName());
+        hashMap.put(Gadget.MAC_ADDRESS, gadget.getMAC());
+        hashMap.put(Gadget.TYPE, gadget.getType().toString());
+        hashMap.put(Gadget.CHANNELS, gadget.getChannels());
+        hashMap.put(Gadget.INSTALLED, gadget.isInstalled());
+        gadgetRef.setValue(hashMap);
+        Log.d("newGadgetSynced", gadgetRef.getKey());
+        return true;
     }
 
     private boolean deleteAndSyncAndSync(Gadget gadget) {
-        return homeManager.delete(gadget);
+        firebaseRoot.child("gadgets").child(gadget.getId().toString()).removeValue();
+        return true;
     }
 
-    private boolean updateAndSync(Gadget newGadget) {
-        return homeManager.update(newGadget);
+    private boolean updateAndSync(Gadget gadget) {
+        Firebase gadgetsRoot = firebaseRoot.child("gadgets");
+        Firebase gadgetRef = gadgetsRoot.child(gadget.getId().toString());
+        Map<String, Object> hashMap = new HashMap<String, Object>();
+        hashMap.put(Gadget.ROOM_ID, gadget.getRoom());
+        hashMap.put(Gadget.NAME, gadget.getName());
+        hashMap.put(Gadget.MAC_ADDRESS, gadget.getMAC());
+        hashMap.put(Gadget.TYPE, gadget.getType().toString());
+        hashMap.put(Gadget.CHANNELS, gadget.getChannels());
+        hashMap.put(Gadget.INSTALLED, gadget.isInstalled());
+        gadgetRef.setValue(hashMap);
+        return true;
     }
 
     private boolean addAndSync(Scene scene) {
