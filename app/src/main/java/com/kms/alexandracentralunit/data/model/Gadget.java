@@ -32,6 +32,7 @@ public abstract class Gadget extends Observable {
     public static final String NAME = "name";
     public static final String MAC_ADDRESS = "MAC";
     public static final String CHANNELS = "channels";
+    public static final String INSTALLED = "installed";
 
     protected GadgetType type;
     protected GadgetState state;
@@ -41,11 +42,12 @@ public abstract class Gadget extends Observable {
     protected String name;
     protected String MAC;
     protected int channels;
+    protected boolean installed;
 
     public Gadget() {
     }
 
-    public Gadget(UUID id, String roomId, String name, String MAC, GadgetType type, int channels) {
+    public Gadget(UUID id, String roomId, String name, String MAC, GadgetType type, int channels, boolean installed) {
         this.id = id;
         this.name = name;
         this.MAC = MAC;
@@ -53,6 +55,7 @@ public abstract class Gadget extends Observable {
         this.type = type;
         this.state = GadgetState.Offline;
         this.channels = channels;
+        this.installed = installed;
     }
 
     public int getChannels() {
@@ -92,6 +95,14 @@ public abstract class Gadget extends Observable {
 
     public void setRoomId(String roomId) {
         this.roomId = roomId;
+    }
+
+    public boolean isInstalled() {
+        return this.installed;
+    }
+
+    public void setInstalled(boolean isInstalled) {
+        this.installed = isInstalled;
     }
 
     public String toString() {

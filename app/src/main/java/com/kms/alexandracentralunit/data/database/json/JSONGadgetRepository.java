@@ -245,6 +245,7 @@ public class JSONGadgetRepository implements GadgetRepository {
         String MAC;
         String roomId;
         Gadget.GadgetType type;
+        boolean installed;
         int channels;
         try
         {
@@ -254,7 +255,8 @@ public class JSONGadgetRepository implements GadgetRepository {
             roomId = object.getString(Gadget.ROOM_ID);
             type = Gadget.GadgetType.valueOf(object.getString(Gadget.TYPE));
             channels = object.getInt(Gadget.CHANNELS);
-            return GadgetFactory.create(id, roomId, name, MAC, type, channels);
+            installed = object.getBoolean(Gadget.INSTALLED);
+            return GadgetFactory.create(id, roomId, name, MAC, type, channels, installed);
 
         }
         catch (JSONException e)
@@ -279,6 +281,7 @@ public class JSONGadgetRepository implements GadgetRepository {
             result.put(Gadget.ROOM_ID, gadget.getRoom());
             result.put(Gadget.TYPE, gadget.getType());
             result.put(Gadget.CHANNELS, gadget.getChannels());
+            result.put(Gadget.INSTALLED, gadget.isInstalled());
         }
         catch (JSONException e)
         {

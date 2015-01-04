@@ -196,7 +196,9 @@ public class FirebaseSyncService extends SyncService {
                         String name = dataSnapshot.child(Gadget.NAME).getValue().toString();
                         String MAC = dataSnapshot.child(Gadget.MAC_ADDRESS).getValue().toString();
                         Gadget.GadgetType type = Gadget.GadgetType.valueOf(dataSnapshot.child(Gadget.TYPE).getValue().toString());
-                        add(GadgetFactory.create(id, roomId, name, MAC, type, 2));
+                        int parameter = Integer.parseInt(dataSnapshot.child(Gadget.CHANNELS).getValue().toString());
+                        boolean installed = Boolean.parseBoolean(dataSnapshot.child(Gadget.INSTALLED).getValue().toString());
+                        add(GadgetFactory.create(id, roomId, name, MAC, type, parameter, installed));
                     }
                     catch (IllegalArgumentException ex)
                     {
@@ -220,7 +222,9 @@ public class FirebaseSyncService extends SyncService {
                         String name = dataSnapshot.child(Gadget.NAME).getValue().toString();
                         String MAC = dataSnapshot.child(Gadget.MAC_ADDRESS).getValue().toString();
                         Gadget.GadgetType type = Gadget.GadgetType.valueOf(dataSnapshot.child(Gadget.TYPE).getValue().toString());
-                        update(GadgetFactory.create(id, roomId, name, MAC, type, 2));
+                        int parameter = Integer.parseInt(dataSnapshot.child(Gadget.CHANNELS).getValue().toString());
+                        boolean installed = Boolean.parseBoolean(dataSnapshot.child(Gadget.INSTALLED).getValue().toString());
+                        update(GadgetFactory.create(id, roomId, name, MAC, type, parameter, installed));
                     }
                     catch (IllegalArgumentException ex)
                     {
@@ -244,7 +248,9 @@ public class FirebaseSyncService extends SyncService {
                         String name = dataSnapshot.child(Gadget.NAME).getValue().toString();
                         String MAC = dataSnapshot.child(Gadget.MAC_ADDRESS).getValue().toString();
                         Gadget.GadgetType type = Gadget.GadgetType.valueOf(dataSnapshot.child(Gadget.TYPE).getValue().toString());
-                        delete(GadgetFactory.create(id, roomId, name, MAC, type, 2));
+                        int parameter = Integer.parseInt(dataSnapshot.child(Gadget.CHANNELS).getValue().toString());
+                        boolean installed = Boolean.parseBoolean(dataSnapshot.child(Gadget.INSTALLED).getValue().toString());
+                        delete(GadgetFactory.create(id, roomId, name, MAC, type, parameter, installed));
                     }
                     catch (IllegalArgumentException ex)
                     {
