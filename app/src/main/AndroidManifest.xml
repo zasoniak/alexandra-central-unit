@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
-    package="com.kms.alexandracentralunit"
+    package="com.kms.alexandra"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
@@ -16,7 +16,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.kms.alexandracentralunit.AdminActivity"
+            android:name="com.kms.alexandra.centralunit.AdminActivity"
             android:label="@string/title_activity_admin">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
@@ -26,11 +26,11 @@
         </activity>
 
         <service
-            android:name="com.kms.alexandracentralunit.CoreService">
+            android:name="com.kms.alexandra.centralunit.CoreService">
         </service>
 
         <receiver
-            android:name="com.kms.alexandracentralunit.Autostart"
+            android:name="com.kms.alexandra.centralunit.Autostart"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -38,32 +38,32 @@
             </intent-filter>
         </receiver>
 
-        <service android:name="com.kms.alexandracentralunit.data.SyncService">
+        <service android:name="com.kms.alexandra.data.SyncService">
         </service>
-        <service android:name="com.kms.alexandracentralunit.data.FirebaseSyncService">
-        </service>
-
-
-        <service android:name=".ScheduleManagerService">
-        </service>
-        <service android:name=".ScheduleService">
+        <service android:name="com.kms.alexandra.data.FirebaseSyncService">
         </service>
 
-        <receiver android:name=".ScheduleReceiver">
+
+        <service android:name="com.kms.alexandra.centralunit.ScheduleManagerService">
+        </service>
+        <service android:name="com.kms.alexandra.centralunit.ScheduleService">
+        </service>
+
+        <receiver android:name="com.kms.alexandra.centralunit.ScheduleReceiver">
         </receiver>
 
 
-        <receiver android:name="com.kms.alexandracentralunit.HistorianBroadcastReceiver">
+        <receiver android:name="com.kms.alexandra.centralunit.HistorianBroadcastReceiver">
         </receiver>
 
         <service
-            android:name=".ControlMessageDispatcher">
+            android:name="com.kms.alexandra.centralunit.ControlMessageDispatcher">
         </service>
         <service
-            android:name=".FirebaseControlMessageDispatcher">
+            android:name="com.kms.alexandra.centralunit.FirebaseControlMessageDispatcher">
         </service>
         <service
-            android:name=".BluetoothControlMessageDispatcher">
+            android:name="com.kms.alexandra.centralunit.BluetoothControlMessageDispatcher">
         </service>
     </application>
 

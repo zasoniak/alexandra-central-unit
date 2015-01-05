@@ -10,7 +10,7 @@ android {
             }
 
     defaultConfig {
-        applicationId "com.kms.alexandracentralunit"
+        applicationId "com.kms.alexandra"
         minSdkVersion 19
         targetSdkVersion 19
         versionCode 1
