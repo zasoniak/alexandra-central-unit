@@ -4,7 +4,6 @@ package com.kms.alexandra.data;
 import android.util.Log;
 
 import com.firebase.client.Firebase;
-import com.kms.alexandra.centralunit.CoreService;
 import com.kms.alexandra.data.model.BaseAction;
 import com.kms.alexandra.data.model.Gadget;
 import com.kms.alexandra.data.model.Room;
@@ -33,7 +32,7 @@ public class FirebaseHomeManagerDecorator extends HomeManagerDecorator {
 
     public FirebaseHomeManagerDecorator(HomeManager homeManager) {
         super(homeManager);
-        String FIREBASE_URL = "https://sizzling-torch-8921.firebaseio.com/configuration/"+CoreService.getHomeId()+"/";
+        String FIREBASE_URL = "https://sizzling-torch-8921.firebaseio.com/configuration/"+homeManager.home.getId()+"/";
         firebaseRoot = new Firebase(FIREBASE_URL);
     }
 

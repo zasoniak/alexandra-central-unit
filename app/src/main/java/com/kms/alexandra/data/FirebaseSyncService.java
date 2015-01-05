@@ -44,7 +44,7 @@ public class FirebaseSyncService extends SyncService {
     protected void onHandleIntent(Intent intent) {
         Log.d("firebase", "intentservice");
         super.onHandleIntent(intent);
-        final Firebase homeReference = new Firebase("https://sizzling-torch-8921.firebaseio.com/configuration/"+String.valueOf(CoreService.getHomeId())+"/");
+        final Firebase homeReference = new Firebase("https://sizzling-torch-8921.firebaseio.com/configuration/"+home.getId()+"/");
 
         homeReference.child(Home.NAME).addValueEventListener(new ValueEventListener() {
             @Override
