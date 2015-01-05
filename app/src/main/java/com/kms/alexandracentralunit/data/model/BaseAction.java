@@ -8,6 +8,7 @@ import com.kms.alexandracentralunit.BLEController;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Delayed;
@@ -28,6 +29,7 @@ public class BaseAction implements SceneComponent, BLEAction, Delayed {
     public static final String PARAMETER = "parameter";
     public static final String DELAY = "delay";
     protected UUID gadgetID;
+
     protected String action;
     protected BluetoothGatt gatt;
     protected String parameter;
@@ -36,10 +38,6 @@ public class BaseAction implements SceneComponent, BLEAction, Delayed {
 
     public void setSubmissionTime(long submissionTime) {
         this.submissionTime = submissionTime;
-    }
-
-    public void setDelay(long delay) {
-        this.delay = delay;
     }
 
     @Override
@@ -70,6 +68,29 @@ public class BaseAction implements SceneComponent, BLEAction, Delayed {
     @Override
     public List<SceneComponent> getComponents() {
         return null;
+    }
+
+    @Override
+    public List<UUID> getGadgetsID() {
+        ArrayList<UUID> ids = new ArrayList<UUID>();
+        ids.add(gadgetID);
+        return ids;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public long getDelay() {
+        return delay;
+    }
+
+    public void setDelay(long delay) {
+        this.delay = delay;
+    }
+
+    public UUID getGadgetID() {
+        return gadgetID;
     }
 
     @Override

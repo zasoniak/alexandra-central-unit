@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -102,6 +103,23 @@ public class Trigger {
                 home.getGadget(observer.gadgetID).removeObserver(observer);
             }
         }
+    }
+
+    public HashMap<String, Object> toHashMap() {
+        HashMap<String, Object> hashMap = new HashMap<String, Object>();
+        HashMap<String, Object> conditionsMap = new HashMap<String, Object>();
+        int i = 0;
+        for(GadgetObserver gadgetObserver : this.gadgetObservers)
+        {
+            HashMap<String, Object> condition = new HashMap<String, Object>();
+            condition.put(CONDITION_GADGET, gadgetObserver.gadgetID);
+            condition.put(CONDITION_PARAMETER, gadgetObserver.parameter);
+            condition.put(CONDITION_VALUE, gadgetObserver.value);
+            conditionsMap.put(String.valueOf(i), condition);
+            i++;
+        }
+        hashMap.put(CONDITIONS, conditionsMap);
+        return hashMap;
     }
 
     /**

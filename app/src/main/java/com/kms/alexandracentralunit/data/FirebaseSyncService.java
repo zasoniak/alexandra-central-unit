@@ -29,6 +29,9 @@ import java.util.UUID;
 
 
 /**
+ * Entry point for remote synchronization
+ * Receives and processes data from Firebase server
+ *
  * @author Mateusz Zasoński
  * @version 0.1
  */
@@ -186,11 +189,10 @@ public class FirebaseSyncService extends SyncService {
         homeReference.child(Home.GADGETS).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                if(dataSnapshot.hasChild(Gadget.ROOM_ID) && dataSnapshot.hasChild(Gadget.NAME) && dataSnapshot.hasChild(Gadget.MAC_ADDRESS) && dataSnapshot.hasChild(Gadget.TYPE))
+                if(dataSnapshot.hasChild(Gadget.ROOM_ID) && dataSnapshot.hasChild(Gadget.NAME) && dataSnapshot.hasChild(Gadget.MAC_ADDRESS) && dataSnapshot.hasChild(Gadget.TYPE) && dataSnapshot.hasChild(Gadget.CHANNELS) && dataSnapshot.hasChild(Gadget.INSTALLED))
                 {
                     try
                     {
-                        Log.d(TAG, "newRoom");
                         UUID id = UUID.fromString(dataSnapshot.getKey());
                         String roomId = dataSnapshot.child(Gadget.ROOM_ID).getValue().toString();
                         String name = dataSnapshot.child(Gadget.NAME).getValue().toString();
@@ -213,7 +215,7 @@ public class FirebaseSyncService extends SyncService {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                if(dataSnapshot.hasChild(Gadget.ROOM_ID) && dataSnapshot.hasChild(Gadget.NAME) && dataSnapshot.hasChild(Gadget.MAC_ADDRESS) && dataSnapshot.hasChild(Gadget.TYPE))
+                if(dataSnapshot.hasChild(Gadget.ROOM_ID) && dataSnapshot.hasChild(Gadget.NAME) && dataSnapshot.hasChild(Gadget.MAC_ADDRESS) && dataSnapshot.hasChild(Gadget.TYPE) && dataSnapshot.hasChild(Gadget.CHANNELS) && dataSnapshot.hasChild(Gadget.INSTALLED))
                 {
                     try
                     {
@@ -239,7 +241,7 @@ public class FirebaseSyncService extends SyncService {
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChild(Gadget.ROOM_ID) && dataSnapshot.hasChild(Gadget.NAME) && dataSnapshot.hasChild(Gadget.MAC_ADDRESS) && dataSnapshot.hasChild(Gadget.TYPE))
+                if(dataSnapshot.hasChild(Gadget.ROOM_ID) && dataSnapshot.hasChild(Gadget.NAME) && dataSnapshot.hasChild(Gadget.MAC_ADDRESS) && dataSnapshot.hasChild(Gadget.TYPE) && dataSnapshot.hasChild(Gadget.CHANNELS) && dataSnapshot.hasChild(Gadget.INSTALLED))
                 {
                     try
                     {

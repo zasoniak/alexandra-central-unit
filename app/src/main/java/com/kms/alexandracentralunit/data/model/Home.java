@@ -2,6 +2,7 @@ package com.kms.alexandracentralunit.data.model;
 
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -44,8 +45,36 @@ public class Home {
         return gadgets;
     }
 
+    public ArrayList<Gadget> getGadgetsByRoom(String roomId) {
+        ArrayList<Gadget> gadgetArrayList = new ArrayList<Gadget>();
+        for(Gadget gadget : this.gadgets)
+        {
+            if(gadget.getRoom().equals(roomId))
+            {
+                gadgetArrayList.add(gadget);
+            }
+        }
+        return gadgetArrayList;
+    }
+
     public ArrayList<Scene> getScenes() {
         return scenes;
+    }
+
+    public ArrayList<Scene> getScenesByRoom(String roomId) {
+        ArrayList<Scene> sceneArrayList = new ArrayList<Scene>();
+        for(Scene scene : this.scenes)
+        {
+            List<UUID> gadgetsID = scene.getGadgetsID();
+            for(UUID uuid : gadgetsID)
+            {
+                if(this.getGadget(uuid).getRoom().equals(roomId))
+                {
+                    sceneArrayList.add(scene);
+                }
+            }
+        }
+        return sceneArrayList;
     }
 
     public ArrayList<Room> getRooms() {

@@ -11,6 +11,7 @@ import com.kms.alexandracentralunit.HistorianBroadcastReceiver;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.UUID;
 
 
 /**
@@ -83,6 +84,16 @@ public class Scene implements SceneComponent {
         return new ArrayList<SceneComponent>();
     }
 
+    @Override
+    public List<UUID> getGadgetsID() {
+        ArrayList<UUID> gadgetArrayList = new ArrayList<UUID>();
+        for(SceneComponent child : children)
+        {
+            gadgetArrayList.addAll(child.getGadgetsID());
+        }
+        return gadgetArrayList;
+    }
+
     public void registerTriggers(Home home) {
         for(Trigger trigger : this.triggers)
         {
@@ -101,6 +112,10 @@ public class Scene implements SceneComponent {
 
     public String getId() {
         return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {

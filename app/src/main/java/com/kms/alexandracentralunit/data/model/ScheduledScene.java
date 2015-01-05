@@ -51,6 +51,10 @@ public class ScheduledScene {
         return this.id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getScene() {
         return this.sceneId;
     }
