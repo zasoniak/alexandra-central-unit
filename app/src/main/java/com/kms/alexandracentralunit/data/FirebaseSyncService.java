@@ -29,6 +29,9 @@ import java.util.UUID;
 
 
 /**
+ * Entry point for remote synchronization
+ * Receives and processes data from Firebase server
+ *
  * @author Mateusz Zasoński
  * @version 0.1
  */

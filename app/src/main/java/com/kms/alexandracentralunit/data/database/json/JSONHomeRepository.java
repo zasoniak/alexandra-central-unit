@@ -69,6 +69,34 @@ public class JSONHomeRepository implements HomeRepository {
     }
 
     @Override
+    public Home getHome(String id) {
+
+        Home home;
+        HomeBuilder builder = new HomeBuilder();
+        builder.create(id, "dom");
+        ArrayList<Room> rooms = new ArrayList<Room>();
+        rooms.addAll(roomRepository.getAll());
+        Log.d("rooms baza", String.valueOf(rooms.size()));
+        builder.addRooms(rooms);
+        ArrayList<Gadget> gadgets = new ArrayList<Gadget>();
+        gadgets.addAll(gadgetRepository.getAll());
+        Log.d("gadgets baza", String.valueOf(gadgets.size()));
+        builder.addGadgets(gadgets);
+        builder.addUsers(new ArrayList<User>());
+        builder.addScenes(new ArrayList<Scene>());
+        ArrayList<ScheduledScene> scheduledScenes = new ArrayList<ScheduledScene>();
+        scheduledScenes.addAll(scheduleRepository.getAll());
+        Log.d("scheduledScenes baza", String.valueOf(scheduledScenes.size()));
+        builder.addSchedule(scheduledScenes);
+        home = builder.getHome();
+
+        sceneRepository.setHome(home);
+        ArrayList<Scene> scenes = home.getScenes();
+        scenes.addAll(sceneRepository.getAll());
+        return home;
+    }
+
+    @Override
     public boolean add(Home home) {
         return false;
     }

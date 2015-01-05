@@ -17,7 +17,12 @@ import java.util.UUID;
 
 
 /**
+ * Firebase synchronization for HomeManager
+ * <p/>
+ * Synchronize changes with remote Firebase server
+ *
  * @author Mateusz Zasoński
+ * @version 0.1
  */
 public class FirebaseHomeManagerDecorator extends HomeManagerDecorator {
 
@@ -25,9 +30,8 @@ public class FirebaseHomeManagerDecorator extends HomeManagerDecorator {
 
     public FirebaseHomeManagerDecorator(HomeManager homeManager) {
         super(homeManager);
-        String FIREBASE_URL = "https://sizzling-torch-8921.firebaseio.com/currentState/"+CoreService.getHomeId()+"/";
+        String FIREBASE_URL = "https://sizzling-torch-8921.firebaseio.com/configuration/"+CoreService.getHomeId()+"/";
         firebaseRoot = new Firebase(FIREBASE_URL);
-
     }
 
     @Override
@@ -50,62 +54,74 @@ public class FirebaseHomeManagerDecorator extends HomeManagerDecorator {
 
     @Override
     public boolean add(Gadget newGadget) {
-        return super.add(newGadget);
+        super.add(newGadget);
+        return addAndSync(newGadget);
     }
 
     @Override
     public boolean delete(Gadget gadget) {
-        return super.delete(gadget);
+        super.delete(gadget);
+        return deleteAndSync(gadget);
     }
 
     @Override
     public boolean update(Gadget newGadget) {
-        return super.update(newGadget);
+        super.update(newGadget);
+        return updateAndSync(newGadget);
     }
 
     @Override
     public boolean add(Scene scene) {
-        return super.add(scene);
+        super.add(scene);
+        return addAndSync(scene);
     }
 
     @Override
     public boolean delete(Scene scene) {
-        return super.delete(scene);
+        super.delete(scene);
+        return deleteAndSync(scene);
     }
 
     @Override
     public boolean update(Scene newScene) {
-        return super.update(newScene);
+        super.update(newScene);
+        return updateAndSync(newScene);
     }
 
     @Override
     public boolean add(ScheduledScene scheduledscene) {
-        return super.add(scheduledscene);
+        super.add(scheduledscene);
+        return addAndSync(scheduledscene);
     }
 
     @Override
     public boolean delete(ScheduledScene scheduledscene) {
-        return super.delete(scheduledscene);
+        super.delete(scheduledscene);
+        return deleteAndSync(scheduledscene);
     }
 
     @Override
     public boolean update(ScheduledScene scheduledscene) {
-        return super.update(scheduledscene);
+        super.update(scheduledscene);
+        return updateAndSync(scheduledscene);
     }
 
     @Override
     public boolean add(User user) {
-        return super.add(user);
+        super.add(user);
+        return addAndSync(user);
     }
 
     @Override
     public boolean delete(User user) {
-        return super.delete(user);
+        super.delete(user);
+        return deleteAndSync(user);
     }
 
     @Override
     public boolean update(User user) {
-        return super.update(user);
+        super.update(user);
+        return updateAndSync(user);
     }
 
     private boolean addAndSync(Room room) {
@@ -116,11 +132,6 @@ public class FirebaseHomeManagerDecorator extends HomeManagerDecorator {
         hashMap.put(Room.NAME, room.getName());
         hashMap.put(Room.COLOR, room.getColor());
         roomIdRef.setValue(hashMap);
-        for(UUID uuid : room.getGadgets())
-        {
-            roomIdRef.child(Room.GADGETS).push().child(Room.ID).setValue(uuid.toString());
-        }
-        Log.d("newRoomSynced", roomIdRef.getKey());
         return true;
     }
 
@@ -131,7 +142,7 @@ public class FirebaseHomeManagerDecorator extends HomeManagerDecorator {
 
     private boolean updateAndSync(Room room) {
         Firebase roomIdRef = firebaseRoot.child("rooms").child(room.getId());
-        room.setName(roomIdRef.getKey());
+        room.setId(roomIdRef.getKey());
         Map<String, Object> hashMap = new HashMap<String, Object>();
         hashMap.put(Room.NAME, room.getName());
         hashMap.put(Room.COLOR, room.getColor());
@@ -141,7 +152,6 @@ public class FirebaseHomeManagerDecorator extends HomeManagerDecorator {
         {
             roomIdRef.child(Room.GADGETS).push().child(Room.ID).setValue(uuid.toString());
         }
-        Log.d("newRoomSynced", roomIdRef.getKey());
         return true;
     }
 
@@ -160,7 +170,7 @@ public class FirebaseHomeManagerDecorator extends HomeManagerDecorator {
         return true;
     }
 
-    private boolean deleteAndSyncAndSync(Gadget gadget) {
+    private boolean deleteAndSync(Gadget gadget) {
         firebaseRoot.child("gadgets").child(gadget.getId().toString()).removeValue();
         return true;
     }

@@ -8,6 +8,7 @@ import com.kms.alexandracentralunit.BLEController;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Delayed;
@@ -70,6 +71,13 @@ public class BaseAction implements SceneComponent, BLEAction, Delayed {
     @Override
     public List<SceneComponent> getComponents() {
         return null;
+    }
+
+    @Override
+    public List<UUID> getGadgetsID() {
+        ArrayList<UUID> ids = new ArrayList<UUID>();
+        ids.add(gadgetID);
+        return ids;
     }
 
     @Override

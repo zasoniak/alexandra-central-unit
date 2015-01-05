@@ -1,6 +1,7 @@
 package com.kms.alexandracentralunit.data.model;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,7 +18,7 @@ public class Room {
     public static final String GADGETS = "gadgets";
     public static final String NAME = "name";
     public static final String COLOR = "color";
-    List<UUID> gadgets;
+    List<UUID> gadgets = new ArrayList<UUID>();
     private String id;
     private String name;
     private int color;
