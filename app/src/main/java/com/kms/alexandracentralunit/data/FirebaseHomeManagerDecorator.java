@@ -5,10 +5,13 @@ import android.util.Log;
 
 import com.firebase.client.Firebase;
 import com.kms.alexandracentralunit.CoreService;
+import com.kms.alexandracentralunit.data.model.BaseAction;
 import com.kms.alexandracentralunit.data.model.Gadget;
 import com.kms.alexandracentralunit.data.model.Room;
 import com.kms.alexandracentralunit.data.model.Scene;
+import com.kms.alexandracentralunit.data.model.SceneComponent;
 import com.kms.alexandracentralunit.data.model.ScheduledScene;
+import com.kms.alexandracentralunit.data.model.Trigger;
 import com.kms.alexandracentralunit.data.model.User;
 
 import java.util.HashMap;
@@ -190,27 +193,135 @@ public class FirebaseHomeManagerDecorator extends HomeManagerDecorator {
     }
 
     private boolean addAndSync(Scene scene) {
-        return homeManager.add(scene);
+        Firebase sceneRoot = firebaseRoot.child("scenes");
+        Firebase sceneRef = sceneRoot.push();
+        scene.setId(sceneRef.getKey());
+        Map<String, Object> hashMap = new HashMap<String, Object>();
+        hashMap.put(Scene.NAME, scene.getName());
+
+        //actions and subscenes
+        HashMap<String, Object> actions = new HashMap<String, Object>();
+        HashMap<String, Object> subscenes = new HashMap<String, Object>();
+        int actionsIndex = 0;
+        int subscenesIndex = 0;
+        for(SceneComponent component : scene.getChildren())
+        {
+            if(component instanceof Scene)
+            {
+                HashMap<String, Object> sceneMap = new HashMap<String, Object>();
+                sceneMap.put(Scene.ID, ((Scene) component).getId());
+                subscenes.put(String.valueOf(subscenesIndex), sceneMap);
+                subscenesIndex++;
+            }
+            else
+            {
+                HashMap<String, Object> actionMap = new HashMap<String, Object>();
+                actionMap.put(BaseAction.ACTION, ((BaseAction) component).getAction());
+                actionMap.put(BaseAction.DELAY, ((BaseAction) component).getDelay());
+                actionMap.put(BaseAction.PARAMETER, ((BaseAction) component).getParameter());
+                actionMap.put(BaseAction.GADGET_ID, ((BaseAction) component).getGadgetID());
+                actions.put(String.valueOf(actionsIndex), actionMap);
+                actionsIndex++;
+            }
+        }
+        hashMap.put(Scene.ACTIONS, actions);
+        hashMap.put(Scene.SUBSCENES, subscenes);
+
+        //triggers
+        HashMap<String, Object> triggersMap = new HashMap<String, Object>();
+        java.util.List<Trigger> triggers = scene.getTriggers();
+        for(int i = 0; i < triggers.size(); i++)
+        {
+            Trigger trigger = triggers.get(i);
+            triggersMap.put(String.valueOf(i), trigger.toHashMap());
+        }
+        hashMap.put(Scene.TRIGGERS, triggersMap);
+
+        sceneRef.setValue(hashMap);
+        return true;
     }
 
     private boolean deleteAndSync(Scene scene) {
-        return homeManager.delete(scene);
+        firebaseRoot.child("scenes").child(scene.getId()).removeValue();
+        return true;
     }
 
-    private boolean updateAndSync(Scene newScene) {
-        return homeManager.update(newScene);
+    private boolean updateAndSync(Scene scene) {
+        Firebase sceneRoot = firebaseRoot.child("scenes");
+        Firebase sceneRef = sceneRoot.child(scene.getId());
+        Map<String, Object> hashMap = new HashMap<String, Object>();
+        hashMap.put(Scene.NAME, scene.getName());
+
+        //actions and subscenes
+        HashMap<String, Object> actions = new HashMap<String, Object>();
+        HashMap<String, Object> subscenes = new HashMap<String, Object>();
+        int actionsIndex = 0;
+        int subscenesIndex = 0;
+        for(SceneComponent component : scene.getChildren())
+        {
+            if(component instanceof Scene)
+            {
+                HashMap<String, Object> sceneMap = new HashMap<String, Object>();
+                sceneMap.put(Scene.ID, ((Scene) component).getId());
+                subscenes.put(String.valueOf(subscenesIndex), sceneMap);
+                subscenesIndex++;
+            }
+            else
+            {
+                HashMap<String, Object> actionMap = new HashMap<String, Object>();
+                actionMap.put(BaseAction.ACTION, ((BaseAction) component).getAction());
+                actionMap.put(BaseAction.DELAY, ((BaseAction) component).getDelay());
+                actionMap.put(BaseAction.PARAMETER, ((BaseAction) component).getParameter());
+                actionMap.put(BaseAction.GADGET_ID, ((BaseAction) component).getGadgetID());
+                actions.put(String.valueOf(actionsIndex), actionMap);
+                actionsIndex++;
+            }
+        }
+        hashMap.put(Scene.ACTIONS, actions);
+        hashMap.put(Scene.SUBSCENES, subscenes);
+
+        //triggers
+        HashMap<String, Object> triggersMap = new HashMap<String, Object>();
+        java.util.List<Trigger> triggers = scene.getTriggers();
+        for(int i = 0; i < triggers.size(); i++)
+        {
+            Trigger trigger = triggers.get(i);
+            triggersMap.put(String.valueOf(i), trigger.toHashMap());
+        }
+        hashMap.put(Scene.TRIGGERS, triggersMap);
+
+        sceneRef.setValue(hashMap);
+        return true;
     }
 
     private boolean addAndSync(ScheduledScene scheduledscene) {
-        return homeManager.add(scheduledscene);
+        Firebase scheduleRoot = firebaseRoot.child("schedule");
+        Firebase scheduleRef = scheduleRoot.push();
+        scheduledscene.setId(scheduleRef.getKey());
+        Map<String, Object> hashMap = new HashMap<String, Object>();
+        hashMap.put(ScheduledScene.SCENE, scheduledscene.getScene());
+        hashMap.put(ScheduledScene.TIME, scheduledscene.getTime());
+        hashMap.put(ScheduledScene.REPEAT_INTERVAL, scheduledscene.getRepeatInterval());
+        hashMap.put(ScheduledScene.CONDITIONS, scheduledscene.getConditions());
+        scheduleRef.setValue(hashMap);
+        return true;
     }
 
     private boolean deleteAndSync(ScheduledScene scheduledscene) {
-        return homeManager.delete(scheduledscene);
+        firebaseRoot.child("schedule").child(scheduledscene.getId()).removeValue();
+        return true;
     }
 
     private boolean updateAndSync(ScheduledScene scheduledscene) {
-        return homeManager.update(scheduledscene);
+        Firebase scheduleRoot = firebaseRoot.child("schedule");
+        Firebase scheduleRef = scheduleRoot.child(scheduledscene.getId());
+        Map<String, Object> hashMap = new HashMap<String, Object>();
+        hashMap.put(ScheduledScene.SCENE, scheduledscene.getScene());
+        hashMap.put(ScheduledScene.TIME, scheduledscene.getTime());
+        hashMap.put(ScheduledScene.REPEAT_INTERVAL, scheduledscene.getRepeatInterval());
+        hashMap.put(ScheduledScene.CONDITIONS, scheduledscene.getConditions());
+        scheduleRef.setValue(hashMap);
+        return true;
     }
 
     private boolean addAndSync(User user) {

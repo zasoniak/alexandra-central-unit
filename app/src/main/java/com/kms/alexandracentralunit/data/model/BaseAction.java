@@ -29,6 +29,7 @@ public class BaseAction implements SceneComponent, BLEAction, Delayed {
     public static final String PARAMETER = "parameter";
     public static final String DELAY = "delay";
     protected UUID gadgetID;
+
     protected String action;
     protected BluetoothGatt gatt;
     protected String parameter;
@@ -37,10 +38,6 @@ public class BaseAction implements SceneComponent, BLEAction, Delayed {
 
     public void setSubmissionTime(long submissionTime) {
         this.submissionTime = submissionTime;
-    }
-
-    public void setDelay(long delay) {
-        this.delay = delay;
     }
 
     @Override
@@ -78,6 +75,22 @@ public class BaseAction implements SceneComponent, BLEAction, Delayed {
         ArrayList<UUID> ids = new ArrayList<UUID>();
         ids.add(gadgetID);
         return ids;
+    }
+
+    public String getAction() {
+        return action;
+    }
+
+    public long getDelay() {
+        return delay;
+    }
+
+    public void setDelay(long delay) {
+        this.delay = delay;
+    }
+
+    public UUID getGadgetID() {
+        return gadgetID;
     }
 
     @Override
