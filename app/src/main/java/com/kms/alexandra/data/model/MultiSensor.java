@@ -25,6 +25,11 @@ public class MultiSensor extends Gadget {
     }
 
     @Override
+    public String[] getSupportedAction() {
+        return new String[0];
+    }
+
+    @Override
     public BaseAction prepare(ActionMessage actionMessage) {
         return null;
     }

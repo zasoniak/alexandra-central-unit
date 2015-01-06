@@ -44,7 +44,7 @@ public class FirebaseSyncService extends SyncService {
     protected void onHandleIntent(Intent intent) {
         Log.d("firebase", "intentservice");
         super.onHandleIntent(intent);
-        final Firebase homeReference = new Firebase("https://sizzling-torch-8921.firebaseio.com/configuration/"+String.valueOf(CoreService.getHomeId())+"/");
+        final Firebase homeReference = new Firebase("https://sizzling-torch-8921.firebaseio.com/configuration/"+home.getId()+"/");
 
         homeReference.child(Home.NAME).addValueEventListener(new ValueEventListener() {
             @Override
@@ -294,6 +294,7 @@ public class FirebaseSyncService extends SyncService {
                              * and passing it to scene builder
                              */
                             List<ActionMessage> actions = new ArrayList<ActionMessage>();
+                            if(dataSnapshot.hasChild(Scene.ACTIONS))
                             for(DataSnapshot actionSnapshot : dataSnapshot.child(Scene.ACTIONS).getChildren())
                             {
                                 String action = actionSnapshot.child(ActionMessage.ACTION).getValue().toString();
@@ -316,6 +317,7 @@ public class FirebaseSyncService extends SyncService {
                              * and passing it to scene builder
                              */
                             List<String> subscenes = new ArrayList<String>();
+                            if(dataSnapshot.hasChild(Scene.SUBSCENES))
                             for(DataSnapshot subsceneSnapshot : dataSnapshot.child(Scene.SUBSCENES).getChildren())
                             {
                                 subscenes.add(subsceneSnapshot.child(Scene.ID).getValue().toString());
@@ -326,7 +328,9 @@ public class FirebaseSyncService extends SyncService {
                              * first step of trigger creation
                              * for next step passing triggers list to scene builder
                              */
+
                             List<Trigger> triggers = new ArrayList<Trigger>();
+                            if(dataSnapshot.hasChild(Scene.TRIGGERS))
                             for(DataSnapshot triggerSnapshot : dataSnapshot.child(Scene.TRIGGERS).getChildren())
                             {
                                 Trigger trigger = new Trigger(id);
@@ -369,7 +373,9 @@ public class FirebaseSyncService extends SyncService {
                              * essential action data encapsulation
                              * and passing it to scene builder
                              */
+
                             List<ActionMessage> actions = new ArrayList<ActionMessage>();
+                            if(dataSnapshot.hasChild(Scene.ACTIONS))
                             for(DataSnapshot actionSnapshot : dataSnapshot.child(Scene.ACTIONS).getChildren())
                             {
                                 String action = actionSnapshot.child(ActionMessage.ACTION).getValue().toString();
@@ -392,6 +398,7 @@ public class FirebaseSyncService extends SyncService {
                              * and passing it to scene builder
                              */
                             List<String> subscenes = new ArrayList<String>();
+                            if(dataSnapshot.hasChild(Scene.SUBSCENES))
                             for(DataSnapshot subsceneSnapshot : dataSnapshot.child(Scene.SUBSCENES).getChildren())
                             {
                                 subscenes.add(subsceneSnapshot.child(Scene.ID).getValue().toString());
@@ -402,6 +409,7 @@ public class FirebaseSyncService extends SyncService {
                              * first step of trigger creation
                              * for next step passing triggers list to scene builder
                              */
+                            if(dataSnapshot.hasChild(Scene.TRIGGERS))
                             for(DataSnapshot triggerSnapshot : dataSnapshot.child(Scene.TRIGGERS).getChildren())
                             {
                                 Trigger trigger = new Trigger(id);
@@ -445,6 +453,7 @@ public class FirebaseSyncService extends SyncService {
                              * and passing it to scene builder
                              */
                             List<ActionMessage> actions = new ArrayList<ActionMessage>();
+                            if(dataSnapshot.hasChild(Scene.ACTIONS))
                             for(DataSnapshot actionSnapshot : dataSnapshot.child(Scene.ACTIONS).getChildren())
                             {
                                 String action = actionSnapshot.child(ActionMessage.ACTION).getValue().toString();
@@ -467,6 +476,7 @@ public class FirebaseSyncService extends SyncService {
                              * and passing it to scene builder
                              */
                             List<String> subscenes = new ArrayList<String>();
+                            if(dataSnapshot.hasChild(Scene.SUBSCENES))
                             for(DataSnapshot subsceneSnapshot : dataSnapshot.child(Scene.SUBSCENES).getChildren())
                             {
                                 subscenes.add(subsceneSnapshot.child(Scene.ID).getValue().toString());
@@ -477,6 +487,7 @@ public class FirebaseSyncService extends SyncService {
                              * first step of trigger creation
                              * for next step passing triggers list to scene builder
                              */
+                            if(dataSnapshot.hasChild(Scene.TRIGGERS))
                             for(DataSnapshot triggerSnapshot : dataSnapshot.child(Scene.TRIGGERS).getChildren())
                             {
                                 Trigger trigger = new Trigger(id);
@@ -516,7 +527,7 @@ public class FirebaseSyncService extends SyncService {
             }
         };
         Timer timerScenes = new Timer();
-        timerScenes.schedule(taskScenes, 5000);
+        timerScenes.schedule(taskScenes, 2000);
 
         TimerTask taskSchedules = new TimerTask() {
             @Override
@@ -626,6 +637,6 @@ public class FirebaseSyncService extends SyncService {
             }
         };
         Timer timerSchedules = new Timer();
-        timerSchedules.schedule(taskSchedules, 8000);
+        timerSchedules.schedule(taskSchedules, 3000);
     }
 }

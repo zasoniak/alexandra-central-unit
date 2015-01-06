@@ -64,7 +64,7 @@ public class JSONUserRepository implements UserRepository {
         SQLiteDatabase sqLiteDatabase = databaseHelper.openDatabase();
 
         String query = "DELETE FROM "+TABLE_NAME+
-                " WHERE "+KEY_USER_ID+" = "+"\'"+user.getId()+"\'"+");";
+                " WHERE "+KEY_USER_ID+" = "+"\'"+user.getId()+"\'"+";";
 
         sqLiteDatabase.execSQL(query);
         databaseHelper.closeDatabase();
