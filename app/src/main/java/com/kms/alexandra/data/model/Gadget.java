@@ -144,7 +144,7 @@ public abstract class Gadget extends Observable {
 
     }
 
-    public abstract String[] getSupportedAction();
+    public abstract String[] getSupportedActions();
 
     public abstract BaseAction prepare(ActionMessage actionMessage);
 

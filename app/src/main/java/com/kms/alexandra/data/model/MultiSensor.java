@@ -25,7 +25,7 @@ public class MultiSensor extends Gadget {
     }
 
     @Override
-    public String[] getSupportedAction() {
+    public String[] getSupportedActions() {
         return new String[0];
     }
 

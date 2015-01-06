@@ -72,7 +72,7 @@ public class MultiSocket extends Gadget implements Switchable {
     }
 
     @Override
-    public String[] getSupportedAction() {
+    public String[] getSupportedActions() {
         return new String[] {"SwitchAll", "SwitchChannelOne", "SwitchChannelTwo",
                              "SwitchChannelThree", "SwitchChannelFour", "SwitchChannelFive",
                              "SwitchChannelSix"};
