@@ -77,7 +77,7 @@ public class JSONSceneRepository implements SceneRepository {
         SQLiteDatabase sqLiteDatabase = databaseHelper.openDatabase();
 
         String query = "DELETE FROM "+TABLE_NAME+
-                " WHERE "+KEY_SCENE_ID+" = "+"\'"+scene.getId()+"\'"+");";
+                " WHERE "+KEY_SCENE_ID+" = "+"\'"+scene.getId()+"\'"+";";
 
         sqLiteDatabase.execSQL(query);
         databaseHelper.closeDatabase();

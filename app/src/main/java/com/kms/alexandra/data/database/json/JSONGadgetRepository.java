@@ -67,7 +67,7 @@ public class JSONGadgetRepository implements GadgetRepository {
         SQLiteDatabase sqLiteDatabase = databaseHelper.openDatabase();
 
         String query = "DELETE FROM "+TABLE_NAME+
-                " WHERE "+KEY_GADGET_ID+" = "+"\'"+gadget.getId()+"\'"+");";
+                " WHERE "+KEY_GADGET_ID+" = "+"\'"+gadget.getId()+"\'"+";";
 
         sqLiteDatabase.execSQL(query);
         databaseHelper.closeDatabase();

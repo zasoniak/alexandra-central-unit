@@ -65,7 +65,7 @@ public class JSONRoomRepository implements RoomRepository {
         SQLiteDatabase sqLiteDatabase = databaseHelper.openDatabase();
 
         String query = "DELETE FROM "+TABLE_NAME+
-                " WHERE "+KEY_ROOM_ID+" = "+"\'"+room.getId()+"\'"+");";
+                " WHERE "+KEY_ROOM_ID+" = "+"\'"+room.getId()+"\'"+";";
 
         sqLiteDatabase.execSQL(query);
         databaseHelper.closeDatabase();

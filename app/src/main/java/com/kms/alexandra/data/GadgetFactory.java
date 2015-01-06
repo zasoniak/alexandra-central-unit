@@ -1,7 +1,6 @@
 package com.kms.alexandra.data;
 
 
-import android.os.AsyncTask;
 import android.util.Log;
 
 import com.firebase.client.DataSnapshot;
@@ -12,7 +11,6 @@ import com.kms.alexandra.data.model.Gadget;
 import com.kms.alexandra.data.model.MultiSocket;
 
 import java.util.UUID;
-import java.util.concurrent.CountDownLatch;
 
 
 /**
@@ -44,59 +42,38 @@ public class GadgetFactory {
         }
     }
 
-    private class GadgetDownloader extends AsyncTask<UUID, Void, Gadget> {
+    public static void downloadAndAdd(final UUID id, final String roomId, final String name, final int icon, final HomeManager homeManager) {
+        final String TAG = "GadgetDownloader";
+        Firebase gadgetsRoot = new Firebase("https://sizzling-torch-8921.firebaseio.com/gadgets/");
 
-        private final String TAG = "GadgetDownloader";
-        Gadget gadget;
-
-        @Override
-        protected Gadget doInBackground(UUID... uuids) {
-            final CountDownLatch latch = new CountDownLatch(1);
-
-            Firebase gadgetsRoot = new Firebase("https://sizzling-torch-8921.firebaseio.com/gadgets/");
-            gadgetsRoot.child(uuids[0].toString()).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    if(dataSnapshot.hasChild(Gadget.ROOM_ID) && dataSnapshot.hasChild(Gadget.NAME) && dataSnapshot.hasChild(Gadget.MAC_ADDRESS) && dataSnapshot.hasChild(Gadget.TYPE))
+        gadgetsRoot.child(id.toString()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChild(Gadget.CHANNELS) && dataSnapshot.hasChild(Gadget.INSTALLED) && dataSnapshot.hasChild(Gadget.MAC_ADDRESS) && dataSnapshot.hasChild(Gadget.TYPE))
+                {
+                    try
                     {
-                        try
-                        {
-                            UUID id = UUID.fromString(dataSnapshot.getKey());
-                            String roomId = dataSnapshot.child(Gadget.ROOM_ID).getValue().toString();
-                            String name = dataSnapshot.child(Gadget.NAME).getValue().toString();
-                            String MAC = dataSnapshot.child(Gadget.MAC_ADDRESS).getValue().toString();
-                            Gadget.GadgetType type = Gadget.GadgetType.valueOf(dataSnapshot.child(Gadget.TYPE).getValue().toString());
-                            int parameter = Integer.parseInt(dataSnapshot.child(Gadget.CHANNELS).getValue().toString());
-                            boolean installed = Boolean.parseBoolean(dataSnapshot.child(Gadget.INSTALLED).getValue().toString());
-                            gadget = create(id, roomId, name, MAC, type, parameter, installed);
-                        }
-                        catch (IllegalArgumentException ex)
-                        {
-                            Log.e(TAG, "Gadget - UUID parse error");
-                        }
+                        String MAC = dataSnapshot.child(Gadget.MAC_ADDRESS).getValue().toString();
+                        Gadget.GadgetType type = Gadget.GadgetType.valueOf(dataSnapshot.child(Gadget.TYPE).getValue().toString());
+                        int parameter = Integer.parseInt(dataSnapshot.child(Gadget.CHANNELS).getValue().toString());
+                        boolean installed = Boolean.parseBoolean(dataSnapshot.child(Gadget.INSTALLED).getValue().toString());
+                        homeManager.add(create(id, roomId, name, MAC, type, parameter, installed));
                     }
-                    else
+                    catch (IllegalArgumentException ex)
                     {
-                        Log.e(TAG, "Gadget - missing data");
+                        Log.e(TAG, "Gadget - UUID parse error");
                     }
-                    latch.countDown();
                 }
-
-                @Override
-                public void onCancelled(FirebaseError firebaseError) {
-
+                else
+                {
+                    Log.e(TAG, "Gadget - missing data");
                 }
-            });
-            try
-            {
-                latch.await();
-                return gadget;
             }
-            catch (InterruptedException e)
-            {
-                e.printStackTrace();
-                return null;
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+
             }
-        }
+        });
     }
 }

@@ -33,6 +33,8 @@ public abstract class Gadget extends Observable {
     public static final String MAC_ADDRESS = "MAC";
     public static final String CHANNELS = "channels";
     public static final String INSTALLED = "installed";
+    public static final String ICON = "icon";
+    public static final String FIRMWARE = "firmware";
 
     protected GadgetType type;
     protected GadgetState state;
@@ -43,6 +45,8 @@ public abstract class Gadget extends Observable {
     protected String MAC;
     protected int channels;
     protected boolean installed;
+    protected int icon;
+    protected int firmware;
 
     public Gadget() {
     }

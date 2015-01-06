@@ -281,6 +281,14 @@ public class FirebaseHomeManagerDecorator extends HomeManagerDecorator {
 
         //triggers
         HashMap<String, Object> triggersMap = new HashMap<String, Object>();
+
+        //        int triggerIndex = 0;
+        //        for(Trigger trigger : scene.getTriggers())
+        //        {
+        //            triggersMap.put(String.valueOf(triggerIndex), trigger.toHashMap());
+        //            triggerIndex++;
+        //        }
+
         java.util.List<Trigger> triggers = scene.getTriggers();
         for(int i = 0; i < triggers.size(); i++)
         {

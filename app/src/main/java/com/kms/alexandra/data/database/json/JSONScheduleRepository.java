@@ -68,7 +68,7 @@ public class JSONScheduleRepository implements ScheduleRepository {
         SQLiteDatabase sqLiteDatabase = databaseHelper.openDatabase();
 
         String query = "DELETE FROM "+TABLE_NAME+
-                " WHERE "+KEY_SCHEDULE_ID+" = "+"\'"+scheduledScene.getId()+"\'"+");";
+                " WHERE "+KEY_SCHEDULE_ID+" = "+"\'"+scheduledScene.getId()+"\'"+";";
 
         sqLiteDatabase.execSQL(query);
         databaseHelper.closeDatabase();

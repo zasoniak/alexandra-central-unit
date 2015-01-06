@@ -50,6 +50,10 @@ public class SceneBuilder {
         }
     }
 
+    public void addTrigger(Trigger trigger) {
+        this.triggers.add(trigger);
+    }
+
     public void addActions(List<ActionMessage> actionMessages) {
         for(ActionMessage actionMessage : actionMessages)
         {
