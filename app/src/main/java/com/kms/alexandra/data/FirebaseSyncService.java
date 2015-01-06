@@ -527,7 +527,7 @@ public class FirebaseSyncService extends SyncService {
             }
         };
         Timer timerScenes = new Timer();
-        timerScenes.schedule(taskScenes, 5000);
+        timerScenes.schedule(taskScenes, 2000);
 
         TimerTask taskSchedules = new TimerTask() {
             @Override
@@ -637,6 +637,6 @@ public class FirebaseSyncService extends SyncService {
             }
         };
         Timer timerSchedules = new Timer();
-        timerSchedules.schedule(taskSchedules, 8000);
+        timerSchedules.schedule(taskSchedules, 3000);
     }
 }

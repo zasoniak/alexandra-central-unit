@@ -72,6 +72,13 @@ public class MultiSocket extends Gadget implements Switchable {
     }
 
     @Override
+    public String[] getSupportedAction() {
+        return new String[] {"SwitchAll", "SwitchChannelOne", "SwitchChannelTwo",
+                             "SwitchChannelThree", "SwitchChannelFour", "SwitchChannelFive",
+                             "SwitchChannelSix"};
+    }
+
+    @Override
     public BaseAction prepare(ActionMessage actionMessage) {
 
         switch(ActionType.valueOf(actionMessage.action))
@@ -140,13 +147,13 @@ public class MultiSocket extends Gadget implements Switchable {
         return channels.get(channel).getPowerConsumption();
     }
 
-    public static enum ActionType {
-        SwitchAll,
-        SwitchChannelOne,
-        SwitchChannelTwo,
-        SwitchChannelThree,
-        SwitchChannelFour,
-        SwitchChannelFive,
-        SwitchChannelSix
-    }
+    //    public static enum ActionType {
+    //        SwitchAll,
+    //        SwitchChannelOne,
+    //        SwitchChannelTwo,
+    //        SwitchChannelThree,
+    //        SwitchChannelFour,
+    //        SwitchChannelFive,
+    //        SwitchChannelSix
+    //    }
 }

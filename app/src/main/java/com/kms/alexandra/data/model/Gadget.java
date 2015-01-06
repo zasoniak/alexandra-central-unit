@@ -144,6 +144,8 @@ public abstract class Gadget extends Observable {
 
     }
 
+    public abstract String[] getSupportedAction();
+
     public abstract BaseAction prepare(ActionMessage actionMessage);
 
     public static enum GadgetType {
@@ -158,6 +160,16 @@ public abstract class Gadget extends Observable {
         OK,
         Offline,
         Error
+    }
+
+    public static enum ActionType {
+        SwitchAll,
+        SwitchChannelOne,
+        SwitchChannelTwo,
+        SwitchChannelThree,
+        SwitchChannelFour,
+        SwitchChannelFive,
+        SwitchChannelSix
     }
 
 }
