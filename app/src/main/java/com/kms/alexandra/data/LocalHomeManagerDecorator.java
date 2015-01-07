@@ -150,9 +150,10 @@ public class LocalHomeManagerDecorator extends HomeManagerDecorator {
         {
             home.getGadgets().add(newGadget);
             FirebaseCurrentStateObserver.getInstance().addGadget(newGadget);
-            if(home.getRoom(newGadget.getRoom()) != null)
+            if(home.getRoom(newGadget.getRoomId()) != null)
             {
-                home.getRoom(newGadget.getRoom()).addGadget(newGadget.getId());
+                home.getRoom(newGadget.getRoomId()).addGadget(newGadget.getId());
+                newGadget.setRoom(home.getRoom(newGadget.getRoomId()));
             }
             return homeRepository.add(newGadget);
         }
@@ -176,9 +177,10 @@ public class LocalHomeManagerDecorator extends HomeManagerDecorator {
                 gadget.setName(newGadget.getName());
                 if(!newGadget.getRoom().equals(gadget.getRoom()))
                 {
-                    home.getRoom(gadget.getRoom()).getGadgets().remove(gadget.getId());
-                    home.getRoom(newGadget.getRoom()).getGadgets().add(newGadget.getId());
-                    gadget.setRoomId(newGadget.getRoom());
+                    home.getRoom(gadget.getRoomId()).getGadgets().remove(gadget.getId());
+                    home.getRoom(newGadget.getRoomId()).getGadgets().add(newGadget.getId());
+                    gadget.setRoomId(newGadget.getRoomId());
+                    gadget.setRoom(home.getRoom(newGadget.getRoomId()));
                 }
                 return homeRepository.update(gadget);
             }

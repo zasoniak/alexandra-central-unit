@@ -21,10 +21,11 @@ import java.util.List;
  */
 public class SceneBuilder {
 
+    public List<ActionMessage> actionsList = new ArrayList<ActionMessage>();
+    public List<String> subscenesList = new ArrayList<String>();
     private String id;
     private String name;
     private Home home;
-
     private List<SceneComponent> children = new ArrayList<SceneComponent>();
     private List<Trigger> triggers = new ArrayList<Trigger>();
 
@@ -59,6 +60,7 @@ public class SceneBuilder {
         {
             if(this.home.getGadget(actionMessage.gadgetID) != null)
             {
+                this.actionsList.add(actionMessage);
                 BaseAction action = this.home.getGadget(actionMessage.gadgetID).prepare(actionMessage);
                 action.setDelay(actionMessage.delay);
                 this.children.add(action);
@@ -71,13 +73,17 @@ public class SceneBuilder {
         {
             if(this.home.getScene(subsceneID) != null)
             {
+                this.subscenesList.add(subsceneID);
                 this.children.add(this.home.getScene(subsceneID));
             }
         }
     }
 
     public Scene getScene() {
-        return new Scene(this.id, this.name, this.triggers, this.children);
+        Scene scene = new Scene(this.id, this.name, this.triggers, this.children);
+        scene.actionsList = actionsList;
+        scene.subscenesList = subscenesList;
+        return scene;
     }
 
 }
