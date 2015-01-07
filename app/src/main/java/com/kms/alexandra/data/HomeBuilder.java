@@ -58,7 +58,17 @@ public class HomeBuilder {
     }
 
     public Home getHome() {
-        return new Home(this.id, this.name, this.gadgets, this.scenes, this.rooms, this.schedule, this.users);
+        Home home = new Home(this.id, this.name, this.gadgets, this.scenes, this.rooms, this.schedule, this.users);
+
+        for(Gadget gadget : home.getGadgets())
+        {
+            if(home.getRoom(gadget.getRoomId()) != null)
+            {
+                gadget.setRoom(home.getRoom(gadget.getRoomId()));
+            }
+        }
+
+        return home;
     }
 
 }

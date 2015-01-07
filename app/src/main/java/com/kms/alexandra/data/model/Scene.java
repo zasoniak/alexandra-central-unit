@@ -34,6 +34,9 @@ public class Scene implements SceneComponent {
     public List<SceneComponent> children;
     public List<Trigger> triggers;
 
+    public List<ActionMessage> actionsList;
+    public List<String> subscenesList;
+
     public Scene(String id, String name) {
         this.id = id;
         this.name = name;
@@ -144,5 +147,13 @@ public class Scene implements SceneComponent {
 
     public String toString() {
         return this.name+": "+this.id;
+    }
+
+    public List<ActionMessage> getActionsList() {
+        return actionsList;
+    }
+
+    public List<String> getSubscenesList() {
+        return subscenesList;
     }
 }
