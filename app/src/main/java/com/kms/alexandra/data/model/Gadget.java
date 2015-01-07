@@ -41,6 +41,7 @@ public abstract class Gadget extends Observable {
     protected BluetoothGatt gatt;
     protected UUID id;
     protected String roomId;
+    protected Room room;
     protected String name;
     protected String MAC;
     protected int channels;
@@ -89,16 +90,24 @@ public abstract class Gadget extends Observable {
         return MAC;
     }
 
-    public String getRoom() {
-        return roomId;
+    public Room getRoom() {
+        return room;
     }
 
-    public GadgetType getType() {
-        return type;
+    public void setRoom(Room room) {
+        this.room = room;
+    }
+
+    public String getRoomId() {
+        return roomId;
     }
 
     public void setRoomId(String roomId) {
         this.roomId = roomId;
+    }
+
+    public GadgetType getType() {
+        return type;
     }
 
     public boolean isInstalled() {

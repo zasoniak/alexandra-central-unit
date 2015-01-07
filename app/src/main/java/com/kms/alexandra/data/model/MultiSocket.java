@@ -146,14 +146,4 @@ public class MultiSocket extends Gadget implements Switchable {
     public double getChannelPowerConsuption(int channel) {
         return channels.get(channel).getPowerConsumption();
     }
-
-    //    public static enum ActionType {
-    //        SwitchAll,
-    //        SwitchChannelOne,
-    //        SwitchChannelTwo,
-    //        SwitchChannelThree,
-    //        SwitchChannelFour,
-    //        SwitchChannelFive,
-    //        SwitchChannelSix
-    //    }
 }
