@@ -74,7 +74,7 @@ public class CoreService extends Service {
         Firebase.setAndroidContext(getApplication());
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        // if(!(sharedPreferences.getBoolean(CONFIGURED, false)))
+        if(!(sharedPreferences.getBoolean(CONFIGURED, false)))
         {
             firstRunSetup();
 
@@ -88,10 +88,10 @@ public class CoreService extends Service {
             }
 
         }
-        //        else
-        //        {
-        //            homeID = sharedPreferences.getString(HOME_ID, "0");
-        //        }
+        else
+        {
+            homeID = sharedPreferences.getString(HOME_ID, "0");
+        }
         loadData();
         initializeConfiguration();
 
