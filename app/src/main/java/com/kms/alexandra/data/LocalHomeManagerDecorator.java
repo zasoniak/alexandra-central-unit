@@ -175,10 +175,10 @@ public class LocalHomeManagerDecorator extends HomeManagerDecorator {
             if(gadget.getId().equals(newGadget.getId()))
             {
                 gadget.setName(newGadget.getName());
-                if(!newGadget.getRoom().equals(gadget.getRoom()))
+                if(!newGadget.getRoomId().equals(gadget.getRoomId()))
                 {
-                    home.getRoom(gadget.getRoomId()).getGadgets().remove(gadget.getId());
-                    home.getRoom(newGadget.getRoomId()).getGadgets().add(newGadget.getId());
+                    //                    home.getRoom(gadget.getRoomId()).getGadgets().remove(gadget.getId());
+                    //               home.getRoom(newGadget.getRoomId()).getGadgets().add(newGadget.getId());
                     gadget.setRoomId(newGadget.getRoomId());
                     gadget.setRoom(home.getRoom(newGadget.getRoomId()));
                 }

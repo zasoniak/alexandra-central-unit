@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class BaseAction implements SceneComponent, BLEAction, Delayed {
 
-    public static final String GADGET_ID = "gadgetId";
+    public static final String GADGET_ID = "gadget";
     public static final String ACTION = "action";
     public static final String PARAMETER = "parameter";
     public static final String DELAY = "delay";
