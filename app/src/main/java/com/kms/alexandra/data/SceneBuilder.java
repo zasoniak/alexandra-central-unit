@@ -29,6 +29,8 @@ public class SceneBuilder {
     private List<SceneComponent> children = new ArrayList<SceneComponent>();
     private List<Trigger> triggers = new ArrayList<Trigger>();
 
+    // TODO: usunąć jak git zadziała
+
     public SceneBuilder(Home home) {
         this.home = home;
 
