@@ -247,6 +247,8 @@ public class JSONGadgetRepository implements GadgetRepository {
         Gadget.GadgetType type;
         boolean installed;
         int channels;
+        int icon;
+        int firmware;
         try
         {
             id = UUID.fromString(object.getString(Gadget.ID));
@@ -256,7 +258,9 @@ public class JSONGadgetRepository implements GadgetRepository {
             type = Gadget.GadgetType.valueOf(object.getString(Gadget.TYPE));
             channels = object.getInt(Gadget.CHANNELS);
             installed = object.getBoolean(Gadget.INSTALLED);
-            return GadgetFactory.create(id, roomId, name, MAC, type, channels, installed);
+            icon = object.getInt(Gadget.ICON);
+            firmware = object.getInt(Gadget.FIRMWARE);
+            return GadgetFactory.create(id, roomId, name, MAC, type, channels, installed, icon, firmware);
 
         }
         catch (JSONException e)
@@ -278,10 +282,12 @@ public class JSONGadgetRepository implements GadgetRepository {
             result.put(Gadget.ID, gadget.getId().toString());
             result.put(Gadget.NAME, gadget.getName());
             result.put(Gadget.MAC_ADDRESS, gadget.getMAC());
-            result.put(Gadget.ROOM_ID, gadget.getRoom());
+            result.put(Gadget.ROOM_ID, gadget.getRoom().getId());
             result.put(Gadget.TYPE, gadget.getType());
             result.put(Gadget.CHANNELS, gadget.getChannels());
             result.put(Gadget.INSTALLED, gadget.isInstalled());
+            result.put(Gadget.ICON, gadget.getIcon());
+            result.put(Gadget.FIRMWARE, gadget.getFirmware());
         }
         catch (JSONException e)
         {

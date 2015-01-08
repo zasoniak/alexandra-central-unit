@@ -34,28 +34,52 @@ public class SceneBuilder {
 
     }
 
-    public void create(String id, String name) {
+    public SceneBuilder create(String id, String name) {
         this.id = id;
         this.name = name;
+        return this;
     }
 
-    public void create(String name) {
+    public SceneBuilder create(String name) {
         this.id = "0";
         this.name = name;
+        return this;
     }
 
-    public void addTriggers(List<Trigger> triggers) {
+    public SceneBuilder addTriggers(List<Trigger> triggers) {
         for(Trigger trigger : triggers)
         {
             this.triggers.add(trigger);
         }
+        return this;
     }
 
-    public void addTrigger(Trigger trigger) {
+    public SceneBuilder addTrigger(Trigger trigger) {
         this.triggers.add(trigger);
+        return this;
     }
 
-    public void addActions(List<ActionMessage> actionMessages) {
+    public SceneBuilder addAction(ActionMessage actionMessage) {
+        if(this.home.getGadget(actionMessage.gadgetID) != null)
+        {
+            this.actionsList.add(actionMessage);
+            BaseAction action = this.home.getGadget(actionMessage.gadgetID).prepare(actionMessage);
+            action.setDelay(actionMessage.delay);
+            this.children.add(action);
+        }
+        return this;
+    }
+
+    public SceneBuilder addSubscene(String subsceneId) {
+        if(this.home.getScene(subsceneId) != null)
+        {
+            this.subscenesList.add(subsceneId);
+            this.children.add(this.home.getScene(subsceneId));
+        }
+        return this;
+    }
+
+    public SceneBuilder addActions(List<ActionMessage> actionMessages) {
         for(ActionMessage actionMessage : actionMessages)
         {
             if(this.home.getGadget(actionMessage.gadgetID) != null)
@@ -66,9 +90,10 @@ public class SceneBuilder {
                 this.children.add(action);
             }
         }
+        return this;
     }
 
-    public void addSubscenes(List<String> subsceneIDs) {
+    public SceneBuilder addSubscenes(List<String> subsceneIDs) {
         for(String subsceneID : subsceneIDs)
         {
             if(this.home.getScene(subsceneID) != null)
@@ -77,6 +102,7 @@ public class SceneBuilder {
                 this.children.add(this.home.getScene(subsceneID));
             }
         }
+        return this;
     }
 
     public Scene getScene() {

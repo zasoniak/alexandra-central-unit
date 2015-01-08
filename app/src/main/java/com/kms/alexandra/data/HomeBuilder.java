@@ -32,29 +32,35 @@ public class HomeBuilder {
     public HomeBuilder() {
     }
 
-    public void create(String id, String name) {
+    public HomeBuilder create(String id, String name) {
         this.id = id;
         this.name = name;
+        return this;
     }
 
-    public void addGadgets(List<Gadget> gadgets) {
+    public HomeBuilder addGadgets(List<Gadget> gadgets) {
         this.gadgets = (ArrayList<Gadget>) gadgets;
+        return this;
     }
 
-    public void addRooms(List<Room> rooms) {
+    public HomeBuilder addRooms(List<Room> rooms) {
         this.rooms = (ArrayList<Room>) rooms;
+        return this;
     }
 
-    public void addScenes(List<Scene> scenes) {
+    public HomeBuilder addScenes(List<Scene> scenes) {
         this.scenes = (ArrayList<Scene>) scenes;
+        return this;
     }
 
-    public void addUsers(List<User> users) {
+    public HomeBuilder addUsers(List<User> users) {
         this.users = (ArrayList<User>) users;
+        return this;
     }
 
-    public void addSchedule(List<ScheduledScene> schedule) {
+    public HomeBuilder addSchedule(List<ScheduledScene> schedule) {
         this.schedule = (ArrayList<ScheduledScene>) schedule;
+        return this;
     }
 
     public Home getHome() {
@@ -62,9 +68,9 @@ public class HomeBuilder {
 
         for(Gadget gadget : home.getGadgets())
         {
-            if(home.getRoom(gadget.getRoomId()) != null)
+            if(home.getRoom(gadget.getTemporaryRoomId()) != null)
             {
-                gadget.setRoom(home.getRoom(gadget.getRoomId()));
+                gadget.setRoom(home.getRoom(gadget.getTemporaryRoomId()));
             }
         }
 
