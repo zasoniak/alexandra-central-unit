@@ -77,6 +77,7 @@ public class CoreService extends Service {
         // if(!(sharedPreferences.getBoolean(CONFIGURED, false)))
         {
             firstRunSetup();
+
             if(connectedToWifi)
             {
                 logEvent("firstRunSetup", "success");
@@ -195,20 +196,20 @@ public class CoreService extends Service {
         /**
          * connecting to WiFi network
          */
-        //connectedToWifi = connectToWifi("Livebox-D69B", "2E62120CE85F61E6C402CE9E72");
-        connectedToWifi = connectToWifi("NexusWiFi", "vanitasvanitatum");
+        connectedToWifi = connectToWifi("Livebox-D69B", "2E62120CE85F61E6C402CE9E72");
+        //  connectedToWifi = connectToWifi("NexusWiFi", "vanitasvanitatum");
 
         if(connectedToWifi)
         {
 
             Map<String, Object> newHome = new HashMap<String, Object>();
             newHome.put("centralUnit", CENTRAL_UNIT);
-            Firebase rootReference = new Firebase("https://sizzling-torch-8921.firebaseio.com/configuration/");
-            Firebase homeIdRef = rootReference.push();
-            homeIdRef.setValue(newHome);
+            //            Firebase rootReference = new Firebase("https://sizzling-torch-8921.firebaseio.com/configuration/");
+            //            Firebase homeIdRef = rootReference.push();
+            //            homeIdRef.setValue(newHome);
             //CoreService.homeID=homeIdRef.getKey();
             CoreService.homeID = "-JcMyexVThw7PEv2Z2PL";
-            Log.d("homeID", homeIdRef.getKey());
+            //            Log.d("homeID", homeIdRef.getKey());
         }
         else
         {

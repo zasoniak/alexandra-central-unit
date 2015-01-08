@@ -9,6 +9,7 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.kms.alexandra.data.model.Gadget;
 import com.kms.alexandra.data.model.MultiSocket;
+import com.kms.alexandra.data.model.Room;
 
 import java.util.UUID;
 
@@ -24,21 +25,39 @@ import java.util.UUID;
 public class GadgetFactory {
 
     //TODO: additional parameter, like number of channels
-    public static Gadget create(UUID id, String roomId, String name, String address, Gadget.GadgetType type, int parameter, boolean installed) {
+    public static Gadget create(UUID id, Room room, String name, String address, Gadget.GadgetType type, int parameter, boolean installed, int icon, int firmware) {
         switch(type)
         {
             case WallSocket:
-                return new MultiSocket(id, roomId, name, address, type, parameter, installed);
+                return new MultiSocket(id, room, name, address, type, parameter, installed, icon, firmware);
             case ExtensionCord:
-                return new MultiSocket(id, roomId, name, address, type, parameter, installed);
+                return new MultiSocket(id, room, name, address, type, parameter, installed, icon, firmware);
             case LightSwitch:
-                return new MultiSocket(id, roomId, name, address, type, parameter, installed);
+                return new MultiSocket(id, room, name, address, type, parameter, installed, icon, firmware);
             case Dimmer:
-                return new MultiSocket(id, roomId, name, address, type, parameter, installed);
+                return new MultiSocket(id, room, name, address, type, parameter, installed, icon, firmware);
             case RGBLight:
-                return new MultiSocket(id, roomId, name, address, type, parameter, installed);
+                return new MultiSocket(id, room, name, address, type, parameter, installed, icon, firmware);
             default:
-                return new MultiSocket(id, roomId, name, address, type, parameter, installed);
+                return new MultiSocket(id, room, name, address, type, parameter, installed, icon, firmware);
+        }
+    }
+
+    public static Gadget create(UUID id, String temporaryRoomID, String name, String address, Gadget.GadgetType type, int parameter, boolean installed, int icon, int firmware) {
+        switch(type)
+        {
+            case WallSocket:
+                return new MultiSocket(id, temporaryRoomID, name, address, type, parameter, installed, icon, firmware);
+            case ExtensionCord:
+                return new MultiSocket(id, temporaryRoomID, name, address, type, parameter, installed, icon, firmware);
+            case LightSwitch:
+                return new MultiSocket(id, temporaryRoomID, name, address, type, parameter, installed, icon, firmware);
+            case Dimmer:
+                return new MultiSocket(id, temporaryRoomID, name, address, type, parameter, installed, icon, firmware);
+            case RGBLight:
+                return new MultiSocket(id, temporaryRoomID, name, address, type, parameter, installed, icon, firmware);
+            default:
+                return new MultiSocket(id, temporaryRoomID, name, address, type, parameter, installed, icon, firmware);
         }
     }
 
@@ -49,7 +68,7 @@ public class GadgetFactory {
         gadgetsRoot.child(id.toString()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChild(Gadget.CHANNELS) && dataSnapshot.hasChild(Gadget.INSTALLED) && dataSnapshot.hasChild(Gadget.MAC_ADDRESS) && dataSnapshot.hasChild(Gadget.TYPE))
+                if((homeManager.home.getRoom(roomId) != null) && dataSnapshot.hasChild(Gadget.CHANNELS) && dataSnapshot.hasChild(Gadget.INSTALLED) && dataSnapshot.hasChild(Gadget.MAC_ADDRESS) && dataSnapshot.hasChild(Gadget.TYPE) && dataSnapshot.hasChild(Gadget.FIRMWARE))
                 {
                     try
                     {
@@ -57,7 +76,9 @@ public class GadgetFactory {
                         Gadget.GadgetType type = Gadget.GadgetType.valueOf(dataSnapshot.child(Gadget.TYPE).getValue().toString());
                         int parameter = Integer.parseInt(dataSnapshot.child(Gadget.CHANNELS).getValue().toString());
                         boolean installed = Boolean.parseBoolean(dataSnapshot.child(Gadget.INSTALLED).getValue().toString());
-                        homeManager.add(create(id, roomId, name, MAC, type, parameter, installed));
+                        int firmware = Integer.parseInt(dataSnapshot.child(Gadget.FIRMWARE).getValue().toString());
+                        Room room = homeManager.home.getRoom(roomId);
+                        homeManager.add(create(id, room, name, MAC, type, parameter, installed, icon, firmware));
                     }
                     catch (IllegalArgumentException ex)
                     {

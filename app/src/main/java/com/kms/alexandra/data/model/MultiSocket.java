@@ -26,8 +26,18 @@ public class MultiSocket extends Gadget implements Switchable {
     protected List<Socket> channels = new ArrayList<Socket>();
     protected boolean on;
 
-    public MultiSocket(UUID id, String roomId, String name, String address, GadgetType type, int socketNumber, boolean installed) {
-        super(id, roomId, name, address, type, socketNumber, installed);
+    public MultiSocket(UUID id, Room room, String name, String address, GadgetType type, int socketNumber, boolean installed, int icon, int firmware) {
+        super(id, room, name, address, type, socketNumber, installed, icon, firmware);
+        this.socketNumber = socketNumber;
+        this.on = false;
+        for(int i = 0; i < socketNumber; i++)
+        {
+            this.channels.add(new Socket());
+        }
+    }
+
+    public MultiSocket(UUID id, String temporaryRoomId, String name, String address, GadgetType type, int socketNumber, boolean installed, int icon, int firmware) {
+        super(id, temporaryRoomId, name, address, type, socketNumber, installed, icon, firmware);
         this.socketNumber = socketNumber;
         this.on = false;
         for(int i = 0; i < socketNumber; i++)

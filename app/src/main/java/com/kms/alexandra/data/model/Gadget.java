@@ -40,8 +40,8 @@ public abstract class Gadget extends Observable {
     protected GadgetState state;
     protected BluetoothGatt gatt;
     protected UUID id;
-    protected String roomId;
     protected Room room;
+    protected String temporaryRoomId;
     protected String name;
     protected String MAC;
     protected int channels;
@@ -52,15 +52,34 @@ public abstract class Gadget extends Observable {
     public Gadget() {
     }
 
-    public Gadget(UUID id, String roomId, String name, String MAC, GadgetType type, int channels, boolean installed) {
+    public Gadget(UUID id, String temporaryRoomId, String name, String MAC, GadgetType type, int channels, boolean installed, int icon, int firmware) {
         this.id = id;
         this.name = name;
         this.MAC = MAC;
-        this.roomId = roomId;
+        this.temporaryRoomId = temporaryRoomId;
         this.type = type;
         this.state = GadgetState.Offline;
         this.channels = channels;
         this.installed = installed;
+        this.icon = icon;
+        this.firmware = firmware;
+    }
+
+    public Gadget(UUID id, Room room, String name, String MAC, GadgetType type, int channels, boolean installed, int icon, int firmware) {
+        this.id = id;
+        this.name = name;
+        this.MAC = MAC;
+        this.room = room;
+        this.type = type;
+        this.state = GadgetState.Offline;
+        this.channels = channels;
+        this.installed = installed;
+        this.icon = icon;
+        this.firmware = firmware;
+    }
+
+    public String getTemporaryRoomId() {
+        return temporaryRoomId;
     }
 
     public int getChannels() {
@@ -98,16 +117,16 @@ public abstract class Gadget extends Observable {
         this.room = room;
     }
 
-    public String getRoomId() {
-        return roomId;
-    }
-
-    public void setRoomId(String roomId) {
-        this.roomId = roomId;
-    }
-
     public GadgetType getType() {
         return type;
+    }
+
+    public int getIcon() {
+        return icon;
+    }
+
+    public int getFirmware() {
+        return firmware;
     }
 
     public boolean isInstalled() {

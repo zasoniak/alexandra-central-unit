@@ -191,18 +191,29 @@ public class FirebaseSyncService extends SyncService {
         homeReference.child(Home.GADGETS).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                if(dataSnapshot.hasChild(Gadget.ROOM_ID) && dataSnapshot.hasChild(Gadget.NAME) && dataSnapshot.hasChild(Gadget.MAC_ADDRESS) && dataSnapshot.hasChild(Gadget.TYPE) && dataSnapshot.hasChild(Gadget.CHANNELS) && dataSnapshot.hasChild(Gadget.INSTALLED))
+                if(dataSnapshot.hasChild(Gadget.ROOM_ID) && dataSnapshot.hasChild(Gadget.NAME) && dataSnapshot.hasChild(Gadget.MAC_ADDRESS) && dataSnapshot.hasChild(Gadget.TYPE) && dataSnapshot.hasChild(Gadget.CHANNELS) && dataSnapshot.hasChild(Gadget.INSTALLED) && dataSnapshot.hasChild(Gadget.ICON) && dataSnapshot.hasChild(Gadget.FIRMWARE))
                 {
                     try
                     {
                         UUID id = UUID.fromString(dataSnapshot.getKey());
                         String roomId = dataSnapshot.child(Gadget.ROOM_ID).getValue().toString();
+                        Room room;
+                        if(homeManager.home.getRoom(roomId) != null)
+                        {
+                            room = homeManager.home.getRoom(roomId);
+                        }
+                        else
+                        {
+                            room = homeManager.home.getRooms().get(0);
+                        }
                         String name = dataSnapshot.child(Gadget.NAME).getValue().toString();
                         String MAC = dataSnapshot.child(Gadget.MAC_ADDRESS).getValue().toString();
                         Gadget.GadgetType type = Gadget.GadgetType.valueOf(dataSnapshot.child(Gadget.TYPE).getValue().toString());
                         int parameter = Integer.parseInt(dataSnapshot.child(Gadget.CHANNELS).getValue().toString());
                         boolean installed = Boolean.parseBoolean(dataSnapshot.child(Gadget.INSTALLED).getValue().toString());
-                        add(GadgetFactory.create(id, roomId, name, MAC, type, parameter, installed));
+                        int icon = Integer.parseInt(dataSnapshot.child(Gadget.ICON).getValue().toString());
+                        int firmware = Integer.parseInt(dataSnapshot.child(Gadget.FIRMWARE).getValue().toString());
+                        add(GadgetFactory.create(id, room, name, MAC, type, parameter, installed, icon, firmware));
                     }
                     catch (IllegalArgumentException ex)
                     {
@@ -217,18 +228,29 @@ public class FirebaseSyncService extends SyncService {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                if(dataSnapshot.hasChild(Gadget.ROOM_ID) && dataSnapshot.hasChild(Gadget.NAME) && dataSnapshot.hasChild(Gadget.MAC_ADDRESS) && dataSnapshot.hasChild(Gadget.TYPE) && dataSnapshot.hasChild(Gadget.CHANNELS) && dataSnapshot.hasChild(Gadget.INSTALLED))
+                if(dataSnapshot.hasChild(Gadget.ROOM_ID) && dataSnapshot.hasChild(Gadget.NAME) && dataSnapshot.hasChild(Gadget.MAC_ADDRESS) && dataSnapshot.hasChild(Gadget.TYPE) && dataSnapshot.hasChild(Gadget.CHANNELS) && dataSnapshot.hasChild(Gadget.INSTALLED) && dataSnapshot.hasChild(Gadget.ICON) && dataSnapshot.hasChild(Gadget.FIRMWARE))
                 {
                     try
                     {
                         UUID id = UUID.fromString(dataSnapshot.getKey());
                         String roomId = dataSnapshot.child(Gadget.ROOM_ID).getValue().toString();
+                        Room room;
+                        if(homeManager.home.getRoom(roomId) != null)
+                        {
+                            room = homeManager.home.getRoom(roomId);
+                        }
+                        else
+                        {
+                            room = homeManager.home.getRooms().get(0);
+                        }
                         String name = dataSnapshot.child(Gadget.NAME).getValue().toString();
                         String MAC = dataSnapshot.child(Gadget.MAC_ADDRESS).getValue().toString();
                         Gadget.GadgetType type = Gadget.GadgetType.valueOf(dataSnapshot.child(Gadget.TYPE).getValue().toString());
                         int parameter = Integer.parseInt(dataSnapshot.child(Gadget.CHANNELS).getValue().toString());
                         boolean installed = Boolean.parseBoolean(dataSnapshot.child(Gadget.INSTALLED).getValue().toString());
-                        update(GadgetFactory.create(id, roomId, name, MAC, type, parameter, installed));
+                        int icon = Integer.parseInt(dataSnapshot.child(Gadget.ICON).getValue().toString());
+                        int firmware = Integer.parseInt(dataSnapshot.child(Gadget.FIRMWARE).getValue().toString());
+                        update(GadgetFactory.create(id, room, name, MAC, type, parameter, installed, icon, firmware));
                     }
                     catch (IllegalArgumentException ex)
                     {
@@ -243,18 +265,29 @@ public class FirebaseSyncService extends SyncService {
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChild(Gadget.ROOM_ID) && dataSnapshot.hasChild(Gadget.NAME) && dataSnapshot.hasChild(Gadget.MAC_ADDRESS) && dataSnapshot.hasChild(Gadget.TYPE) && dataSnapshot.hasChild(Gadget.CHANNELS) && dataSnapshot.hasChild(Gadget.INSTALLED))
+                if(dataSnapshot.hasChild(Gadget.ROOM_ID) && dataSnapshot.hasChild(Gadget.NAME) && dataSnapshot.hasChild(Gadget.MAC_ADDRESS) && dataSnapshot.hasChild(Gadget.TYPE) && dataSnapshot.hasChild(Gadget.CHANNELS) && dataSnapshot.hasChild(Gadget.INSTALLED) && dataSnapshot.hasChild(Gadget.ICON) && dataSnapshot.hasChild(Gadget.FIRMWARE))
                 {
                     try
                     {
                         UUID id = UUID.fromString(dataSnapshot.getKey());
                         String roomId = dataSnapshot.child(Gadget.ROOM_ID).getValue().toString();
+                        Room room;
+                        if(homeManager.home.getRoom(roomId) != null)
+                        {
+                            room = homeManager.home.getRoom(roomId);
+                        }
+                        else
+                        {
+                            room = homeManager.home.getRooms().get(0);
+                        }
                         String name = dataSnapshot.child(Gadget.NAME).getValue().toString();
                         String MAC = dataSnapshot.child(Gadget.MAC_ADDRESS).getValue().toString();
                         Gadget.GadgetType type = Gadget.GadgetType.valueOf(dataSnapshot.child(Gadget.TYPE).getValue().toString());
                         int parameter = Integer.parseInt(dataSnapshot.child(Gadget.CHANNELS).getValue().toString());
                         boolean installed = Boolean.parseBoolean(dataSnapshot.child(Gadget.INSTALLED).getValue().toString());
-                        delete(GadgetFactory.create(id, roomId, name, MAC, type, parameter, installed));
+                        int icon = Integer.parseInt(dataSnapshot.child(Gadget.ICON).getValue().toString());
+                        int firmware = Integer.parseInt(dataSnapshot.child(Gadget.FIRMWARE).getValue().toString());
+                        delete(GadgetFactory.create(id, room, name, MAC, type, parameter, installed, icon, firmware));
                     }
                     catch (IllegalArgumentException ex)
                     {
