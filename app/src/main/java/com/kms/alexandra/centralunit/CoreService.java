@@ -92,6 +92,9 @@ public class CoreService extends Service {
         {
             homeID = sharedPreferences.getString(HOME_ID, "0");
         }
+        GPIO led1 = new GPIO(195);
+        led1.initPin("out");
+        led1.setState(0);
         loadData();
         initializeConfiguration();
 
