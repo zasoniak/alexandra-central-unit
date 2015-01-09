@@ -49,7 +49,7 @@ public class Home {
         ArrayList<Gadget> gadgetArrayList = new ArrayList<Gadget>();
         for(Gadget gadget : this.gadgets)
         {
-            if(gadget.getRoom().equals(roomId))
+            if(gadget.getRoom().getId().equals(roomId))
             {
                 gadgetArrayList.add(gadget);
             }
@@ -68,7 +68,7 @@ public class Home {
             List<UUID> gadgetsID = scene.getGadgetsID();
             for(UUID uuid : gadgetsID)
             {
-                if(this.getGadget(uuid).getRoom().equals(roomId))
+                if(this.getGadget(uuid).getRoom().getId().equals(roomId))
                 {
                     sceneArrayList.add(scene);
                 }
