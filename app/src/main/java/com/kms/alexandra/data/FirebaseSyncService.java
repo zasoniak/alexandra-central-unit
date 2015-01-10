@@ -10,6 +10,7 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.GenericTypeIndicator;
 import com.firebase.client.ValueEventListener;
 import com.kms.alexandra.centralunit.CoreService;
 import com.kms.alexandra.data.model.ActionMessage;
@@ -107,7 +108,7 @@ public class FirebaseSyncService extends SyncService {
                             }
                             catch (IllegalArgumentException ex)
                             {
-                                Log.e(TAG, "Rooms - gadget UUID parse error");
+                                Log.e(TAG, "Rooms - gadget UUID parse error", ex);
                             }
                         }
                     }
@@ -137,7 +138,7 @@ public class FirebaseSyncService extends SyncService {
                             }
                             catch (IllegalArgumentException ex)
                             {
-                                Log.e(TAG, "Rooms - gadget UUID parse error");
+                                Log.e(TAG, "Rooms - gadget UUID parse error", ex);
                             }
                         }
                     }
@@ -167,7 +168,7 @@ public class FirebaseSyncService extends SyncService {
                             }
                             catch (IllegalArgumentException ex)
                             {
-                                Log.e(TAG, "Rooms - gadget UUID parse error");
+                                Log.e(TAG, "Rooms - gadget UUID parse error", ex);
                             }
                         }
                     }
@@ -188,126 +189,109 @@ public class FirebaseSyncService extends SyncService {
             }
         });
 
-        homeReference.child(Home.GADGETS).addChildEventListener(new ChildEventListener() {
+        TimerTask gadgetTask = new TimerTask() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                if(dataSnapshot.hasChild(Gadget.ROOM_ID) && dataSnapshot.hasChild(Gadget.NAME) && dataSnapshot.hasChild(Gadget.MAC_ADDRESS) && dataSnapshot.hasChild(Gadget.TYPE) && dataSnapshot.hasChild(Gadget.CHANNELS) && dataSnapshot.hasChild(Gadget.INSTALLED) && dataSnapshot.hasChild(Gadget.ICON) && dataSnapshot.hasChild(Gadget.FIRMWARE))
-                {
-                    try
-                    {
-                        UUID id = UUID.fromString(dataSnapshot.getKey());
-                        String roomId = dataSnapshot.child(Gadget.ROOM_ID).getValue().toString();
-                        Room room;
-                        if(homeManager.home.getRoom(roomId) != null)
+            public void run() {
+                homeReference.child(Home.GADGETS).addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        if(dataSnapshot.hasChild(Gadget.ROOM_ID) && dataSnapshot.hasChild(Gadget.NAME) && dataSnapshot.hasChild(Gadget.MAC_ADDRESS) && dataSnapshot.hasChild(Gadget.TYPE) && dataSnapshot.hasChild(Gadget.CHANNELS) && dataSnapshot.hasChild(Gadget.INSTALLED) && dataSnapshot.hasChild(Gadget.ICON) && dataSnapshot.hasChild(Gadget.FIRMWARE))
                         {
-                            room = homeManager.home.getRoom(roomId);
+                            try
+                            {
+                                UUID id = UUID.fromString(dataSnapshot.getKey());
+                                String roomId = dataSnapshot.child(Gadget.ROOM_ID).getValue().toString();
+                                Room room = homeManager.home.getRoom(roomId);
+                                String name = dataSnapshot.child(Gadget.NAME).getValue().toString();
+                                String MAC = dataSnapshot.child(Gadget.MAC_ADDRESS).getValue().toString();
+                                Gadget.GadgetType type = Gadget.GadgetType.valueOf(dataSnapshot.child(Gadget.TYPE).getValue().toString());
+                                int parameter = Integer.parseInt(dataSnapshot.child(Gadget.CHANNELS).getValue().toString());
+                                boolean installed = Boolean.parseBoolean(dataSnapshot.child(Gadget.INSTALLED).getValue().toString());
+                                int icon = Integer.parseInt(dataSnapshot.child(Gadget.ICON).getValue().toString());
+                                int firmware = Integer.parseInt(dataSnapshot.child(Gadget.FIRMWARE).getValue().toString());
+                                add(GadgetFactory.create(id, room, name, MAC, type, parameter, installed, icon, firmware));
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.e(TAG, "Gadget - UUID parse error");
+                            }
                         }
                         else
                         {
-                            room = homeManager.home.getRooms().get(0);
+                            Log.e(TAG, "Gadget - missing data");
                         }
-                        String name = dataSnapshot.child(Gadget.NAME).getValue().toString();
-                        String MAC = dataSnapshot.child(Gadget.MAC_ADDRESS).getValue().toString();
-                        Gadget.GadgetType type = Gadget.GadgetType.valueOf(dataSnapshot.child(Gadget.TYPE).getValue().toString());
-                        int parameter = Integer.parseInt(dataSnapshot.child(Gadget.CHANNELS).getValue().toString());
-                        boolean installed = Boolean.parseBoolean(dataSnapshot.child(Gadget.INSTALLED).getValue().toString());
-                        int icon = Integer.parseInt(dataSnapshot.child(Gadget.ICON).getValue().toString());
-                        int firmware = Integer.parseInt(dataSnapshot.child(Gadget.FIRMWARE).getValue().toString());
-                        add(GadgetFactory.create(id, room, name, MAC, type, parameter, installed, icon, firmware));
                     }
-                    catch (IllegalArgumentException ex)
-                    {
-                        Log.e(TAG, "Gadget - UUID parse error");
-                    }
-                }
-                else
-                {
-                    Log.e(TAG, "Gadget - missing data");
-                }
-            }
 
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                if(dataSnapshot.hasChild(Gadget.ROOM_ID) && dataSnapshot.hasChild(Gadget.NAME) && dataSnapshot.hasChild(Gadget.MAC_ADDRESS) && dataSnapshot.hasChild(Gadget.TYPE) && dataSnapshot.hasChild(Gadget.CHANNELS) && dataSnapshot.hasChild(Gadget.INSTALLED) && dataSnapshot.hasChild(Gadget.ICON) && dataSnapshot.hasChild(Gadget.FIRMWARE))
-                {
-                    try
-                    {
-                        UUID id = UUID.fromString(dataSnapshot.getKey());
-                        String roomId = dataSnapshot.child(Gadget.ROOM_ID).getValue().toString();
-                        Room room;
-                        if(homeManager.home.getRoom(roomId) != null)
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                        if(dataSnapshot.hasChild(Gadget.ROOM_ID) && dataSnapshot.hasChild(Gadget.NAME) && dataSnapshot.hasChild(Gadget.MAC_ADDRESS) && dataSnapshot.hasChild(Gadget.TYPE) && dataSnapshot.hasChild(Gadget.CHANNELS) && dataSnapshot.hasChild(Gadget.INSTALLED) && dataSnapshot.hasChild(Gadget.ICON) && dataSnapshot.hasChild(Gadget.FIRMWARE))
                         {
-                            room = homeManager.home.getRoom(roomId);
+                            try
+                            {
+                                UUID id = UUID.fromString(dataSnapshot.getKey());
+                                String roomId = dataSnapshot.child(Gadget.ROOM_ID).getValue().toString();
+                                Room room = homeManager.home.getRoom(roomId);
+                                String name = dataSnapshot.child(Gadget.NAME).getValue().toString();
+                                String MAC = dataSnapshot.child(Gadget.MAC_ADDRESS).getValue().toString();
+                                Gadget.GadgetType type = Gadget.GadgetType.valueOf(dataSnapshot.child(Gadget.TYPE).getValue().toString());
+                                int parameter = Integer.parseInt(dataSnapshot.child(Gadget.CHANNELS).getValue().toString());
+                                boolean installed = Boolean.parseBoolean(dataSnapshot.child(Gadget.INSTALLED).getValue().toString());
+                                int icon = Integer.parseInt(dataSnapshot.child(Gadget.ICON).getValue().toString());
+                                int firmware = Integer.parseInt(dataSnapshot.child(Gadget.FIRMWARE).getValue().toString());
+                                update(GadgetFactory.create(id, room, name, MAC, type, parameter, installed, icon, firmware));
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.e(TAG, "Gadget - UUID parse error", ex);
+                            }
                         }
                         else
                         {
-                            room = homeManager.home.getRooms().get(0);
+                            Log.e(TAG, "Gadget - missing data");
                         }
-                        String name = dataSnapshot.child(Gadget.NAME).getValue().toString();
-                        String MAC = dataSnapshot.child(Gadget.MAC_ADDRESS).getValue().toString();
-                        Gadget.GadgetType type = Gadget.GadgetType.valueOf(dataSnapshot.child(Gadget.TYPE).getValue().toString());
-                        int parameter = Integer.parseInt(dataSnapshot.child(Gadget.CHANNELS).getValue().toString());
-                        boolean installed = Boolean.parseBoolean(dataSnapshot.child(Gadget.INSTALLED).getValue().toString());
-                        int icon = Integer.parseInt(dataSnapshot.child(Gadget.ICON).getValue().toString());
-                        int firmware = Integer.parseInt(dataSnapshot.child(Gadget.FIRMWARE).getValue().toString());
-                        update(GadgetFactory.create(id, room, name, MAC, type, parameter, installed, icon, firmware));
                     }
-                    catch (IllegalArgumentException ex)
-                    {
-                        Log.e(TAG, "Gadget - UUID parse error");
-                    }
-                }
-                else
-                {
-                    Log.e(TAG, "Gadget - missing data");
-                }
-            }
 
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChild(Gadget.ROOM_ID) && dataSnapshot.hasChild(Gadget.NAME) && dataSnapshot.hasChild(Gadget.MAC_ADDRESS) && dataSnapshot.hasChild(Gadget.TYPE) && dataSnapshot.hasChild(Gadget.CHANNELS) && dataSnapshot.hasChild(Gadget.INSTALLED) && dataSnapshot.hasChild(Gadget.ICON) && dataSnapshot.hasChild(Gadget.FIRMWARE))
-                {
-                    try
-                    {
-                        UUID id = UUID.fromString(dataSnapshot.getKey());
-                        String roomId = dataSnapshot.child(Gadget.ROOM_ID).getValue().toString();
-                        Room room;
-                        if(homeManager.home.getRoom(roomId) != null)
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+                        if(dataSnapshot.hasChild(Gadget.ROOM_ID) && dataSnapshot.hasChild(Gadget.NAME) && dataSnapshot.hasChild(Gadget.MAC_ADDRESS) && dataSnapshot.hasChild(Gadget.TYPE) && dataSnapshot.hasChild(Gadget.CHANNELS) && dataSnapshot.hasChild(Gadget.INSTALLED) && dataSnapshot.hasChild(Gadget.ICON) && dataSnapshot.hasChild(Gadget.FIRMWARE))
                         {
-                            room = homeManager.home.getRoom(roomId);
+                            try
+                            {
+                                UUID id = UUID.fromString(dataSnapshot.getKey());
+                                String roomId = dataSnapshot.child(Gadget.ROOM_ID).getValue().toString();
+                                Room room = homeManager.home.getRoom(roomId);
+                                String name = dataSnapshot.child(Gadget.NAME).getValue().toString();
+                                String MAC = dataSnapshot.child(Gadget.MAC_ADDRESS).getValue().toString();
+                                Gadget.GadgetType type = Gadget.GadgetType.valueOf(dataSnapshot.child(Gadget.TYPE).getValue().toString());
+                                int parameter = Integer.parseInt(dataSnapshot.child(Gadget.CHANNELS).getValue().toString());
+                                boolean installed = Boolean.parseBoolean(dataSnapshot.child(Gadget.INSTALLED).getValue().toString());
+                                int icon = Integer.parseInt(dataSnapshot.child(Gadget.ICON).getValue().toString());
+                                int firmware = Integer.parseInt(dataSnapshot.child(Gadget.FIRMWARE).getValue().toString());
+                                delete(GadgetFactory.create(id, room, name, MAC, type, parameter, installed, icon, firmware));
+                            }
+                            catch (Exception ex)
+                            {
+                                Log.e(TAG, "Gadget - UUID parse error", ex);
+                            }
                         }
                         else
                         {
-                            room = homeManager.home.getRooms().get(0);
+                            Log.e(TAG, "Gadget - missing data");
                         }
-                        String name = dataSnapshot.child(Gadget.NAME).getValue().toString();
-                        String MAC = dataSnapshot.child(Gadget.MAC_ADDRESS).getValue().toString();
-                        Gadget.GadgetType type = Gadget.GadgetType.valueOf(dataSnapshot.child(Gadget.TYPE).getValue().toString());
-                        int parameter = Integer.parseInt(dataSnapshot.child(Gadget.CHANNELS).getValue().toString());
-                        boolean installed = Boolean.parseBoolean(dataSnapshot.child(Gadget.INSTALLED).getValue().toString());
-                        int icon = Integer.parseInt(dataSnapshot.child(Gadget.ICON).getValue().toString());
-                        int firmware = Integer.parseInt(dataSnapshot.child(Gadget.FIRMWARE).getValue().toString());
-                        delete(GadgetFactory.create(id, room, name, MAC, type, parameter, installed, icon, firmware));
                     }
-                    catch (IllegalArgumentException ex)
-                    {
-                        Log.e(TAG, "Gadget - UUID parse error");
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
                     }
-                }
-                else
-                {
-                    Log.e(TAG, "Gadget - missing data");
-                }
-            }
 
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+                    @Override
+                    public void onCancelled(FirebaseError firebaseError) {
+                    }
+                });
             }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-            }
-        });
+        };
+        Timer timerGadget = new Timer();
+        timerGadget.schedule(gadgetTask, 1000);
 
         TimerTask taskScenes = new TimerTask() {
             @Override
@@ -340,7 +324,7 @@ public class FirebaseSyncService extends SyncService {
                                 }
                                 catch (IllegalArgumentException ex)
                                 {
-                                    Log.e(TAG, "Scene - action - gadget UUID parse error");
+                                    Log.e(TAG, "Scene - action - gadget UUID parse error", ex);
                                 }
                             }
                             builder.addActions(actions);
@@ -378,7 +362,7 @@ public class FirebaseSyncService extends SyncService {
                                     }
                                     catch (IllegalArgumentException ex)
                                     {
-                                        Log.e(TAG, "scene - trigger - gadget UUID parse error");
+                                        Log.e(TAG, "scene - trigger - gadget UUID parse error", ex);
                                     }
                                 }
                                 triggers.add(trigger);
@@ -421,7 +405,7 @@ public class FirebaseSyncService extends SyncService {
                                 }
                                 catch (IllegalArgumentException ex)
                                 {
-                                    Log.e(TAG, "Scene - action - gadget UUID parse error");
+                                    Log.e(TAG, "Scene - action - gadget UUID parse error", ex);
                                 }
                             }
                             builder.addActions(actions);
@@ -457,7 +441,7 @@ public class FirebaseSyncService extends SyncService {
                                     }
                                     catch (IllegalArgumentException ex)
                                     {
-                                        Log.e(TAG, "scene - trigger - gadget UUID parse error");
+                                        Log.e(TAG, "scene - trigger - gadget UUID parse error", ex);
                                     }
                                 }
                                 triggers.add(trigger);
@@ -499,7 +483,7 @@ public class FirebaseSyncService extends SyncService {
                                 }
                                 catch (IllegalArgumentException ex)
                                 {
-                                    Log.e(TAG, "Scene - action - gadget UUID parse error");
+                                    Log.e(TAG, "Scene - action - gadget UUID parse error", ex);
                                 }
                             }
                             builder.addActions(actions);
@@ -535,7 +519,7 @@ public class FirebaseSyncService extends SyncService {
                                     }
                                     catch (IllegalArgumentException ex)
                                     {
-                                        Log.e(TAG, "scene - trigger - gadget UUID parse error");
+                                        Log.e(TAG, "scene - trigger - gadget UUID parse error", ex);
                                     }
                                 }
                                 triggers.add(trigger);
@@ -568,15 +552,28 @@ public class FirebaseSyncService extends SyncService {
                 homeReference.child(Home.SCHEDULE).addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        if(dataSnapshot.hasChild(ScheduledScene.SCENE) && dataSnapshot.hasChild(ScheduledScene.TIME) && dataSnapshot.hasChild(ScheduledScene.REPEAT_INTERVAL))
+                        if(dataSnapshot.hasChild(ScheduledScene.SCENE) && dataSnapshot.hasChild(ScheduledScene.HOUR) && dataSnapshot.hasChild(ScheduledScene.MINUTES) && dataSnapshot.hasChild(ScheduledScene.DAYS_OF_WEEK))
                         {
                             try
                             {
                                 String id = dataSnapshot.getKey();
                                 String scene = dataSnapshot.child(ScheduledScene.SCENE).getValue().toString();
-                                long time = Long.parseLong(dataSnapshot.child(ScheduledScene.TIME).getValue().toString());
-                                long repeatInterval = Long.parseLong(dataSnapshot.child(ScheduledScene.REPEAT_INTERVAL).getValue().toString());
+                                int hour = Integer.parseInt(dataSnapshot.child(ScheduledScene.HOUR).getValue().toString());
+                                int minutes = Integer.parseInt(dataSnapshot.child(ScheduledScene.MINUTES).getValue().toString());
+
+                                GenericTypeIndicator<List<String>> t = new GenericTypeIndicator<List<String>>() {
+                                };
+                                List<String> daysList = dataSnapshot.child(ScheduledScene.DAYS_OF_WEEK).getValue(t);
+
+                                boolean[] daysOfWeek = new boolean[7];
+                                for(int i = 0; i < daysList.size(); i++)
+                                {
+                                    String s1 = daysList.get(i);
+                                    daysOfWeek[i] = Boolean.parseBoolean(s1);
+
+                                }
                                 HashMap<String, String> conditions = new HashMap<String, String>();
+                                if(dataSnapshot.hasChild(ScheduledScene.CONDITIONS))
                                 for(DataSnapshot snapshot : dataSnapshot.child(ScheduledScene.CONDITIONS).getChildren())
                                 {
                                     if(snapshot.hasChild(ScheduledScene.CONDITION_TYPE) && snapshot.hasChild(ScheduledScene.CONDITION_VALUE))
@@ -584,11 +581,11 @@ public class FirebaseSyncService extends SyncService {
                                         conditions.put(snapshot.child(ScheduledScene.CONDITION_TYPE).getValue().toString(), snapshot.child(ScheduledScene.CONDITION_VALUE).getValue().toString());
                                     }
                                 }
-                                add(new ScheduledScene(id, scene, time, repeatInterval, conditions));
+                                add(new ScheduledScene(id, scene, hour, minutes, daysOfWeek, conditions));
                             }
                             catch (NumberFormatException ex)
                             {
-                                Log.e(TAG, "Schedule - long parse error");
+                                Log.e(TAG, "Schedule - long parse error", ex);
                             }
                         }
                         else
@@ -599,27 +596,40 @@ public class FirebaseSyncService extends SyncService {
 
                     @Override
                     public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                        if(dataSnapshot.hasChild(ScheduledScene.SCENE) && dataSnapshot.hasChild(ScheduledScene.TIME) && dataSnapshot.hasChild(ScheduledScene.REPEAT_INTERVAL))
+                        if(dataSnapshot.hasChild(ScheduledScene.SCENE) && dataSnapshot.hasChild(ScheduledScene.HOUR) && dataSnapshot.hasChild(ScheduledScene.MINUTES) && dataSnapshot.hasChild(ScheduledScene.DAYS_OF_WEEK))
                         {
                             try
                             {
                                 String id = dataSnapshot.getKey();
                                 String scene = dataSnapshot.child(ScheduledScene.SCENE).getValue().toString();
-                                long time = Long.parseLong(dataSnapshot.child(ScheduledScene.TIME).getValue().toString());
-                                long repeatInterval = Long.parseLong(dataSnapshot.child(ScheduledScene.REPEAT_INTERVAL).getValue().toString());
-                                HashMap<String, String> conditions = new HashMap<String, String>();
-                                for(DataSnapshot snapshot : dataSnapshot.child(ScheduledScene.CONDITIONS).getChildren())
+                                int hour = Integer.parseInt(dataSnapshot.child(ScheduledScene.HOUR).getValue().toString());
+                                int minutes = Integer.parseInt(dataSnapshot.child(ScheduledScene.MINUTES).getValue().toString());
+
+                                GenericTypeIndicator<List<String>> t = new GenericTypeIndicator<List<String>>() {
+                                };
+                                List<String> daysList = dataSnapshot.child(ScheduledScene.DAYS_OF_WEEK).getValue(t);
+
+                                boolean[] daysOfWeek = new boolean[7];
+                                for(int i = 0; i < daysList.size(); i++)
                                 {
-                                    if(snapshot.hasChild(ScheduledScene.CONDITION_TYPE) && snapshot.hasChild(ScheduledScene.CONDITION_VALUE))
-                                    {
-                                        conditions.put(snapshot.child(ScheduledScene.CONDITION_TYPE).getValue().toString(), snapshot.child(ScheduledScene.CONDITION_VALUE).getValue().toString());
-                                    }
+                                    String s1 = daysList.get(i);
+                                    daysOfWeek[i] = Boolean.parseBoolean(s1);
+
                                 }
-                                update(new ScheduledScene(id, scene, time, repeatInterval, conditions));
+                                HashMap<String, String> conditions = new HashMap<String, String>();
+                                if(dataSnapshot.hasChild(ScheduledScene.CONDITIONS))
+                                    for(DataSnapshot snapshot : dataSnapshot.child(ScheduledScene.CONDITIONS).getChildren())
+                                    {
+                                        if(snapshot.hasChild(ScheduledScene.CONDITION_TYPE) && snapshot.hasChild(ScheduledScene.CONDITION_VALUE))
+                                        {
+                                            conditions.put(snapshot.child(ScheduledScene.CONDITION_TYPE).getValue().toString(), snapshot.child(ScheduledScene.CONDITION_VALUE).getValue().toString());
+                                        }
+                                    }
+                                update(new ScheduledScene(id, scene, hour, minutes, daysOfWeek, conditions));
                             }
                             catch (NumberFormatException ex)
                             {
-                                Log.e(TAG, "Schedule - long parse error");
+                                Log.e(TAG, "Schedule - long parse error", ex);
                             }
                         }
                         else
@@ -630,27 +640,40 @@ public class FirebaseSyncService extends SyncService {
 
                     @Override
                     public void onChildRemoved(DataSnapshot dataSnapshot) {
-                        if(dataSnapshot.hasChild(ScheduledScene.SCENE) && dataSnapshot.hasChild(ScheduledScene.TIME) && dataSnapshot.hasChild(ScheduledScene.REPEAT_INTERVAL))
+                        if(dataSnapshot.hasChild(ScheduledScene.SCENE) && dataSnapshot.hasChild(ScheduledScene.HOUR) && dataSnapshot.hasChild(ScheduledScene.MINUTES) && dataSnapshot.hasChild(ScheduledScene.DAYS_OF_WEEK))
                         {
                             try
                             {
                                 String id = dataSnapshot.getKey();
                                 String scene = dataSnapshot.child(ScheduledScene.SCENE).getValue().toString();
-                                long time = Long.parseLong(dataSnapshot.child(ScheduledScene.TIME).getValue().toString());
-                                long repeatInterval = Long.parseLong(dataSnapshot.child(ScheduledScene.REPEAT_INTERVAL).getValue().toString());
-                                HashMap<String, String> conditions = new HashMap<String, String>();
-                                for(DataSnapshot snapshot : dataSnapshot.child(ScheduledScene.CONDITIONS).getChildren())
+                                int hour = Integer.parseInt(dataSnapshot.child(ScheduledScene.HOUR).getValue().toString());
+                                int minutes = Integer.parseInt(dataSnapshot.child(ScheduledScene.MINUTES).getValue().toString());
+
+                                GenericTypeIndicator<List<String>> t = new GenericTypeIndicator<List<String>>() {
+                                };
+                                List<String> daysList = dataSnapshot.child(ScheduledScene.DAYS_OF_WEEK).getValue(t);
+
+                                boolean[] daysOfWeek = new boolean[7];
+                                for(int i = 0; i < daysList.size(); i++)
                                 {
-                                    if(snapshot.hasChild(ScheduledScene.CONDITION_TYPE) && snapshot.hasChild(ScheduledScene.CONDITION_VALUE))
-                                    {
-                                        conditions.put(snapshot.child(ScheduledScene.CONDITION_TYPE).getValue().toString(), snapshot.child(ScheduledScene.CONDITION_VALUE).getValue().toString());
-                                    }
+                                    String s1 = daysList.get(i);
+                                    daysOfWeek[i] = Boolean.parseBoolean(s1);
+
                                 }
-                                delete(new ScheduledScene(id, scene, time, repeatInterval, conditions));
+                                HashMap<String, String> conditions = new HashMap<String, String>();
+                                if(dataSnapshot.hasChild(ScheduledScene.CONDITIONS))
+                                    for(DataSnapshot snapshot : dataSnapshot.child(ScheduledScene.CONDITIONS).getChildren())
+                                    {
+                                        if(snapshot.hasChild(ScheduledScene.CONDITION_TYPE) && snapshot.hasChild(ScheduledScene.CONDITION_VALUE))
+                                        {
+                                            conditions.put(snapshot.child(ScheduledScene.CONDITION_TYPE).getValue().toString(), snapshot.child(ScheduledScene.CONDITION_VALUE).getValue().toString());
+                                        }
+                                    }
+                                delete(new ScheduledScene(id, scene, hour, minutes, daysOfWeek, conditions));
                             }
                             catch (NumberFormatException ex)
                             {
-                                Log.e(TAG, "Schedule - long parse error");
+                                Log.e(TAG, "Schedule - long parse error", ex);
                             }
                         }
                         else

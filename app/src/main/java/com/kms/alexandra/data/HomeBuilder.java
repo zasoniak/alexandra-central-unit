@@ -73,7 +73,6 @@ public class HomeBuilder {
                 gadget.setRoom(home.getRoom(gadget.getTemporaryRoomId()));
             }
         }
-
         return home;
     }
 

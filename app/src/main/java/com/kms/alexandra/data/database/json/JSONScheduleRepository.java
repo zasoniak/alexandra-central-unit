@@ -10,6 +10,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kms.alexandra.data.database.ScheduleRepository;
 import com.kms.alexandra.data.model.ScheduledScene;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -127,11 +128,18 @@ public class JSONScheduleRepository implements ScheduleRepository {
         {
             String id = object.getString(ScheduledScene.ID);
             String sceneId = object.getString(ScheduledScene.SCENE);
-            long time = object.getLong(ScheduledScene.TIME);
-            long repeatInterval = object.getLong(ScheduledScene.REPEAT_INTERVAL);
+            int hour = object.getInt(ScheduledScene.HOUR);
+            int minutes = object.getInt(ScheduledScene.MINUTES);
+            boolean[] daysOfWeek = new boolean[7];
+            JSONArray daysArray = object.getJSONArray(ScheduledScene.DAYS_OF_WEEK);
+            for(int i = 0; i < daysArray.length(); i++)
+            {
+                daysOfWeek[i] = (Boolean) daysArray.get(i);
+            }
+
             HashMap<String, String> conditions = new ObjectMapper().readValue(object.getJSONObject(ScheduledScene.CONDITIONS).toString(), new TypeReference<Map<String, String>>() {
             });
-            return new ScheduledScene(id, sceneId, time, repeatInterval, conditions);
+            return new ScheduledScene(id, sceneId, hour, minutes, daysOfWeek, conditions);
         }
         catch (JSONException e)
         {
@@ -150,9 +158,10 @@ public class JSONScheduleRepository implements ScheduleRepository {
         {
             result.put(ScheduledScene.ID, scheduledScene.getId());
             result.put(ScheduledScene.SCENE, scheduledScene.getScene());
-            result.put(ScheduledScene.TIME, scheduledScene.getTime());
-            result.put(ScheduledScene.REPEAT_INTERVAL, scheduledScene.getRepeatInterval());
-
+            result.put(ScheduledScene.HOUR, scheduledScene.getHour());
+            result.put(ScheduledScene.MINUTES, scheduledScene.getMinutes());
+            JSONArray daysArray = new JSONArray(scheduledScene.getDaysOfWeek());
+            result.put(ScheduledScene.DAYS_OF_WEEK, daysArray);
             JSONObject conditions = new JSONObject();
             for(Map.Entry<String, String> entry : scheduledScene.getConditions().entrySet())
             {

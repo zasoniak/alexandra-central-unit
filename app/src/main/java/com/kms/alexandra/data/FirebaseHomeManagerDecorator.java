@@ -307,8 +307,9 @@ public class FirebaseHomeManagerDecorator extends HomeManagerDecorator {
         scheduledscene.setId(scheduleRef.getKey());
         Map<String, Object> hashMap = new HashMap<String, Object>();
         hashMap.put(ScheduledScene.SCENE, scheduledscene.getScene());
-        hashMap.put(ScheduledScene.TIME, scheduledscene.getTime());
-        hashMap.put(ScheduledScene.REPEAT_INTERVAL, scheduledscene.getRepeatInterval());
+        hashMap.put(ScheduledScene.HOUR, scheduledscene.getHour());
+        hashMap.put(ScheduledScene.MINUTES, scheduledscene.getMinutes());
+        hashMap.put(ScheduledScene.DAYS_OF_WEEK, scheduledscene.getDaysOfWeek());
         hashMap.put(ScheduledScene.CONDITIONS, scheduledscene.getConditions());
         scheduleRef.setValue(hashMap);
         return true;
@@ -324,8 +325,9 @@ public class FirebaseHomeManagerDecorator extends HomeManagerDecorator {
         Firebase scheduleRef = scheduleRoot.child(scheduledscene.getId());
         Map<String, Object> hashMap = new HashMap<String, Object>();
         hashMap.put(ScheduledScene.SCENE, scheduledscene.getScene());
-        hashMap.put(ScheduledScene.TIME, scheduledscene.getTime());
-        hashMap.put(ScheduledScene.REPEAT_INTERVAL, scheduledscene.getRepeatInterval());
+        hashMap.put(ScheduledScene.HOUR, scheduledscene.getHour());
+        hashMap.put(ScheduledScene.MINUTES, scheduledscene.getMinutes());
+        hashMap.put(ScheduledScene.DAYS_OF_WEEK, scheduledscene.getDaysOfWeek());
         hashMap.put(ScheduledScene.CONDITIONS, scheduledscene.getConditions());
         scheduleRef.setValue(hashMap);
         return true;

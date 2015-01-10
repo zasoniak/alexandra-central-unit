@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 
 /**
@@ -13,6 +14,14 @@ import java.util.Map;
 public class MultiSensor extends Gadget {
 
     protected List<Sensor> sensors;
+
+    public MultiSensor(UUID id, String temporaryRoomId, String name, String MAC, GadgetType type, int channels, boolean installed, int icon, int firmware) {
+        super(id, temporaryRoomId, name, MAC, type, channels, installed, icon, firmware);
+    }
+
+    public MultiSensor(UUID id, Room room, String name, String MAC, GadgetType type, int channels, boolean installed, int icon, int firmware) {
+        super(id, room, name, MAC, type, channels, installed, icon, firmware);
+    }
 
     @Override
     public JSONObject toJSON() {

@@ -14,36 +14,43 @@ public class ScheduledScene {
 
     public static final String ID = "id";
     public static final String SCENE = "scene";
-    public static final String TIME = "time";
-    public static final String REPEAT_INTERVAL = "repeatInterval";
+    public static final String HOUR = "hour";
+    public static final String MINUTES = "minutes";
+    public static final String DAYS_OF_WEEK = "daysOfWeek";
     public static final String CONDITIONS = "conditions";
     public static final String CONDITION_TYPE = "type";
     public static final String CONDITION_VALUE = "value";
 
     public static final String EXTRA_ID = "com.kms.alexandra.EXTRA_ID";
     public static final String EXTRA_SCENE_ID = "com.kms.alexandra.EXTRA_SCENE_ID";
-    public static final String EXTRA_TIME = "com.kms.alexandra.EXTRA_TIME";
-    public static final String EXTRA_REPEAT_INTERVAL = "com.kms.alexandra.EXTRA_REPEAT_INTERVAL";
+    public static final String EXTRA_MINUTES = "com.kms.alexandra.EXTRA_MINUTES";
+    public static final String EXTRA_HOUR = "com.kms.alexandra.EXTRA_HOUR";
+    public static final String EXTRA_DAYS_OF_WEEK = "com.kms.alexandra.EXTRA_DAYS_OF_WEEK";
     public static final String EXTRA_CONDITIONS = "com.kms.alexandra.EXTRA_CONDITIONS";
 
     public String id;
     public String sceneId;
-    public long time;
-    public long repeatInterval;
+    public int hour;
+    public int minutes;
+    public boolean[] daysOfWeek;
     public HashMap<String, String> conditions = new HashMap<String, String>();
 
-    public ScheduledScene(String id, String sceneId, long time, long repeatInterval, HashMap<String, String> conditions) {
+    public int intentId;
+
+    public ScheduledScene(String id, String sceneId, int hour, int minutes, boolean[] daysOfWeek, HashMap<String, String> conditions) {
         this.id = id;
         this.sceneId = sceneId;
-        this.time = time;
-        this.repeatInterval = repeatInterval;
+        this.hour = hour;
+        this.minutes = minutes;
+        this.daysOfWeek = daysOfWeek;
         this.conditions = conditions;
     }
 
-    public ScheduledScene(String sceneId, long time, long repeatInterval, HashMap<String, String> conditions) {
+    public ScheduledScene(String sceneId, int hour, int minutes, boolean[] daysOfWeek, HashMap<String, String> conditions) {
         this.sceneId = sceneId;
-        this.time = time;
-        this.repeatInterval = repeatInterval;
+        this.hour = hour;
+        this.minutes = minutes;
+        this.daysOfWeek = daysOfWeek;
         this.conditions = conditions;
     }
 
@@ -59,15 +66,27 @@ public class ScheduledScene {
         return this.sceneId;
     }
 
-    public long getTime() {
-        return time;
-    }
-
-    public long getRepeatInterval() {
-        return repeatInterval;
-    }
-
     public HashMap<String, String> getConditions() {
         return conditions;
+    }
+
+    public int getHour() {
+        return hour;
+    }
+
+    public int getMinutes() {
+        return minutes;
+    }
+
+    public boolean[] getDaysOfWeek() {
+        return daysOfWeek;
+    }
+
+    public int getIntentId() {
+        return intentId;
+    }
+
+    public void setIntentId(int intentId) {
+        this.intentId = intentId;
     }
 }

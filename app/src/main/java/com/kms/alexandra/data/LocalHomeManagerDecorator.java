@@ -2,6 +2,7 @@ package com.kms.alexandra.data;
 
 
 import com.kms.alexandra.centralunit.FirebaseCurrentStateObserver;
+import com.kms.alexandra.centralunit.ScheduleManager;
 import com.kms.alexandra.data.model.Gadget;
 import com.kms.alexandra.data.model.Room;
 import com.kms.alexandra.data.model.Scene;
@@ -150,10 +151,10 @@ public class LocalHomeManagerDecorator extends HomeManagerDecorator {
         {
             home.getGadgets().add(newGadget);
             FirebaseCurrentStateObserver.getInstance().addGadget(newGadget);
-            if(home.getRoom(newGadget.getRoom().getId()) != null)
+            if(home.getRoom(newGadget.getTemporaryRoomId()) != null)
             {
-                home.getRoom(newGadget.getRoom().getId()).addGadget(newGadget.getId());
-                newGadget.setRoom(home.getRoom(newGadget.getRoom().getId()));
+                home.getRoom(newGadget.getTemporaryRoomId()).addGadget(newGadget.getId());
+                newGadget.setRoom(home.getRoom(newGadget.getTemporaryRoomId()));
             }
             return homeRepository.add(newGadget);
         }
@@ -207,17 +208,13 @@ public class LocalHomeManagerDecorator extends HomeManagerDecorator {
     }
 
     private boolean updateAndSave(Scene newScene) {
-        for(Scene scene : home.getScenes())
+        Scene scene = home.getScene(newScene.getId());
+        if(scene != null)
         {
-            if(scene.getId().equals(newScene.getId()))
-            {
-                scene.setName(newScene.getName());
-                scene.unregisterTriggers(home);
-                scene.setTriggers(newScene.getTriggers());
-                scene.registerTriggers(home);
-                scene.setChildren(newScene.getChildren());
-                return homeRepository.update(scene);
-            }
+            scene.unregisterTriggers(home);
+            scene = newScene;
+            scene.registerTriggers(home);
+            return homeRepository.update(scene);
         }
         return false;
     }
@@ -226,6 +223,7 @@ public class LocalHomeManagerDecorator extends HomeManagerDecorator {
         if(home.getScheduledScene(scheduledscene.getId()) == null)
         {
             home.getSchedule().add(scheduledscene);
+            ScheduleManager.getInstance().add(scheduledscene);
             return homeRepository.add(scheduledscene);
         }
         else
@@ -237,6 +235,7 @@ public class LocalHomeManagerDecorator extends HomeManagerDecorator {
 
     private boolean deleteAndSave(ScheduledScene scheduledscene) {
         home.getSchedule().remove(scheduledscene);
+        ScheduleManager.getInstance().delete(scheduledscene);
         return homeRepository.delete(scheduledscene);
     }
 
@@ -245,7 +244,9 @@ public class LocalHomeManagerDecorator extends HomeManagerDecorator {
         {
             if(scheduledscene1.getId().equals(scheduledscene.getId()))
             {
+                scheduledscene.setIntentId(scheduledscene1.getIntentId());
                 scheduledscene1 = scheduledscene;
+                ScheduleManager.getInstance().update(scheduledscene);
                 return homeRepository.update(scheduledscene1);
             }
         }

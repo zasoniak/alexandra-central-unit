@@ -2,15 +2,24 @@ package com.kms.alexandra.centralunit;
 
 
 import android.app.Service;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothGattCallback;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothManager;
+import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
+import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.util.SparseArray;
 import android.widget.Toast;
 
 import com.firebase.client.Firebase;
@@ -31,7 +40,7 @@ import java.util.UUID;
  * Created by Mateusz Zasoński on 2014-10-29.
  * CoreService - starting place for other parts of the system
  */
-public class CoreService extends Service {
+public class CoreService extends Service implements BluetoothAdapter.LeScanCallback {
 
     public static final String UPDATE_MESSAGE = "com.kms.alexandra.centralunit.CoreService.UPDATE_MESSAGE";
     public static final String GADGET = "gadgetName";
@@ -40,13 +49,141 @@ public class CoreService extends Service {
     public static final String CONFIGURED = "configured";
     private static final UUID CENTRAL_UNIT = UUID.fromString("f000aa20-0451-4000-b000-000000000000");
     private static final String TAG = "CoreService";
+    private BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
+        private final UUID WIFI_ACCESS_SERVICE = UUID.fromString("f000aa20-0451-4000-b000-000000000000");
+        private final UUID SSID_CHARACTERISTIC = UUID.fromString("f000aa20-0451-4000-b000-000000000000");
+        private final UUID PASSWORD_CHARACTERISTIC = UUID.fromString("f000aa20-0451-4000-b000-000000000000");
 
+        private String ssid;
+        private String password;
+
+        @Override
+        public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
+            Log.d(TAG, "Connection State Change: "+status+" -> "+connectionState(newState));
+            if(status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_CONNECTED)
+            {
+                /*
+                 * Once successfully connected, we must next discover all the services on the
+                 * device before we can read and write their characteristics.
+                 */
+                gatt.discoverServices();
+            }
+            else
+            {
+                if(status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_DISCONNECTED)
+                {
+                /*
+                 * If at any point we disconnect, send a message to clear the weather values
+                 * out of the UI
+                 */
+                }
+                else
+                {
+                    if(status != BluetoothGatt.GATT_SUCCESS)
+                    {
+                /*
+                 * If there is a failure at any stage, simply disconnect
+                 */
+                        gatt.disconnect();
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+            Log.d(TAG, "Services Discovered: "+status);
+            /*
+             * With services discovered, we are going to reset our state machine and start
+             * working through the sensors we need to enable
+             */
+
+            if(gatt.getService(WIFI_ACCESS_SERVICE) != null)
+            {
+                Log.d(TAG, "SSID read");
+                readSSID(gatt);
+            }
+
+        }
+
+        @Override
+        public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+            //For each read, pass the data up to the UI thread to update the display
+            if(SSID_CHARACTERISTIC.equals(characteristic.getUuid()))
+            {
+                if(characteristic.getValue() != null)
+                {
+                    ssid = characteristic.getStringValue(0);
+                    Log.d(TAG, "Password read");
+                    readPassword(gatt);
+                }
+            }
+            if(PASSWORD_CHARACTERISTIC.equals(characteristic.getUuid()))
+            {
+                if(characteristic.getValue() != null)
+                {
+                    password = characteristic.getStringValue(0);
+                    connectToWifi(ssid, password);
+                }
+            }
+        }
+
+        @Override
+        public void onReadRemoteRssi(BluetoothGatt gatt, int rssi, int status) {
+            Log.d(TAG, "Remote RSSI: "+rssi);
+        }
+
+        private void readSSID(BluetoothGatt gatt) {
+            BluetoothGattCharacteristic characteristic;
+            characteristic = gatt.getService(WIFI_ACCESS_SERVICE).getCharacteristic(SSID_CHARACTERISTIC);
+            gatt.readCharacteristic(characteristic);
+
+        }
+
+        private void readPassword(BluetoothGatt gatt) {
+            BluetoothGattCharacteristic characteristic;
+            characteristic = gatt.getService(WIFI_ACCESS_SERVICE).getCharacteristic(PASSWORD_CHARACTERISTIC);
+            gatt.readCharacteristic(characteristic);
+        }
+
+        private String connectionState(int status) {
+            switch(status)
+            {
+                case BluetoothProfile.STATE_CONNECTED:
+                    return "Connected";
+                case BluetoothProfile.STATE_DISCONNECTED:
+                    return "Disconnected";
+                case BluetoothProfile.STATE_CONNECTING:
+                    return "Connecting";
+                case BluetoothProfile.STATE_DISCONNECTING:
+                    return "Disconnecting";
+                default:
+                    return String.valueOf(status);
+            }
+        }
+    };
     private static Context context;
     private static Home home;
     private static String homeID;
     private static HomeRepository homeRepository;
     private LocalBroadcastManager broadcaster;
     private boolean connectedToWifi = false;
+    private BluetoothAdapter bluetoothAdapter;
+    private SparseArray<BluetoothDevice> devices;
+    private BluetoothGatt connectedGatt;
+    private Handler handler;
+    private Runnable mStopRunnable = new Runnable() {
+        @Override
+        public void run() {
+            stopScan();
+        }
+    };
+    private Runnable mStartRunnable = new Runnable() {
+        @Override
+        public void run() {
+            startScan();
+        }
+    };
 
     public CoreService() {
     }
@@ -74,10 +211,12 @@ public class CoreService extends Service {
         Firebase.setAndroidContext(getApplication());
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        if(!(sharedPreferences.getBoolean(CONFIGURED, false)))
+        //if(!(sharedPreferences.getBoolean(CONFIGURED, false)))
+        if(true)
         {
-            firstRunSetup();
-
+            // firstRunSetup();
+            connectedToWifi = connectToWifi("Livebox-D69B", "2E62120CE85F61E6C402CE9E72");
+            // connectedToWifi = connectToWifi("NexusWiFi", "vanitasvanitatum");
             if(connectedToWifi)
             {
                 logEvent("firstRunSetup", "success");
@@ -91,12 +230,10 @@ public class CoreService extends Service {
         else
         {
             homeID = sharedPreferences.getString(HOME_ID, "0");
+            loadData();
+            initializeConfiguration();
+
         }
-        GPIO led1 = new GPIO(195);
-        led1.initPin("out");
-        led1.setState(0);
-        loadData();
-        initializeConfiguration();
 
         super.onCreate();
     }
@@ -119,9 +256,8 @@ public class CoreService extends Service {
                 Log.d("ilosc scen:", String.valueOf(home.getScenes().size()));
                 Log.d("ilosc harmonogramow:", String.valueOf(home.getSchedule().size()));
 
-                //start scheduleManagerService
-                Intent scheduleIntent = new Intent(getBaseContext(), ScheduleManagerService.class);
-                startService(scheduleIntent);
+                //start scheduleManager
+                ScheduleManager scheduleManager = ScheduleManager.getInstance();
                 //start remote control services
                 Intent remoteControlIntent = new Intent(getBaseContext(), FirebaseControlMessageDispatcher.class);
                 startService(remoteControlIntent);
@@ -195,30 +331,25 @@ public class CoreService extends Service {
         /**
          * receiving data from main user
          */
+        connectToBLE();
 
         /**
          * connecting to WiFi network
          */
-        connectedToWifi = connectToWifi("Livebox-D69B", "2E62120CE85F61E6C402CE9E72");
+        // connectedToWifi = connectToWifi("Livebox-D69B", "2E62120CE85F61E6C402CE9E72");
         //  connectedToWifi = connectToWifi("NexusWiFi", "vanitasvanitatum");
 
-        if(connectedToWifi)
-        {
+    }
 
-            Map<String, Object> newHome = new HashMap<String, Object>();
-            newHome.put("centralUnit", CENTRAL_UNIT);
-            //            Firebase rootReference = new Firebase("https://sizzling-torch-8921.firebaseio.com/configuration/");
-            //            Firebase homeIdRef = rootReference.push();
-            //            homeIdRef.setValue(newHome);
-            //CoreService.homeID=homeIdRef.getKey();
-            CoreService.homeID = "-JcMyexVThw7PEv2Z2PL";
-            //            Log.d("homeID", homeIdRef.getKey());
-        }
-        else
-        {
-            //TODO: obsługa ponownego podania hasła przez użytkownika
-            Log.e("firstRunSetup", "cannot connect to wifi network");
-        }
+    private void setupHome() {
+        Map<String, Object> newHome = new HashMap<String, Object>();
+        newHome.put("centralUnit", CENTRAL_UNIT);
+        //            Firebase rootReference = new Firebase("https://sizzling-torch-8921.firebaseio.com/configuration/");
+        //            Firebase homeIdRef = rootReference.push();
+        //            homeIdRef.setValue(newHome);
+        //CoreService.homeID=homeIdRef.getKey();
+        CoreService.homeID = "-JcMyexVThw7PEv2Z2PL";
+        //            Log.d("homeID", homeIdRef.getKey());
 
         /**
          * saving data into SharedPreferences
@@ -231,6 +362,27 @@ public class CoreService extends Service {
         editor.putBoolean(CONFIGURED, true);
         editor.apply();
         Log.d("sharedPref", "zapisano");
+
+        homeID = sharedPref.getString(HOME_ID, "0");
+        loadData();
+        initializeConfiguration();
+
+    }
+
+    private void connectToBLE() {
+        BluetoothManager manager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
+        bluetoothAdapter = manager.getAdapter();
+        devices = new SparseArray<BluetoothDevice>();
+        startScan();
+    }
+
+    private void startScan() {
+        bluetoothAdapter.startLeScan(this);
+        handler.postDelayed(mStopRunnable, 2500);
+    }
+
+    private void stopScan() {
+        bluetoothAdapter.stopLeScan(this);
     }
 
     /**
@@ -297,7 +449,15 @@ public class CoreService extends Service {
         {
             e.printStackTrace();
         }
+
+        setupHome();
         return completed;
     }
 
+    @Override
+    public void onLeScan(BluetoothDevice bluetoothDevice, int i, byte[] bytes) {
+        Log.d(TAG, "discovered device: "+bluetoothDevice.getName());
+        devices.put(bluetoothDevice.hashCode(), bluetoothDevice);
+        bluetoothDevice.connectGatt(this, false, gattCallback);
+    }
 }
