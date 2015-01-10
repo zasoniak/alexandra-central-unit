@@ -1,6 +1,9 @@
 package com.kms.alexandra.data.model;
 
 
+import android.util.ArrayMap;
+
+import java.util.Map;
 import java.util.UUID;
 
 
@@ -36,5 +39,14 @@ public class ActionMessage {
         this.action = action;
         this.parameter = parameter;
         this.delay = delay;
+    }
+
+    public Map<String, String> toMap() {
+        Map<String, String> map = new ArrayMap<String, String>();
+        map.put(GADGET, gadgetID.toString());
+        map.put(ACTION, action);
+        map.put(PARAMETER, parameter);
+        map.put(DELAY, Long.toString(delay));
+        return map;
     }
 }
