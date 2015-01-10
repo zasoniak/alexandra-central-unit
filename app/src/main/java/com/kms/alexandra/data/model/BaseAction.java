@@ -3,8 +3,6 @@ package com.kms.alexandra.data.model;
 
 import android.bluetooth.BluetoothGatt;
 
-import com.kms.alexandra.centralunit.BLEController;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -61,7 +59,7 @@ public class BaseAction implements SceneComponent, BLEAction, Delayed {
     }
 
     @Override
-    public void start(BLEController controller) {
+    public void start(Controller controller) {
         controller.queue(this);
     }
 

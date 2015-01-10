@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothGattCharacteristic;
 import android.util.Log;
 
 import com.kms.alexandra.data.model.BaseAction;
+import com.kms.alexandra.data.model.Controller;
 
 import java.util.concurrent.DelayQueue;
 import java.util.concurrent.TimeUnit;
@@ -16,7 +17,7 @@ import java.util.concurrent.TimeUnit;
  * @author Mateusz Zasoński
  * @version 0.1
  */
-public class BLEController {
+public class BLEController implements Controller {
 
     private static final long MESSAGE_INTERVAL = 50;
     private DelayQueue<BaseAction> actionQueue = new DelayQueue<BaseAction>();
@@ -31,6 +32,7 @@ public class BLEController {
         isRunning = true;
     }
 
+    @Override
     public synchronized void queue(BaseAction action) {
         action.setSubmissionTime(System.currentTimeMillis());
         actionQueue.put(action);

@@ -3,6 +3,7 @@ package com.kms.alexandra.centralunit;
 
 import com.kms.alexandra.data.model.ActionMessage;
 import com.kms.alexandra.data.model.BaseAction;
+import com.kms.alexandra.data.model.Controller;
 import com.kms.alexandra.data.model.Home;
 
 
@@ -20,7 +21,7 @@ public class Control {
     private static Control instance;
 
     private Home home;
-    private BLEController controller;
+    private Controller controller;
 
     /**
      * private singleton constructor

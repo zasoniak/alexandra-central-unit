@@ -1,8 +1,6 @@
 package com.kms.alexandra.data.model;
 
 
-import com.kms.alexandra.centralunit.BLEController;
-
 import java.util.List;
 import java.util.UUID;
 
@@ -15,7 +13,7 @@ import java.util.UUID;
  */
 public interface SceneComponent {
 
-    public void start(BLEController controller);
+    public void start(Controller controller);
     public List<SceneComponent> getComponents();
     public List<UUID> getGadgetsID();
 

@@ -8,9 +8,10 @@ import android.content.Intent;
 
 import com.kms.alexandra.data.model.ScheduledScene;
 
-import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -21,7 +22,7 @@ public class ScheduleManager {
 
     private static ScheduleManager instance;
     private AlarmManager alarmManager;
-    private ArrayList<PendingIntent> alarmIntents = new ArrayList<PendingIntent>();
+    private Map<String, PendingIntent> alarmIntents = new HashMap<String, PendingIntent>();
 
     private ScheduleManager() {
         alarmManager = (AlarmManager) CoreService.getContext().getSystemService(Context.ALARM_SERVICE);
@@ -34,7 +35,7 @@ public class ScheduleManager {
             scheduledScene.setIntentId(id);
             PendingIntent alarmIntent = PendingIntent.getBroadcast(CoreService.getContext(), id, newIntent, 0);
             //remember for the future
-            alarmIntents.add(alarmIntent);
+            alarmIntents.put(scheduledScene.getId(), alarmIntent);
 
             Calendar scheduleTime = Calendar.getInstance();
 
@@ -55,15 +56,15 @@ public class ScheduleManager {
     }
 
     public void update(ScheduledScene scheduledScene) {
-        alarmManager.cancel(alarmIntents.get(scheduledScene.getIntentId()));
 
+        alarmManager.cancel(alarmIntents.get(scheduledScene.getId()));
         Intent newIntent = new Intent(CoreService.getContext(), ScheduleReceiver.class).putExtra(ScheduledScene.EXTRA_ID, scheduledScene.getId()).putExtra(ScheduledScene.EXTRA_SCENE_ID, scheduledScene.getScene()).putExtra(ScheduledScene.EXTRA_HOUR, String.valueOf(scheduledScene.getHour())).putExtra(ScheduledScene.EXTRA_MINUTES, scheduledScene.getMinutes()).putExtra(ScheduledScene.EXTRA_DAYS_OF_WEEK, scheduledScene.getDaysOfWeek()).putExtra(ScheduledScene.EXTRA_CONDITIONS, scheduledScene.getConditions());
 
         final int id = (int) System.currentTimeMillis();
         scheduledScene.setIntentId(id);
         PendingIntent alarmIntent = PendingIntent.getBroadcast(CoreService.getContext(), id, newIntent, 0);
         //remember for the future
-        alarmIntents.add(alarmIntent);
+        alarmIntents.put(scheduledScene.getId(), alarmIntent);
 
         Calendar scheduleTime = Calendar.getInstance();
 
@@ -81,7 +82,7 @@ public class ScheduleManager {
         scheduledScene.setIntentId(id);
         PendingIntent alarmIntent = PendingIntent.getBroadcast(CoreService.getContext(), id, newIntent, 0);
         //remember for the future
-        alarmIntents.add(alarmIntent);
+        alarmIntents.put(scheduledScene.getId(), alarmIntent);
 
         Calendar scheduleTime = Calendar.getInstance();
 
@@ -93,7 +94,7 @@ public class ScheduleManager {
     }
 
     public void delete(ScheduledScene updatedScene) {
-        alarmManager.cancel(alarmIntents.get(updatedScene.getIntentId()));
+        alarmManager.cancel(alarmIntents.get(updatedScene.getId()));
     }
 
 }

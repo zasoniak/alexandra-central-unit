@@ -4,7 +4,6 @@ package com.kms.alexandra.data.model;
 import android.content.Intent;
 import android.util.Log;
 
-import com.kms.alexandra.centralunit.BLEController;
 import com.kms.alexandra.centralunit.CoreService;
 import com.kms.alexandra.centralunit.HistorianBroadcastReceiver;
 
@@ -62,7 +61,7 @@ public class Scene implements SceneComponent {
      * @param controller reference to bluetooth messages queue control
      */
     @Override
-    public void start(BLEController controller) {
+    public void start(Controller controller) {
 
         Log.d("scene", id+" ruszyła, dzieci: "+String.valueOf(children.size()));
         Intent intent = new Intent(CoreService.getContext(), HistorianBroadcastReceiver.class);
