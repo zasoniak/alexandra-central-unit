@@ -13,13 +13,13 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.GenericTypeIndicator;
 import com.firebase.client.ValueEventListener;
 import com.kms.alexandra.centralunit.CoreService;
-import com.kms.alexandra.data.model.Gadget;
 import com.kms.alexandra.data.model.Home;
 import com.kms.alexandra.data.model.Room;
 import com.kms.alexandra.data.model.Scene;
 import com.kms.alexandra.data.model.ScheduledScene;
 import com.kms.alexandra.data.model.Trigger;
 import com.kms.alexandra.data.model.actions.ActionMessage;
+import com.kms.alexandra.data.model.gadgets.Gadget;
 
 import java.util.ArrayList;
 import java.util.HashMap;

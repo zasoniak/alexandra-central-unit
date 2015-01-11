@@ -1,8 +1,10 @@
-package com.kms.alexandra.data.model;
+package com.kms.alexandra.data.model.gadgets;
 
 
 import android.util.Log;
 
+import com.kms.alexandra.data.model.Room;
+import com.kms.alexandra.data.model.Switchable;
 import com.kms.alexandra.data.model.actions.ActionMessage;
 import com.kms.alexandra.data.model.actions.ActionSwitchAll;
 import com.kms.alexandra.data.model.actions.ActionSwitchChannelOne;
@@ -154,10 +156,14 @@ public class MultiSocket extends Gadget implements Switchable {
     }
 
     public boolean getChannelOn(int channel) {
-        return channels.get(channel).isOn();
+        return channel > channelsNumber && channels.get(channel).isOn();
     }
 
     public double getChannelPowerConsuption(int channel) {
-        return channels.get(channel).getPowerConsumption();
+        if(channel < channelsNumber)
+        {
+            return channels.get(channel).getPowerConsumption();
+        }
+        return 0;
     }
 }

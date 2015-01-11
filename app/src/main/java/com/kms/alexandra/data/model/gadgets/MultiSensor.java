@@ -1,6 +1,7 @@
-package com.kms.alexandra.data.model;
+package com.kms.alexandra.data.model.gadgets;
 
 
+import com.kms.alexandra.data.model.Room;
 import com.kms.alexandra.data.model.actions.ActionMessage;
 import com.kms.alexandra.data.model.actions.BaseAction;
 

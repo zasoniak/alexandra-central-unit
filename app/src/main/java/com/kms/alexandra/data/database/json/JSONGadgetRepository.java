@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.kms.alexandra.centralunit.FirebaseCurrentStateObserver;
 import com.kms.alexandra.data.GadgetFactory;
 import com.kms.alexandra.data.database.GadgetRepository;
-import com.kms.alexandra.data.model.Gadget;
+import com.kms.alexandra.data.model.gadgets.Gadget;
 
 import org.json.JSONException;
 import org.json.JSONObject;

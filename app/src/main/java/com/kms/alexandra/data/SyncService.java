@@ -7,12 +7,12 @@ import android.util.Log;
 
 import com.kms.alexandra.centralunit.CoreService;
 import com.kms.alexandra.data.database.HomeRepository;
-import com.kms.alexandra.data.model.Gadget;
 import com.kms.alexandra.data.model.Home;
 import com.kms.alexandra.data.model.Room;
 import com.kms.alexandra.data.model.Scene;
 import com.kms.alexandra.data.model.ScheduledScene;
 import com.kms.alexandra.data.model.User;
+import com.kms.alexandra.data.model.gadgets.Gadget;
 
 
 /**

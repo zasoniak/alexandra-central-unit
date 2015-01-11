@@ -1,12 +1,11 @@
-package com.kms.alexandra.data.model;
+package com.kms.alexandra.data.model.gadgets;
 
 
 import android.util.Log;
 
+import com.kms.alexandra.data.model.Room;
+import com.kms.alexandra.data.model.Switchable;
 import com.kms.alexandra.data.model.actions.ActionMessage;
-import com.kms.alexandra.data.model.actions.ActionSetBrightness;
-import com.kms.alexandra.data.model.actions.ActionSetBrightnessChannelOne;
-import com.kms.alexandra.data.model.actions.ActionSetBrightnessChannelTwo;
 import com.kms.alexandra.data.model.actions.ActionSwitchAll;
 import com.kms.alexandra.data.model.actions.ActionSwitchChannelOne;
 import com.kms.alexandra.data.model.actions.ActionSwitchChannelTwo;
@@ -25,16 +24,30 @@ import java.util.UUID;
 /**
  * @author Mateusz Zasoński
  */
-public class MultiDimmer extends MultiLight {
+public class MultiLight extends Gadget implements Switchable {
 
-    private List<Dimmer> channels = new ArrayList<Dimmer>();
+    protected int channelsNumber;
+    protected boolean on;
+    private List<Light> channels = new ArrayList<Light>();
 
-    public MultiDimmer(UUID id, Room room, String name, String address, GadgetType type, int channelsNumber, boolean installed, int icon, int firmware) {
+    public MultiLight(UUID id, Room room, String name, String address, GadgetType type, int channelsNumber, boolean installed, int icon, int firmware) {
         super(id, room, name, address, type, channelsNumber, installed, icon, firmware);
+        this.channelsNumber = channelsNumber;
+        this.on = false;
+        for(int i = 0; i < channelsNumber; i++)
+        {
+            this.channels.add(new Light());
+        }
     }
 
-    public MultiDimmer(UUID id, String temporaryRoomId, String name, String address, GadgetType type, int socketNumber, boolean installed, int icon, int firmware) {
+    public MultiLight(UUID id, String temporaryRoomId, String name, String address, GadgetType type, int socketNumber, boolean installed, int icon, int firmware) {
         super(id, temporaryRoomId, name, address, type, socketNumber, installed, icon, firmware);
+        this.channelsNumber = socketNumber;
+        this.on = false;
+        for(int i = 0; i < socketNumber; i++)
+        {
+            this.channels.add(new Light());
+        }
     }
 
     @Override
@@ -42,7 +55,7 @@ public class MultiDimmer extends MultiLight {
         JSONObject jsonObject = new JSONObject();
         try
         {
-            jsonObject.put("type", GadgetType.WallSocket.toString());
+            jsonObject.put("type", GadgetType.LightSwitch.toString());
             jsonObject.put("channelsNumber", this.channelsNumber);
             jsonObject.put(Switch.ON, this.isOn());
 
@@ -61,7 +74,7 @@ public class MultiDimmer extends MultiLight {
     @Override
     public Map<String, Object> getCurrentState() {
         Map<String, Object> currentState = new HashMap<String, Object>();
-        currentState.put("type", GadgetType.WallSocket.toString());
+        currentState.put("type", GadgetType.LightSwitch.toString());
         currentState.put("channelsNumber", this.channelsNumber);
         currentState.put("state", this.state);
         currentState.put("on", this.isOn());
@@ -75,8 +88,7 @@ public class MultiDimmer extends MultiLight {
 
     @Override
     public String[] getSupportedActions() {
-        return new String[] {"SwitchAll", "SwitchChannelOne", "SwitchChannelTwo", "SetBrightness",
-                             "SetBrightnessChannelOne", "SetBrightnessChannelTwo"};
+        return new String[] {"SwitchAll", "SwitchChannelOne", "SwitchChannelTwo"};
     }
 
     @Override
@@ -100,38 +112,46 @@ public class MultiDimmer extends MultiLight {
                     return new ActionSwitchChannelTwo(this.id, this.gatt, actionMessage.parameter);
                 }
                 return null;
-            case SetBrightness:
-                Log.d("przygotowano", "SetBrightness");
-                setBrightness(Integer.parseInt(actionMessage.parameter));
-                return new ActionSetBrightness(this.id, this.gatt, actionMessage.parameter);
-            case SetBrightnessChannelOne:
-                Log.d("przygotowano", "SetBrightnessChannelOne");
-                setChannelBrightness(0, Integer.parseInt(actionMessage.parameter));
-                return new ActionSetBrightnessChannelOne(this.id, this.gatt, actionMessage.parameter);
-            case SetBrightnessChannelTwo:
-                if(channelsNumber >= 2)
-                {
-                    Log.d("przygotowano", "SetBrightnessChannelTwo");
-                    setChannelBrightness(1, Integer.parseInt(actionMessage.parameter));
-                    return new ActionSetBrightnessChannelTwo(this.id, this.gatt, actionMessage.parameter);
-                }
-                return null;
             default:
                 return null;
         }
     }
 
-    public void setBrightness(int brightness) {
-        for(Dimmer channel : channels)
+    @Override
+    public boolean isOn() {
+        boolean state = false;
+        for(Light light : channels)
         {
-            channel.setBrightness(brightness);
+            state |= light.isOn();
         }
-        notifyObservers("brightness", String.valueOf(brightness));
+        if(this.on != state)
+        {
+            this.on = state;
+        }
+        return this.on;
     }
 
-    public void setChannelBrightness(int channel, int brightness) {
-        channels.get(channel).setBrightness(brightness);
-        notifyObservers("brightnessChannel"+String.valueOf(channel), String.valueOf(channels.get(channel).isOn()));
+    @Override
+    public void setOn(boolean state) {
+        for(Light light : channels)
+        {
+            light.setOn(state);
+        }
+        notifyObservers("isOn", String.valueOf(isOn()));
+    }
+
+    public int getChannelsNumber() {
+        return this.channelsNumber;
+    }
+
+    public void setChannelOn(int channel, boolean state) {
+        channels.get(channel).setOn(state);
+        isOn();
+        notifyObservers("isOnChannel"+String.valueOf(channel), String.valueOf(channels.get(channel).isOn()));
+    }
+
+    public boolean getChannelOn(int channel) {
+        return channels.get(channel).isOn();
     }
 
 }

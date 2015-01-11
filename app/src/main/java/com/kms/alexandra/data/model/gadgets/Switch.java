@@ -1,5 +1,7 @@
-package com.kms.alexandra.data.model;
+package com.kms.alexandra.data.model.gadgets;
 
+
+import com.kms.alexandra.data.model.Switchable;
 
 import org.json.JSONException;
 import org.json.JSONObject;

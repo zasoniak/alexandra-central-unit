@@ -1,4 +1,4 @@
-package com.kms.alexandra.data.model;
+package com.kms.alexandra.data.model.gadgets;
 
 
 import org.json.JSONException;
@@ -32,4 +32,5 @@ public class Light extends Switch {
         }
         return jsonObject;
     }
+
 }

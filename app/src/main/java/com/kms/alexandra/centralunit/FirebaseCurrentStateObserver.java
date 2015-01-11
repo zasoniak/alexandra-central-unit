@@ -2,8 +2,8 @@ package com.kms.alexandra.centralunit;
 
 
 import com.firebase.client.Firebase;
-import com.kms.alexandra.data.model.Gadget;
 import com.kms.alexandra.data.model.Observer;
+import com.kms.alexandra.data.model.gadgets.Gadget;
 
 import java.util.ArrayList;
 import java.util.List;

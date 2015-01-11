@@ -1,6 +1,8 @@
 package com.kms.alexandra.data.model;
 
 
+import com.kms.alexandra.data.model.gadgets.Gadget;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;

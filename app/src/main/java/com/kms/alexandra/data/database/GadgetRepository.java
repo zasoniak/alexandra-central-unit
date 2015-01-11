@@ -1,7 +1,7 @@
 package com.kms.alexandra.data.database;
 
 
-import com.kms.alexandra.data.model.Gadget;
+import com.kms.alexandra.data.model.gadgets.Gadget;
 
 import java.util.List;
 import java.util.UUID;

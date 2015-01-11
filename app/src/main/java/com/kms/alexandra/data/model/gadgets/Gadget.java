@@ -1,4 +1,4 @@
-package com.kms.alexandra.data.model;
+package com.kms.alexandra.data.model.gadgets;
 
 
 import android.bluetooth.BluetoothGatt;
@@ -6,6 +6,8 @@ import android.content.Intent;
 
 import com.kms.alexandra.centralunit.CoreService;
 import com.kms.alexandra.centralunit.HistorianBroadcastReceiver;
+import com.kms.alexandra.data.model.Observable;
+import com.kms.alexandra.data.model.Room;
 import com.kms.alexandra.data.model.actions.ActionMessage;
 import com.kms.alexandra.data.model.actions.BaseAction;
 

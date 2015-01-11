@@ -7,15 +7,15 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
-import com.kms.alexandra.data.model.Gadget;
-import com.kms.alexandra.data.model.MultiDimmer;
-import com.kms.alexandra.data.model.MultiLight;
-import com.kms.alexandra.data.model.MultiSocket;
-import com.kms.alexandra.data.model.OpenClosedSensor;
-import com.kms.alexandra.data.model.RGBMultiController;
 import com.kms.alexandra.data.model.Room;
-import com.kms.alexandra.data.model.WallSocket;
-import com.kms.alexandra.data.model.WeatherStation;
+import com.kms.alexandra.data.model.gadgets.Gadget;
+import com.kms.alexandra.data.model.gadgets.MultiDimmer;
+import com.kms.alexandra.data.model.gadgets.MultiLight;
+import com.kms.alexandra.data.model.gadgets.MultiSocket;
+import com.kms.alexandra.data.model.gadgets.OpenClosedSensor;
+import com.kms.alexandra.data.model.gadgets.RGBMultiController;
+import com.kms.alexandra.data.model.gadgets.WallSocket;
+import com.kms.alexandra.data.model.gadgets.WeatherStation;
 
 import java.util.UUID;
 
