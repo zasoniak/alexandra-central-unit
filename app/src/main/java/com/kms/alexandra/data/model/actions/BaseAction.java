@@ -1,4 +1,4 @@
-package com.kms.alexandra.data.model.actions2;
+package com.kms.alexandra.data.model.actions;
 
 
 import android.bluetooth.BluetoothGatt;

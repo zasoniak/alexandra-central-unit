@@ -19,7 +19,7 @@ import com.kms.alexandra.data.model.Room;
 import com.kms.alexandra.data.model.Scene;
 import com.kms.alexandra.data.model.ScheduledScene;
 import com.kms.alexandra.data.model.Trigger;
-import com.kms.alexandra.data.model.actions2.ActionMessage;
+import com.kms.alexandra.data.model.actions.ActionMessage;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -3,8 +3,8 @@ package com.kms.alexandra.centralunit;
 
 import com.kms.alexandra.data.model.Controller;
 import com.kms.alexandra.data.model.Home;
-import com.kms.alexandra.data.model.actions2.ActionMessage;
-import com.kms.alexandra.data.model.actions2.BaseAction;
+import com.kms.alexandra.data.model.actions.ActionMessage;
+import com.kms.alexandra.data.model.actions.BaseAction;
 
 
 /**

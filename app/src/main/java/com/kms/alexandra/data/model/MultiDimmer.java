@@ -3,14 +3,14 @@ package com.kms.alexandra.data.model;
 
 import android.util.Log;
 
-import com.kms.alexandra.data.model.actions2.ActionMessage;
-import com.kms.alexandra.data.model.actions2.ActionSetBrightness;
-import com.kms.alexandra.data.model.actions2.ActionSetBrightnessChannelOne;
-import com.kms.alexandra.data.model.actions2.ActionSetBrightnessChannelTwo;
-import com.kms.alexandra.data.model.actions2.ActionSwitchAll;
-import com.kms.alexandra.data.model.actions2.ActionSwitchChannelOne;
-import com.kms.alexandra.data.model.actions2.ActionSwitchChannelTwo;
-import com.kms.alexandra.data.model.actions2.BaseAction;
+import com.kms.alexandra.data.model.actions.ActionMessage;
+import com.kms.alexandra.data.model.actions.ActionSetBrightness;
+import com.kms.alexandra.data.model.actions.ActionSetBrightnessChannelOne;
+import com.kms.alexandra.data.model.actions.ActionSetBrightnessChannelTwo;
+import com.kms.alexandra.data.model.actions.ActionSwitchAll;
+import com.kms.alexandra.data.model.actions.ActionSwitchChannelOne;
+import com.kms.alexandra.data.model.actions.ActionSwitchChannelTwo;
+import com.kms.alexandra.data.model.actions.BaseAction;
 
 import org.json.JSONException;
 import org.json.JSONObject;

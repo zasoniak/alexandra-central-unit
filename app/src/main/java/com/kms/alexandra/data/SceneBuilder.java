@@ -5,8 +5,8 @@ import com.kms.alexandra.data.model.Home;
 import com.kms.alexandra.data.model.Scene;
 import com.kms.alexandra.data.model.SceneComponent;
 import com.kms.alexandra.data.model.Trigger;
-import com.kms.alexandra.data.model.actions2.ActionMessage;
-import com.kms.alexandra.data.model.actions2.BaseAction;
+import com.kms.alexandra.data.model.actions.ActionMessage;
+import com.kms.alexandra.data.model.actions.BaseAction;
 
 import java.util.ArrayList;
 import java.util.List;

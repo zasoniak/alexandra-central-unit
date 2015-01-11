@@ -6,8 +6,8 @@ import android.content.Intent;
 
 import com.kms.alexandra.centralunit.CoreService;
 import com.kms.alexandra.centralunit.HistorianBroadcastReceiver;
-import com.kms.alexandra.data.model.actions2.ActionMessage;
-import com.kms.alexandra.data.model.actions2.BaseAction;
+import com.kms.alexandra.data.model.actions.ActionMessage;
+import com.kms.alexandra.data.model.actions.BaseAction;
 
 import org.json.JSONObject;
 

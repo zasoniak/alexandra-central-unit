@@ -11,7 +11,7 @@ import com.kms.alexandra.data.model.SceneComponent;
 import com.kms.alexandra.data.model.ScheduledScene;
 import com.kms.alexandra.data.model.Trigger;
 import com.kms.alexandra.data.model.User;
-import com.kms.alexandra.data.model.actions2.BaseAction;
+import com.kms.alexandra.data.model.actions.BaseAction;
 
 import java.util.HashMap;
 import java.util.Map;
