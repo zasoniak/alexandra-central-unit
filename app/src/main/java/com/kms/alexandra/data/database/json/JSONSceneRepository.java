@@ -7,12 +7,12 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.kms.alexandra.data.SceneBuilder;
 import com.kms.alexandra.data.database.SceneRepository;
-import com.kms.alexandra.data.model.Actions.ActionMessage;
-import com.kms.alexandra.data.model.Actions.BaseAction;
 import com.kms.alexandra.data.model.Home;
 import com.kms.alexandra.data.model.Scene;
 import com.kms.alexandra.data.model.SceneComponent;
 import com.kms.alexandra.data.model.Trigger;
+import com.kms.alexandra.data.model.actions2.ActionMessage;
+import com.kms.alexandra.data.model.actions2.BaseAction;
 
 import org.json.JSONArray;
 import org.json.JSONException;

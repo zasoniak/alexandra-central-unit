@@ -1,8 +1,8 @@
 package com.kms.alexandra.data.model;
 
 
-import com.kms.alexandra.data.model.Actions.ActionMessage;
-import com.kms.alexandra.data.model.Actions.BaseAction;
+import com.kms.alexandra.data.model.actions2.ActionMessage;
+import com.kms.alexandra.data.model.actions2.BaseAction;
 
 import org.json.JSONObject;
 

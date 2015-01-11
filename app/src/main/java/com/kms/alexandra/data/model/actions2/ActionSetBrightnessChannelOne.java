@@ -1,4 +1,4 @@
-package com.kms.alexandra.data.model.Actions;
+package com.kms.alexandra.data.model.actions2;
 
 
 import android.bluetooth.BluetoothGatt;
@@ -7,17 +7,14 @@ import java.util.UUID;
 
 
 /**
- * action switching channel one
- *
  * @author Mateusz Zasoński
- * @version 0.1
  */
-public class ActionSwitchChannelOne extends BaseAction {
+public class ActionSetBrightnessChannelOne extends BaseAction {
 
     private static final UUID SERVICE = UUID.fromString("f000aa20-0451-4000-b000-111111111111");
     private static final UUID CHARACTERISTIC = UUID.fromString("f000aa20-0451-4000-b000-000000000000");
 
-    public ActionSwitchChannelOne(UUID gadgetID, BluetoothGatt gatt, String parameter) {
+    public ActionSetBrightnessChannelOne(UUID gadgetID, BluetoothGatt gatt, String parameter) {
         this.gadgetID = gadgetID;
         this.gatt = gatt;
         this.action = "SwitchChannelOne";

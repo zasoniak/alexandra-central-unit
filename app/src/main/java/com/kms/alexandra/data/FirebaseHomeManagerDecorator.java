@@ -4,7 +4,6 @@ package com.kms.alexandra.data;
 import android.util.Log;
 
 import com.firebase.client.Firebase;
-import com.kms.alexandra.data.model.Actions.BaseAction;
 import com.kms.alexandra.data.model.Gadget;
 import com.kms.alexandra.data.model.Room;
 import com.kms.alexandra.data.model.Scene;
@@ -12,6 +11,7 @@ import com.kms.alexandra.data.model.SceneComponent;
 import com.kms.alexandra.data.model.ScheduledScene;
 import com.kms.alexandra.data.model.Trigger;
 import com.kms.alexandra.data.model.User;
+import com.kms.alexandra.data.model.actions2.BaseAction;
 
 import java.util.HashMap;
 import java.util.Map;

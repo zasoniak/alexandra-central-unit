@@ -1,12 +1,12 @@
 package com.kms.alexandra.data;
 
 
-import com.kms.alexandra.data.model.Actions.ActionMessage;
-import com.kms.alexandra.data.model.Actions.BaseAction;
 import com.kms.alexandra.data.model.Home;
 import com.kms.alexandra.data.model.Scene;
 import com.kms.alexandra.data.model.SceneComponent;
 import com.kms.alexandra.data.model.Trigger;
+import com.kms.alexandra.data.model.actions2.ActionMessage;
+import com.kms.alexandra.data.model.actions2.BaseAction;
 
 import java.util.ArrayList;
 import java.util.List;

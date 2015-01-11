@@ -1,10 +1,10 @@
 package com.kms.alexandra.centralunit;
 
 
-import com.kms.alexandra.data.model.Actions.ActionMessage;
-import com.kms.alexandra.data.model.Actions.BaseAction;
 import com.kms.alexandra.data.model.Controller;
 import com.kms.alexandra.data.model.Home;
+import com.kms.alexandra.data.model.actions2.ActionMessage;
+import com.kms.alexandra.data.model.actions2.BaseAction;
 
 
 /**
