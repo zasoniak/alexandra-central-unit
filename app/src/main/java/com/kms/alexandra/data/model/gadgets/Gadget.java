@@ -142,7 +142,7 @@ public abstract class Gadget extends Observable {
     }
 
     public String toString() {
-        return this.name+": "+this.id.toString();
+        return this.name+", "+this.room.getName();
     }
 
     public void setup() {

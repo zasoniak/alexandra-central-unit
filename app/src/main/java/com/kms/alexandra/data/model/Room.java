@@ -36,6 +36,11 @@ public class Room {
         this.color = color;
     }
 
+    public Room(String name, int color) {
+        this.name = name;
+        this.color = color;
+    }
+
     public String getId() {
         return id;
     }
@@ -73,6 +78,6 @@ public class Room {
     }
 
     public String toString() {
-        return this.name+": "+this.id;
+        return this.name;
     }
 }

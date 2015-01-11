@@ -146,7 +146,7 @@ public class Scene implements SceneComponent {
     }
 
     public String toString() {
-        return this.name+": "+this.id;
+        return this.name;
     }
 
     public List<ActionMessage> getActionsList() {
