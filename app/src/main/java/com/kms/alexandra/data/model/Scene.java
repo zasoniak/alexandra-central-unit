@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.kms.alexandra.centralunit.CoreService;
 import com.kms.alexandra.centralunit.HistorianBroadcastReceiver;
+import com.kms.alexandra.data.model.Actions.ActionMessage;
 
 import java.util.ArrayList;
 import java.util.Calendar;

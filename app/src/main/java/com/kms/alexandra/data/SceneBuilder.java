@@ -1,8 +1,8 @@
 package com.kms.alexandra.data;
 
 
-import com.kms.alexandra.data.model.ActionMessage;
-import com.kms.alexandra.data.model.BaseAction;
+import com.kms.alexandra.data.model.Actions.ActionMessage;
+import com.kms.alexandra.data.model.Actions.BaseAction;
 import com.kms.alexandra.data.model.Home;
 import com.kms.alexandra.data.model.Scene;
 import com.kms.alexandra.data.model.SceneComponent;

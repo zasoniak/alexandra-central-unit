@@ -22,7 +22,12 @@ import java.util.ArrayList;
 
 
 /**
- * Created by Mateusz Zasoński on 2014-11-11.
+ * Main repository for home object
+ * <p/>
+ * Contains references and uses repositories for objects contained by home
+ *
+ * @author Mateusz Zasoński
+ * @version 0.1
  */
 public class JSONHomeRepository implements HomeRepository {
 

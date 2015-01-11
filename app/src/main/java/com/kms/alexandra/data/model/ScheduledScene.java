@@ -35,8 +35,6 @@ public class ScheduledScene {
     public boolean[] daysOfWeek;
     public HashMap<String, String> conditions = new HashMap<String, String>();
 
-    public int intentId;
-
     public ScheduledScene(String id, String sceneId, int hour, int minutes, boolean[] daysOfWeek, HashMap<String, String> conditions) {
         this.id = id;
         this.sceneId = sceneId;
@@ -82,11 +80,4 @@ public class ScheduledScene {
         return daysOfWeek;
     }
 
-    public int getIntentId() {
-        return intentId;
-    }
-
-    public void setIntentId(int intentId) {
-        this.intentId = intentId;
-    }
 }

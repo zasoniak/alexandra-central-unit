@@ -8,8 +8,14 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.kms.alexandra.data.model.Gadget;
+import com.kms.alexandra.data.model.MultiDimmer;
+import com.kms.alexandra.data.model.MultiLight;
 import com.kms.alexandra.data.model.MultiSocket;
+import com.kms.alexandra.data.model.OpenClosedSensor;
+import com.kms.alexandra.data.model.RGBMultiController;
 import com.kms.alexandra.data.model.Room;
+import com.kms.alexandra.data.model.WallSocket;
+import com.kms.alexandra.data.model.WeatherStation;
 
 import java.util.UUID;
 
@@ -29,15 +35,19 @@ public class GadgetFactory {
         switch(type)
         {
             case WallSocket:
-                return new MultiSocket(id, room, name, address, type, parameter, installed, icon, firmware);
+                return new WallSocket(id, room, name, address, type, parameter, installed, icon, firmware);
             case ExtensionCord:
                 return new MultiSocket(id, room, name, address, type, parameter, installed, icon, firmware);
             case LightSwitch:
-                return new MultiSocket(id, room, name, address, type, parameter, installed, icon, firmware);
+                return new MultiLight(id, room, name, address, type, parameter, installed, icon, firmware);
             case Dimmer:
-                return new MultiSocket(id, room, name, address, type, parameter, installed, icon, firmware);
-            case RGBLight:
-                return new MultiSocket(id, room, name, address, type, parameter, installed, icon, firmware);
+                return new MultiDimmer(id, room, name, address, type, parameter, installed, icon, firmware);
+            case RGBController:
+                return new RGBMultiController(id, room, name, address, type, parameter, installed, icon, firmware);
+            case OpenClosedSensor:
+                return new OpenClosedSensor(id, room, name, address, type, parameter, installed, icon, firmware);
+            case WeatherStation:
+                return new WeatherStation(id, room, name, address, type, parameter, installed, icon, firmware);
             default:
                 return new MultiSocket(id, room, name, address, type, parameter, installed, icon, firmware);
         }
@@ -47,15 +57,19 @@ public class GadgetFactory {
         switch(type)
         {
             case WallSocket:
-                return new MultiSocket(id, temporaryRoomID, name, address, type, parameter, installed, icon, firmware);
+                return new WallSocket(id, temporaryRoomID, name, address, type, parameter, installed, icon, firmware);
             case ExtensionCord:
                 return new MultiSocket(id, temporaryRoomID, name, address, type, parameter, installed, icon, firmware);
             case LightSwitch:
-                return new MultiSocket(id, temporaryRoomID, name, address, type, parameter, installed, icon, firmware);
+                return new MultiLight(id, temporaryRoomID, name, address, type, parameter, installed, icon, firmware);
             case Dimmer:
-                return new MultiSocket(id, temporaryRoomID, name, address, type, parameter, installed, icon, firmware);
-            case RGBLight:
-                return new MultiSocket(id, temporaryRoomID, name, address, type, parameter, installed, icon, firmware);
+                return new MultiDimmer(id, temporaryRoomID, name, address, type, parameter, installed, icon, firmware);
+            case RGBController:
+                return new RGBMultiController(id, temporaryRoomID, name, address, type, parameter, installed, icon, firmware);
+            case OpenClosedSensor:
+                return new OpenClosedSensor(id, temporaryRoomID, name, address, type, parameter, installed, icon, firmware);
+            case WeatherStation:
+                return new WeatherStation(id, temporaryRoomID, name, address, type, parameter, installed, icon, firmware);
             default:
                 return new MultiSocket(id, temporaryRoomID, name, address, type, parameter, installed, icon, firmware);
         }

@@ -3,6 +3,12 @@ package com.kms.alexandra.data.model;
 
 import android.util.Log;
 
+import com.kms.alexandra.data.model.Actions.ActionMessage;
+import com.kms.alexandra.data.model.Actions.ActionSwitchAll;
+import com.kms.alexandra.data.model.Actions.ActionSwitchChannelOne;
+import com.kms.alexandra.data.model.Actions.ActionSwitchChannelTwo;
+import com.kms.alexandra.data.model.Actions.BaseAction;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -22,25 +28,25 @@ import java.util.UUID;
  */
 public class MultiSocket extends Gadget implements Switchable {
 
-    protected int socketNumber;
+    protected int channelsNumber;
     protected List<Socket> channels = new ArrayList<Socket>();
     protected boolean on;
 
-    public MultiSocket(UUID id, Room room, String name, String address, GadgetType type, int socketNumber, boolean installed, int icon, int firmware) {
-        super(id, room, name, address, type, socketNumber, installed, icon, firmware);
-        this.socketNumber = socketNumber;
+    public MultiSocket(UUID id, Room room, String name, String address, GadgetType type, int channelsNumber, boolean installed, int icon, int firmware) {
+        super(id, room, name, address, type, channelsNumber, installed, icon, firmware);
+        this.channelsNumber = channelsNumber;
         this.on = false;
-        for(int i = 0; i < socketNumber; i++)
+        for(int i = 0; i < channelsNumber; i++)
         {
             this.channels.add(new Socket());
         }
     }
 
-    public MultiSocket(UUID id, String temporaryRoomId, String name, String address, GadgetType type, int socketNumber, boolean installed, int icon, int firmware) {
-        super(id, temporaryRoomId, name, address, type, socketNumber, installed, icon, firmware);
-        this.socketNumber = socketNumber;
+    public MultiSocket(UUID id, String temporaryRoomId, String name, String address, GadgetType type, int channelsNumber, boolean installed, int icon, int firmware) {
+        super(id, temporaryRoomId, name, address, type, channelsNumber, installed, icon, firmware);
+        this.channelsNumber = channelsNumber;
         this.on = false;
-        for(int i = 0; i < socketNumber; i++)
+        for(int i = 0; i < channelsNumber; i++)
         {
             this.channels.add(new Socket());
         }
@@ -52,7 +58,7 @@ public class MultiSocket extends Gadget implements Switchable {
         try
         {
             jsonObject.put("type", GadgetType.WallSocket.toString());
-            jsonObject.put("socketNumber", this.socketNumber);
+            jsonObject.put("channelsNumber", this.channelsNumber);
             jsonObject.put(Switch.ON, this.isOn());
 
             for(int i = 0; i < channels.size(); i++)
@@ -67,10 +73,11 @@ public class MultiSocket extends Gadget implements Switchable {
         return null;
     }
 
+    @Override
     public Map<String, Object> getCurrentState() {
         Map<String, Object> currentState = new HashMap<String, Object>();
         currentState.put("type", GadgetType.WallSocket.toString());
-        currentState.put("socketNumber", this.socketNumber);
+        currentState.put("channelsNumber", this.channelsNumber);
         currentState.put("state", this.state);
         currentState.put("on", this.isOn());
 
@@ -102,15 +109,12 @@ public class MultiSocket extends Gadget implements Switchable {
                 setChannelOn(0, Boolean.parseBoolean(actionMessage.parameter));
                 return new ActionSwitchChannelOne(this.id, this.gatt, actionMessage.parameter);
             case SwitchChannelTwo:
-                return null;
-            case SwitchChannelThree:
-                return null;
-            case SwitchChannelFour:
-                return null;
-            case SwitchChannelFive:
-                return null;
-            case SwitchChannelSix:
-                return null;
+                if(channelsNumber >= 2)
+                {
+                    Log.d("przygotowano", "switch channel two");
+                    setChannelOn(1, Boolean.parseBoolean(actionMessage.parameter));
+                    return new ActionSwitchChannelTwo(this.id, this.gatt, actionMessage.parameter);
+                }
             default:
                 return null;
         }
@@ -139,8 +143,8 @@ public class MultiSocket extends Gadget implements Switchable {
         notifyObservers("isOn", String.valueOf(isOn()));
     }
 
-    public int getSocketNumber() {
-        return this.socketNumber;
+    public int getChannelsNumber() {
+        return this.channelsNumber;
     }
 
     public void setChannelOn(int channel, boolean state) {

@@ -6,6 +6,8 @@ import android.content.Intent;
 
 import com.kms.alexandra.centralunit.CoreService;
 import com.kms.alexandra.centralunit.HistorianBroadcastReceiver;
+import com.kms.alexandra.data.model.Actions.ActionMessage;
+import com.kms.alexandra.data.model.Actions.BaseAction;
 
 import org.json.JSONObject;
 
@@ -181,7 +183,9 @@ public abstract class Gadget extends Observable {
         ExtensionCord,
         LightSwitch,
         Dimmer,
-        RGBLight
+        RGBController,
+        OpenClosedSensor,
+        WeatherStation
     }
 
     public static enum GadgetState {
@@ -194,10 +198,9 @@ public abstract class Gadget extends Observable {
         SwitchAll,
         SwitchChannelOne,
         SwitchChannelTwo,
-        SwitchChannelThree,
-        SwitchChannelFour,
-        SwitchChannelFive,
-        SwitchChannelSix
+        SetBrightness,
+        SetBrightnessChannelOne,
+        SetBrightnessChannelTwo
     }
 
 }

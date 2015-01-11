@@ -3,6 +3,12 @@ package com.kms.alexandra.data.model;
 
 import android.util.Log;
 
+import com.kms.alexandra.data.model.Actions.ActionMessage;
+import com.kms.alexandra.data.model.Actions.ActionSwitchAll;
+import com.kms.alexandra.data.model.Actions.ActionSwitchChannelOne;
+import com.kms.alexandra.data.model.Actions.ActionSwitchChannelTwo;
+import com.kms.alexandra.data.model.Actions.BaseAction;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,8 +25,8 @@ import java.util.UUID;
 public class MultiLight extends Gadget implements Switchable {
 
     protected int channelsNumber;
-    protected List<Light> channels = new ArrayList<Light>();
     protected boolean on;
+    private List<Light> channels = new ArrayList<Light>();
 
     public MultiLight(UUID id, Room room, String name, String address, GadgetType type, int channelsNumber, boolean installed, int icon, int firmware) {
         super(id, room, name, address, type, channelsNumber, installed, icon, firmware);
@@ -48,7 +54,7 @@ public class MultiLight extends Gadget implements Switchable {
         try
         {
             jsonObject.put("type", GadgetType.LightSwitch.toString());
-            jsonObject.put("socketNumber", this.channelsNumber);
+            jsonObject.put("channelsNumber", this.channelsNumber);
             jsonObject.put(Switch.ON, this.isOn());
 
             for(int i = 0; i < channels.size(); i++)
@@ -63,10 +69,11 @@ public class MultiLight extends Gadget implements Switchable {
         return null;
     }
 
+    @Override
     public Map<String, Object> getCurrentState() {
         Map<String, Object> currentState = new HashMap<String, Object>();
         currentState.put("type", GadgetType.LightSwitch.toString());
-        currentState.put("socketNumber", this.channelsNumber);
+        currentState.put("channelsNumber", this.channelsNumber);
         currentState.put("state", this.state);
         currentState.put("on", this.isOn());
 
@@ -79,9 +86,7 @@ public class MultiLight extends Gadget implements Switchable {
 
     @Override
     public String[] getSupportedActions() {
-        return new String[] {"SwitchAll", "SwitchChannelOne", "SwitchChannelTwo",
-                             "SwitchChannelThree", "SwitchChannelFour", "SwitchChannelFive",
-                             "SwitchChannelSix"};
+        return new String[] {"SwitchAll", "SwitchChannelOne", "SwitchChannelTwo"};
     }
 
     @Override
@@ -90,22 +95,20 @@ public class MultiLight extends Gadget implements Switchable {
         switch(ActionType.valueOf(actionMessage.action))
         {
             case SwitchAll:
-                Log.d("przygotowano", "swichtAll");
+                Log.d("przygotowano", "SwitchAll");
                 setOn(Boolean.parseBoolean(actionMessage.parameter));
                 return new ActionSwitchAll(this.id, this.gatt, actionMessage.parameter);
             case SwitchChannelOne:
-                Log.d("przygotowano", "switch channel one");
+                Log.d("przygotowano", "SwitchChannelOne");
                 setChannelOn(0, Boolean.parseBoolean(actionMessage.parameter));
                 return new ActionSwitchChannelOne(this.id, this.gatt, actionMessage.parameter);
             case SwitchChannelTwo:
-                return null;
-            case SwitchChannelThree:
-                return null;
-            case SwitchChannelFour:
-                return null;
-            case SwitchChannelFive:
-                return null;
-            case SwitchChannelSix:
+                if(channelsNumber >= 2)
+                {
+                    Log.d("przygotowano", "SwitchChannelTwo");
+                    setChannelOn(1, Boolean.parseBoolean(actionMessage.parameter));
+                    return new ActionSwitchChannelTwo(this.id, this.gatt, actionMessage.parameter);
+                }
                 return null;
             default:
                 return null;

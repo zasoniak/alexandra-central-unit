@@ -1,6 +1,9 @@
 package com.kms.alexandra.data.model;
 
 
+import com.kms.alexandra.data.model.Actions.BaseAction;
+
+
 /**
  * @author Mateusz Zasoński
  */

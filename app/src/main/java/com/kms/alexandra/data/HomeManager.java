@@ -35,90 +35,64 @@ public class HomeManager {
         return true;
     }
 
-    ;
+    public Home getHome() {
+        return this.home;
+    }
 
     public boolean delete(Room room) {
         return true;
     }
 
-    ;
-
     public boolean update(Room room) {
         return true;
     }
-
-    ;
 
     public boolean add(Gadget newGadget) {
         return true;
     }
 
-    ;
-
     public boolean delete(Gadget gadget) {
         return true;
     }
-
-    ;
 
     public boolean update(Gadget newGadget) {
         return true;
     }
 
-    ;
-
     public boolean add(Scene scene) {
         return true;
     }
-
-    ;
 
     public boolean delete(Scene scene) {
         return true;
     }
 
-    ;
-
     public boolean update(Scene newScene) {
         return true;
     }
-
-    ;
 
     public boolean add(ScheduledScene scheduledscene) {
         return true;
     }
 
-    ;
-
     public boolean delete(ScheduledScene scheduledscene) {
         return true;
     }
-
-    ;
 
     public boolean update(ScheduledScene scheduledscene) {
         return true;
     }
 
-    ;
-
     public boolean add(User user) {
         return true;
     }
-
-    ;
 
     public boolean delete(User user) {
         return true;
     }
 
-    ;
-
     public boolean update(User user) {
         return true;
     }
-
-    ;
 
 }

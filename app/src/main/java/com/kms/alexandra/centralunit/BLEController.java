@@ -4,7 +4,7 @@ package com.kms.alexandra.centralunit;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.util.Log;
 
-import com.kms.alexandra.data.model.BaseAction;
+import com.kms.alexandra.data.model.Actions.BaseAction;
 import com.kms.alexandra.data.model.Controller;
 
 import java.util.concurrent.DelayQueue;

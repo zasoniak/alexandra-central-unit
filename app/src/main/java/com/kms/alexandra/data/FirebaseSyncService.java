@@ -13,7 +13,7 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.GenericTypeIndicator;
 import com.firebase.client.ValueEventListener;
 import com.kms.alexandra.centralunit.CoreService;
-import com.kms.alexandra.data.model.ActionMessage;
+import com.kms.alexandra.data.model.Actions.ActionMessage;
 import com.kms.alexandra.data.model.Gadget;
 import com.kms.alexandra.data.model.Home;
 import com.kms.alexandra.data.model.Room;
@@ -312,19 +312,21 @@ public class FirebaseSyncService extends SyncService {
                              */
                             List<ActionMessage> actions = new ArrayList<ActionMessage>();
                             if(dataSnapshot.hasChild(Scene.ACTIONS))
-                            for(DataSnapshot actionSnapshot : dataSnapshot.child(Scene.ACTIONS).getChildren())
                             {
-                                String action = actionSnapshot.child(ActionMessage.ACTION).getValue().toString();
-                                try
+                                for(DataSnapshot actionSnapshot : dataSnapshot.child(Scene.ACTIONS).getChildren())
                                 {
-                                    UUID gadget = UUID.fromString(actionSnapshot.child(ActionMessage.GADGET).getValue().toString());
-                                    String parameter = actionSnapshot.child(ActionMessage.PARAMETER).getValue().toString();
-                                    long delay = Long.parseLong(actionSnapshot.child(ActionMessage.DELAY).getValue().toString());
-                                    actions.add(new ActionMessage(gadget, action, parameter, delay));
-                                }
-                                catch (IllegalArgumentException ex)
-                                {
-                                    Log.e(TAG, "Scene - action - gadget UUID parse error", ex);
+                                    String action = actionSnapshot.child(ActionMessage.ACTION).getValue().toString();
+                                    try
+                                    {
+                                        UUID gadget = UUID.fromString(actionSnapshot.child(ActionMessage.GADGET).getValue().toString());
+                                        String parameter = actionSnapshot.child(ActionMessage.PARAMETER).getValue().toString();
+                                        long delay = Long.parseLong(actionSnapshot.child(ActionMessage.DELAY).getValue().toString());
+                                        actions.add(new ActionMessage(gadget, action, parameter, delay));
+                                    }
+                                    catch (IllegalArgumentException ex)
+                                    {
+                                        Log.e(TAG, "Scene - action - gadget UUID parse error", ex);
+                                    }
                                 }
                             }
                             builder.addActions(actions);
@@ -335,9 +337,11 @@ public class FirebaseSyncService extends SyncService {
                              */
                             List<String> subscenes = new ArrayList<String>();
                             if(dataSnapshot.hasChild(Scene.SUBSCENES))
-                            for(DataSnapshot subsceneSnapshot : dataSnapshot.child(Scene.SUBSCENES).getChildren())
                             {
-                                subscenes.add(subsceneSnapshot.child(Scene.ID).getValue().toString());
+                                for(DataSnapshot subsceneSnapshot : dataSnapshot.child(Scene.SUBSCENES).getChildren())
+                                {
+                                    subscenes.add(subsceneSnapshot.child(Scene.ID).getValue().toString());
+                                }
                             }
                             builder.addSubscenes(subscenes);
 
@@ -348,24 +352,26 @@ public class FirebaseSyncService extends SyncService {
 
                             List<Trigger> triggers = new ArrayList<Trigger>();
                             if(dataSnapshot.hasChild(Scene.TRIGGERS))
-                            for(DataSnapshot triggerSnapshot : dataSnapshot.child(Scene.TRIGGERS).getChildren())
                             {
-                                Trigger trigger = new Trigger(id);
-                                for(DataSnapshot condition : triggerSnapshot.child(Trigger.CONDITIONS).getChildren())
+                                for(DataSnapshot triggerSnapshot : dataSnapshot.child(Scene.TRIGGERS).getChildren())
                                 {
-                                    try
+                                    Trigger trigger = new Trigger(id);
+                                    for(DataSnapshot condition : triggerSnapshot.child(Trigger.CONDITIONS).getChildren())
                                     {
-                                        UUID gadgetID = UUID.fromString(condition.child(Trigger.CONDITION_GADGET).getValue().toString());
-                                        String parameter = condition.child(Trigger.CONDITION_PARAMETER).getValue().toString();
-                                        String value = condition.child(Trigger.CONDITION_VALUE).getValue().toString();
-                                        trigger.addObserver(gadgetID, parameter, value);
+                                        try
+                                        {
+                                            UUID gadgetID = UUID.fromString(condition.child(Trigger.CONDITION_GADGET).getValue().toString());
+                                            String parameter = condition.child(Trigger.CONDITION_PARAMETER).getValue().toString();
+                                            String value = condition.child(Trigger.CONDITION_VALUE).getValue().toString();
+                                            trigger.addObserver(gadgetID, parameter, value);
+                                        }
+                                        catch (IllegalArgumentException ex)
+                                        {
+                                            Log.e(TAG, "scene - trigger - gadget UUID parse error", ex);
+                                        }
                                     }
-                                    catch (IllegalArgumentException ex)
-                                    {
-                                        Log.e(TAG, "scene - trigger - gadget UUID parse error", ex);
-                                    }
+                                    triggers.add(trigger);
                                 }
-                                triggers.add(trigger);
                             }
                             builder.addTriggers(triggers);
                             add(builder.getScene());
@@ -393,19 +399,21 @@ public class FirebaseSyncService extends SyncService {
 
                             List<ActionMessage> actions = new ArrayList<ActionMessage>();
                             if(dataSnapshot.hasChild(Scene.ACTIONS))
-                            for(DataSnapshot actionSnapshot : dataSnapshot.child(Scene.ACTIONS).getChildren())
                             {
-                                String action = actionSnapshot.child(ActionMessage.ACTION).getValue().toString();
-                                try
+                                for(DataSnapshot actionSnapshot : dataSnapshot.child(Scene.ACTIONS).getChildren())
                                 {
-                                    UUID gadget = UUID.fromString(actionSnapshot.child(ActionMessage.GADGET).getValue().toString());
-                                    String parameter = actionSnapshot.child(ActionMessage.PARAMETER).getValue().toString();
-                                    long delay = Long.parseLong(actionSnapshot.child(ActionMessage.DELAY).getValue().toString());
-                                    actions.add(new ActionMessage(gadget, action, parameter, delay));
-                                }
-                                catch (IllegalArgumentException ex)
-                                {
-                                    Log.e(TAG, "Scene - action - gadget UUID parse error", ex);
+                                    String action = actionSnapshot.child(ActionMessage.ACTION).getValue().toString();
+                                    try
+                                    {
+                                        UUID gadget = UUID.fromString(actionSnapshot.child(ActionMessage.GADGET).getValue().toString());
+                                        String parameter = actionSnapshot.child(ActionMessage.PARAMETER).getValue().toString();
+                                        long delay = Long.parseLong(actionSnapshot.child(ActionMessage.DELAY).getValue().toString());
+                                        actions.add(new ActionMessage(gadget, action, parameter, delay));
+                                    }
+                                    catch (IllegalArgumentException ex)
+                                    {
+                                        Log.e(TAG, "Scene - action - gadget UUID parse error", ex);
+                                    }
                                 }
                             }
                             builder.addActions(actions);
@@ -416,9 +424,11 @@ public class FirebaseSyncService extends SyncService {
                              */
                             List<String> subscenes = new ArrayList<String>();
                             if(dataSnapshot.hasChild(Scene.SUBSCENES))
-                            for(DataSnapshot subsceneSnapshot : dataSnapshot.child(Scene.SUBSCENES).getChildren())
                             {
-                                subscenes.add(subsceneSnapshot.child(Scene.ID).getValue().toString());
+                                for(DataSnapshot subsceneSnapshot : dataSnapshot.child(Scene.SUBSCENES).getChildren())
+                                {
+                                    subscenes.add(subsceneSnapshot.child(Scene.ID).getValue().toString());
+                                }
                             }
                             builder.addSubscenes(subscenes);
 
@@ -427,24 +437,26 @@ public class FirebaseSyncService extends SyncService {
                              * for next step passing triggers list to scene builder
                              */
                             if(dataSnapshot.hasChild(Scene.TRIGGERS))
-                            for(DataSnapshot triggerSnapshot : dataSnapshot.child(Scene.TRIGGERS).getChildren())
                             {
-                                Trigger trigger = new Trigger(id);
-                                for(DataSnapshot condition : triggerSnapshot.child(Trigger.CONDITIONS).getChildren())
+                                for(DataSnapshot triggerSnapshot : dataSnapshot.child(Scene.TRIGGERS).getChildren())
                                 {
-                                    try
+                                    Trigger trigger = new Trigger(id);
+                                    for(DataSnapshot condition : triggerSnapshot.child(Trigger.CONDITIONS).getChildren())
                                     {
-                                        UUID gadgetID = UUID.fromString(condition.child(Trigger.CONDITION_GADGET).getValue().toString());
-                                        String parameter = condition.child(Trigger.CONDITION_PARAMETER).getValue().toString();
-                                        String value = condition.child(Trigger.CONDITION_VALUE).getValue().toString();
-                                        trigger.addObserver(gadgetID, parameter, value);
+                                        try
+                                        {
+                                            UUID gadgetID = UUID.fromString(condition.child(Trigger.CONDITION_GADGET).getValue().toString());
+                                            String parameter = condition.child(Trigger.CONDITION_PARAMETER).getValue().toString();
+                                            String value = condition.child(Trigger.CONDITION_VALUE).getValue().toString();
+                                            trigger.addObserver(gadgetID, parameter, value);
+                                        }
+                                        catch (IllegalArgumentException ex)
+                                        {
+                                            Log.e(TAG, "scene - trigger - gadget UUID parse error", ex);
+                                        }
                                     }
-                                    catch (IllegalArgumentException ex)
-                                    {
-                                        Log.e(TAG, "scene - trigger - gadget UUID parse error", ex);
-                                    }
+                                    triggers.add(trigger);
                                 }
-                                triggers.add(trigger);
                             }
                             builder.addTriggers(triggers);
                             update(builder.getScene());
@@ -471,19 +483,21 @@ public class FirebaseSyncService extends SyncService {
                              */
                             List<ActionMessage> actions = new ArrayList<ActionMessage>();
                             if(dataSnapshot.hasChild(Scene.ACTIONS))
-                            for(DataSnapshot actionSnapshot : dataSnapshot.child(Scene.ACTIONS).getChildren())
                             {
-                                String action = actionSnapshot.child(ActionMessage.ACTION).getValue().toString();
-                                try
+                                for(DataSnapshot actionSnapshot : dataSnapshot.child(Scene.ACTIONS).getChildren())
                                 {
-                                    UUID gadget = UUID.fromString(actionSnapshot.child(ActionMessage.GADGET).getValue().toString());
-                                    String parameter = actionSnapshot.child(ActionMessage.PARAMETER).getValue().toString();
-                                    long delay = Long.parseLong(actionSnapshot.child(ActionMessage.DELAY).getValue().toString());
-                                    actions.add(new ActionMessage(gadget, action, parameter, delay));
-                                }
-                                catch (IllegalArgumentException ex)
-                                {
-                                    Log.e(TAG, "Scene - action - gadget UUID parse error", ex);
+                                    String action = actionSnapshot.child(ActionMessage.ACTION).getValue().toString();
+                                    try
+                                    {
+                                        UUID gadget = UUID.fromString(actionSnapshot.child(ActionMessage.GADGET).getValue().toString());
+                                        String parameter = actionSnapshot.child(ActionMessage.PARAMETER).getValue().toString();
+                                        long delay = Long.parseLong(actionSnapshot.child(ActionMessage.DELAY).getValue().toString());
+                                        actions.add(new ActionMessage(gadget, action, parameter, delay));
+                                    }
+                                    catch (IllegalArgumentException ex)
+                                    {
+                                        Log.e(TAG, "Scene - action - gadget UUID parse error", ex);
+                                    }
                                 }
                             }
                             builder.addActions(actions);
@@ -494,9 +508,11 @@ public class FirebaseSyncService extends SyncService {
                              */
                             List<String> subscenes = new ArrayList<String>();
                             if(dataSnapshot.hasChild(Scene.SUBSCENES))
-                            for(DataSnapshot subsceneSnapshot : dataSnapshot.child(Scene.SUBSCENES).getChildren())
                             {
-                                subscenes.add(subsceneSnapshot.child(Scene.ID).getValue().toString());
+                                for(DataSnapshot subsceneSnapshot : dataSnapshot.child(Scene.SUBSCENES).getChildren())
+                                {
+                                    subscenes.add(subsceneSnapshot.child(Scene.ID).getValue().toString());
+                                }
                             }
                             builder.addSubscenes(subscenes);
 
@@ -505,24 +521,26 @@ public class FirebaseSyncService extends SyncService {
                              * for next step passing triggers list to scene builder
                              */
                             if(dataSnapshot.hasChild(Scene.TRIGGERS))
-                            for(DataSnapshot triggerSnapshot : dataSnapshot.child(Scene.TRIGGERS).getChildren())
                             {
-                                Trigger trigger = new Trigger(id);
-                                for(DataSnapshot condition : triggerSnapshot.child(Trigger.CONDITIONS).getChildren())
+                                for(DataSnapshot triggerSnapshot : dataSnapshot.child(Scene.TRIGGERS).getChildren())
                                 {
-                                    try
+                                    Trigger trigger = new Trigger(id);
+                                    for(DataSnapshot condition : triggerSnapshot.child(Trigger.CONDITIONS).getChildren())
                                     {
-                                        UUID gadgetID = UUID.fromString(condition.child(Trigger.CONDITION_GADGET).getValue().toString());
-                                        String parameter = condition.child(Trigger.CONDITION_PARAMETER).getValue().toString();
-                                        String value = condition.child(Trigger.CONDITION_VALUE).getValue().toString();
-                                        trigger.addObserver(gadgetID, parameter, value);
+                                        try
+                                        {
+                                            UUID gadgetID = UUID.fromString(condition.child(Trigger.CONDITION_GADGET).getValue().toString());
+                                            String parameter = condition.child(Trigger.CONDITION_PARAMETER).getValue().toString();
+                                            String value = condition.child(Trigger.CONDITION_VALUE).getValue().toString();
+                                            trigger.addObserver(gadgetID, parameter, value);
+                                        }
+                                        catch (IllegalArgumentException ex)
+                                        {
+                                            Log.e(TAG, "scene - trigger - gadget UUID parse error", ex);
+                                        }
                                     }
-                                    catch (IllegalArgumentException ex)
-                                    {
-                                        Log.e(TAG, "scene - trigger - gadget UUID parse error", ex);
-                                    }
+                                    triggers.add(trigger);
                                 }
-                                triggers.add(trigger);
                             }
                             builder.addTriggers(triggers);
                             delete(builder.getScene());
@@ -574,11 +592,13 @@ public class FirebaseSyncService extends SyncService {
                                 }
                                 HashMap<String, String> conditions = new HashMap<String, String>();
                                 if(dataSnapshot.hasChild(ScheduledScene.CONDITIONS))
-                                for(DataSnapshot snapshot : dataSnapshot.child(ScheduledScene.CONDITIONS).getChildren())
                                 {
-                                    if(snapshot.hasChild(ScheduledScene.CONDITION_TYPE) && snapshot.hasChild(ScheduledScene.CONDITION_VALUE))
+                                    for(DataSnapshot snapshot : dataSnapshot.child(ScheduledScene.CONDITIONS).getChildren())
                                     {
-                                        conditions.put(snapshot.child(ScheduledScene.CONDITION_TYPE).getValue().toString(), snapshot.child(ScheduledScene.CONDITION_VALUE).getValue().toString());
+                                        if(snapshot.hasChild(ScheduledScene.CONDITION_TYPE) && snapshot.hasChild(ScheduledScene.CONDITION_VALUE))
+                                        {
+                                            conditions.put(snapshot.child(ScheduledScene.CONDITION_TYPE).getValue().toString(), snapshot.child(ScheduledScene.CONDITION_VALUE).getValue().toString());
+                                        }
                                     }
                                 }
                                 add(new ScheduledScene(id, scene, hour, minutes, daysOfWeek, conditions));
@@ -596,6 +616,7 @@ public class FirebaseSyncService extends SyncService {
 
                     @Override
                     public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                        Log.d(TAG, "scheduled changed "+dataSnapshot.getKey());
                         if(dataSnapshot.hasChild(ScheduledScene.SCENE) && dataSnapshot.hasChild(ScheduledScene.HOUR) && dataSnapshot.hasChild(ScheduledScene.MINUTES) && dataSnapshot.hasChild(ScheduledScene.DAYS_OF_WEEK))
                         {
                             try
@@ -618,6 +639,7 @@ public class FirebaseSyncService extends SyncService {
                                 }
                                 HashMap<String, String> conditions = new HashMap<String, String>();
                                 if(dataSnapshot.hasChild(ScheduledScene.CONDITIONS))
+                                {
                                     for(DataSnapshot snapshot : dataSnapshot.child(ScheduledScene.CONDITIONS).getChildren())
                                     {
                                         if(snapshot.hasChild(ScheduledScene.CONDITION_TYPE) && snapshot.hasChild(ScheduledScene.CONDITION_VALUE))
@@ -625,6 +647,7 @@ public class FirebaseSyncService extends SyncService {
                                             conditions.put(snapshot.child(ScheduledScene.CONDITION_TYPE).getValue().toString(), snapshot.child(ScheduledScene.CONDITION_VALUE).getValue().toString());
                                         }
                                     }
+                                }
                                 update(new ScheduledScene(id, scene, hour, minutes, daysOfWeek, conditions));
                             }
                             catch (NumberFormatException ex)
@@ -662,6 +685,7 @@ public class FirebaseSyncService extends SyncService {
                                 }
                                 HashMap<String, String> conditions = new HashMap<String, String>();
                                 if(dataSnapshot.hasChild(ScheduledScene.CONDITIONS))
+                                {
                                     for(DataSnapshot snapshot : dataSnapshot.child(ScheduledScene.CONDITIONS).getChildren())
                                     {
                                         if(snapshot.hasChild(ScheduledScene.CONDITION_TYPE) && snapshot.hasChild(ScheduledScene.CONDITION_VALUE))
@@ -669,6 +693,7 @@ public class FirebaseSyncService extends SyncService {
                                             conditions.put(snapshot.child(ScheduledScene.CONDITION_TYPE).getValue().toString(), snapshot.child(ScheduledScene.CONDITION_VALUE).getValue().toString());
                                         }
                                     }
+                                }
                                 delete(new ScheduledScene(id, scene, hour, minutes, daysOfWeek, conditions));
                             }
                             catch (NumberFormatException ex)

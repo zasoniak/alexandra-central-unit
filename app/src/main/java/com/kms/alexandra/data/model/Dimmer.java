@@ -25,6 +25,10 @@ public class Dimmer extends Light {
         return brightness;
     }
 
+    public void setBrightness(int brightness) {
+        this.brightness = brightness;
+    }
+
     public Map<String, Object> getCurrentState() {
         Map<String, Object> currentState = new HashMap<String, Object>();
         currentState.put(ON, this.on);

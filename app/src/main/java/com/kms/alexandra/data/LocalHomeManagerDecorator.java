@@ -1,6 +1,8 @@
 package com.kms.alexandra.data;
 
 
+import android.util.Log;
+
 import com.kms.alexandra.centralunit.FirebaseCurrentStateObserver;
 import com.kms.alexandra.centralunit.ScheduleManager;
 import com.kms.alexandra.data.model.Gadget;
@@ -117,9 +119,8 @@ public class LocalHomeManagerDecorator extends HomeManagerDecorator {
         }
         else
         {
-            update(room);
+            return update(room);
         }
-        return false;
     }
 
     private boolean deleteAndSave(Room room) {
@@ -160,9 +161,8 @@ public class LocalHomeManagerDecorator extends HomeManagerDecorator {
         }
         else
         {
-            update(newGadget);
+            return update(newGadget);
         }
-        return false;
     }
 
     private boolean deleteAndSave(Gadget gadget) {
@@ -197,9 +197,8 @@ public class LocalHomeManagerDecorator extends HomeManagerDecorator {
         }
         else
         {
-            update(scene);
+            return update(scene);
         }
-        return false;
     }
 
     private boolean deleteAndSave(Scene scene) {
@@ -228,23 +227,22 @@ public class LocalHomeManagerDecorator extends HomeManagerDecorator {
         }
         else
         {
-            update(scheduledscene);
+            return update(scheduledscene);
         }
-        return false;
     }
 
     private boolean deleteAndSave(ScheduledScene scheduledscene) {
-        home.getSchedule().remove(scheduledscene);
         ScheduleManager.getInstance().delete(scheduledscene);
+        home.getSchedule().remove(scheduledscene);
         return homeRepository.delete(scheduledscene);
     }
 
     private boolean updateAndSave(ScheduledScene scheduledscene) {
         for(ScheduledScene scheduledscene1 : home.getSchedule())
         {
+            Log.d("UpdateAndSave", "ScheduledScene "+scheduledscene.getId());
             if(scheduledscene1.getId().equals(scheduledscene.getId()))
             {
-                scheduledscene.setIntentId(scheduledscene1.getIntentId());
                 scheduledscene1 = scheduledscene;
                 ScheduleManager.getInstance().update(scheduledscene);
                 return homeRepository.update(scheduledscene1);
@@ -261,9 +259,8 @@ public class LocalHomeManagerDecorator extends HomeManagerDecorator {
         }
         else
         {
-            update(user);
+            return update(user);
         }
-        return false;
     }
 
     private boolean deleteAndSave(User user) {

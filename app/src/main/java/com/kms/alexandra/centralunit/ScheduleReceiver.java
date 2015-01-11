@@ -22,7 +22,7 @@ public class ScheduleReceiver extends WakefulBroadcastReceiver {
         Log.d("ScheduleReceiver", "started");
 
         //TODO: check condition
-        boolean[] daysOfWeek = intent.getBooleanArrayExtra(ScheduledScene.DAYS_OF_WEEK);
+        boolean[] daysOfWeek = intent.getBooleanArrayExtra(ScheduledScene.EXTRA_DAYS_OF_WEEK);
 
         int day = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
         if(daysOfWeek[day-1])

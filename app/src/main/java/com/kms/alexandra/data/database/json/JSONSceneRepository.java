@@ -7,8 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.kms.alexandra.data.SceneBuilder;
 import com.kms.alexandra.data.database.SceneRepository;
-import com.kms.alexandra.data.model.ActionMessage;
-import com.kms.alexandra.data.model.BaseAction;
+import com.kms.alexandra.data.model.Actions.ActionMessage;
+import com.kms.alexandra.data.model.Actions.BaseAction;
 import com.kms.alexandra.data.model.Home;
 import com.kms.alexandra.data.model.Scene;
 import com.kms.alexandra.data.model.SceneComponent;

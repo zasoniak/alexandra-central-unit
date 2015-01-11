@@ -7,7 +7,7 @@ import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.kms.alexandra.data.model.ActionMessage;
+import com.kms.alexandra.data.model.Actions.ActionMessage;
 import com.kms.alexandra.data.model.Scene;
 
 import java.util.UUID;

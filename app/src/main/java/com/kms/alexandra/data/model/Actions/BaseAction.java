@@ -1,7 +1,10 @@
-package com.kms.alexandra.data.model;
+package com.kms.alexandra.data.model.Actions;
 
 
 import android.bluetooth.BluetoothGatt;
+
+import com.kms.alexandra.data.model.Controller;
+import com.kms.alexandra.data.model.SceneComponent;
 
 import org.json.JSONException;
 import org.json.JSONObject;
