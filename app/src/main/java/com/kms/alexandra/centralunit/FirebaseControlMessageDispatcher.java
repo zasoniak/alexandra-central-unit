@@ -1,6 +1,9 @@
 package com.kms.alexandra.centralunit;
 
 
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.firebase.client.ChildEventListener;
@@ -25,12 +28,21 @@ public class FirebaseControlMessageDispatcher extends ControlMessageDispatcher {
 
     private static final String SCENES = "scenes";
     private static final String ACTIONS = "actions";
-    private Control control;
 
     public FirebaseControlMessageDispatcher() {
         super();
-        final Firebase remoteControlReference = new Firebase("https://sizzling-torch-8921.firebaseio.com/control/"+String.valueOf(CoreService.getHomeId())+"/");
-        this.control = Control.getInstance();
+
+    }
+
+    @Override
+    protected void onHandleIntent(Intent intent) {
+        super.onHandleIntent(intent);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        String homeId = sharedPreferences.getString(MainActivity.HOME_ID, "-JcMyexVThw7PEv2Z2PL");
+
+        final Firebase remoteControlReference = new Firebase("https://sizzling-torch-8921.firebaseio.com/control/"+homeId+"/");
+
         remoteControlReference.child(SCENES).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {

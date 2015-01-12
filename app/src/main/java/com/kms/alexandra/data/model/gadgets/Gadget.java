@@ -2,10 +2,7 @@ package com.kms.alexandra.data.model.gadgets;
 
 
 import android.bluetooth.BluetoothGatt;
-import android.content.Intent;
 
-import com.kms.alexandra.centralunit.CoreService;
-import com.kms.alexandra.centralunit.HistorianBroadcastReceiver;
 import com.kms.alexandra.data.model.Observable;
 import com.kms.alexandra.data.model.Room;
 import com.kms.alexandra.data.model.actions.ActionMessage;
@@ -13,8 +10,6 @@ import com.kms.alexandra.data.model.actions.BaseAction;
 
 import org.json.JSONObject;
 
-import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -147,33 +142,6 @@ public abstract class Gadget extends Observable {
 
     public void setup() {
         //TODO: communication setup
-    }
-
-    public void run(String action, HashMap<String, String> parameters) {
-
-        Intent intent = new Intent(CoreService.getContext(), HistorianBroadcastReceiver.class);
-        intent.putExtra(HistorianBroadcastReceiver.LOG_TYPE, HistorianBroadcastReceiver.LOG_ACTION);
-        intent.putExtra(HistorianBroadcastReceiver.GADGET, this.id.toString());
-        intent.putExtra(HistorianBroadcastReceiver.TIME, Calendar.getInstance().getTime().toString());
-        intent.putExtra(HistorianBroadcastReceiver.ACTION, action);
-        intent.putExtra(HistorianBroadcastReceiver.PARAMETERS, parameters.toString());
-        CoreService.getContext().sendBroadcast(intent);
-
-        Intent intent2 = new Intent(CoreService.getContext(), HistorianBroadcastReceiver.class);
-        intent2.putExtra(HistorianBroadcastReceiver.LOG_TYPE, HistorianBroadcastReceiver.LOG_MEASUREMENT);
-        intent2.putExtra(HistorianBroadcastReceiver.GADGET, this.id.toString());
-        intent2.putExtra(HistorianBroadcastReceiver.TIME, Calendar.getInstance().getTime().toString());
-        intent2.putExtra(HistorianBroadcastReceiver.TYPE, "temperatura");
-        intent2.putExtra(HistorianBroadcastReceiver.VALUE, "30");
-        intent2.putExtra(HistorianBroadcastReceiver.UNIT, "st.C");
-        CoreService.getContext().sendBroadcast(intent2);
-
-        Intent intent3 = new Intent(CoreService.getContext(), HistorianBroadcastReceiver.class);
-        intent3.putExtra(HistorianBroadcastReceiver.LOG_TYPE, HistorianBroadcastReceiver.LOG_ERROR);
-        intent3.putExtra(HistorianBroadcastReceiver.TIME, Calendar.getInstance().getTime().toString());
-        intent3.putExtra(HistorianBroadcastReceiver.DESCRIPTION, "trololo, poszedl blad!");
-        CoreService.getContext().sendBroadcast(intent3);
-
     }
 
     public abstract String[] getSupportedActions();

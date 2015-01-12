@@ -4,7 +4,7 @@ package com.kms.alexandra.data.model;
 import android.content.Intent;
 import android.util.Log;
 
-import com.kms.alexandra.centralunit.CoreService;
+import com.kms.alexandra.centralunit.Alexandra;
 import com.kms.alexandra.centralunit.HistorianBroadcastReceiver;
 import com.kms.alexandra.data.model.actions.ActionMessage;
 
@@ -65,11 +65,11 @@ public class Scene implements SceneComponent {
     public void start(Controller controller) {
 
         Log.d("scene", id+" ruszyła, dzieci: "+String.valueOf(children.size()));
-        Intent intent = new Intent(CoreService.getContext(), HistorianBroadcastReceiver.class);
+        Intent intent = new Intent(Alexandra.getContext(), HistorianBroadcastReceiver.class);
         intent.putExtra(HistorianBroadcastReceiver.LOG_TYPE, HistorianBroadcastReceiver.LogType.Scene);
         intent.putExtra(HistorianBroadcastReceiver.TIME, Calendar.getInstance().getTime().toString());
         intent.putExtra(HistorianBroadcastReceiver.SCENE, this.getId());
-        CoreService.getContext().sendBroadcast(intent);
+        Alexandra.getContext().sendBroadcast(intent);
 
         for(SceneComponent child : children)
         {

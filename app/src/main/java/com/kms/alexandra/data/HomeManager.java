@@ -1,6 +1,7 @@
 package com.kms.alexandra.data;
 
 
+import android.content.Context;
 import android.util.Log;
 
 import com.kms.alexandra.data.database.HomeRepository;
@@ -19,15 +20,18 @@ public class HomeManager {
 
     protected Home home;
     protected HomeRepository homeRepository;
+    protected Context context;
 
     public HomeManager(HomeManager homeManager) {
         this.home = homeManager.home;
         this.homeRepository = homeManager.homeRepository;
+        this.context = homeManager.context;
     }
 
-    public HomeManager(Home home, HomeRepository homeRepository) {
+    public HomeManager(Home home, HomeRepository homeRepository, Context context) {
         this.home = home;
         this.homeRepository = homeRepository;
+        this.context = context;
     }
 
     public boolean add(Room room) {
@@ -37,6 +41,10 @@ public class HomeManager {
 
     public Home getHome() {
         return this.home;
+    }
+
+    public HomeRepository getHomeRepository() {
+        return this.homeRepository;
     }
 
     public boolean delete(Room room) {

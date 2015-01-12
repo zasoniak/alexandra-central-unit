@@ -27,7 +27,7 @@ public class Control {
      * private singleton constructor
      */
     private Control() {
-        this.home = CoreService.getHome();
+        this.home = ((Alexandra) Alexandra.getContext()).getHome();
         this.controller = new BLEController();
     }
 

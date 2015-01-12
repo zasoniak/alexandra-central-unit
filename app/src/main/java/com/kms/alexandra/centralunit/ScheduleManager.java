@@ -26,18 +26,20 @@ public class ScheduleManager {
     private AlarmManager alarmManager;
     private Map<String, PendingIntent> alarmIntents = new HashMap<String, PendingIntent>();
     private List<ScheduledScene> scheduledScenes;
+    private Context context;
 
-    private ScheduleManager() {
+    private ScheduleManager(Context context) {
         Log.d(TAG, "started");
-        alarmManager = (AlarmManager) CoreService.getContext().getSystemService(Context.ALARM_SERVICE);
-        scheduledScenes = CoreService.getHome().getSchedule();
+        this.context = context.getApplicationContext();
+        alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+        scheduledScenes = ((Alexandra) context).getHome().getSchedule();
         Log.d(TAG, "currently "+scheduledScenes.size()+" elements to schedule");
         for(ScheduledScene scheduledScene : scheduledScenes)
         {
-            Intent newIntent = new Intent(CoreService.getContext(), ScheduleReceiver.class).putExtra(ScheduledScene.EXTRA_ID, scheduledScene.getId()).putExtra(ScheduledScene.EXTRA_SCENE_ID, scheduledScene.getScene()).putExtra(ScheduledScene.EXTRA_HOUR, String.valueOf(scheduledScene.getHour())).putExtra(ScheduledScene.EXTRA_MINUTES, scheduledScene.getMinutes()).putExtra(ScheduledScene.EXTRA_DAYS_OF_WEEK, scheduledScene.getDaysOfWeek()).putExtra(ScheduledScene.EXTRA_CONDITIONS, scheduledScene.getConditions());
+            Intent newIntent = new Intent(context, ScheduleReceiver.class).putExtra(ScheduledScene.EXTRA_ID, scheduledScene.getId()).putExtra(ScheduledScene.EXTRA_SCENE_ID, scheduledScene.getScene()).putExtra(ScheduledScene.EXTRA_HOUR, String.valueOf(scheduledScene.getHour())).putExtra(ScheduledScene.EXTRA_MINUTES, scheduledScene.getMinutes()).putExtra(ScheduledScene.EXTRA_DAYS_OF_WEEK, scheduledScene.getDaysOfWeek()).putExtra(ScheduledScene.EXTRA_CONDITIONS, scheduledScene.getConditions());
 
             final int id = (int) System.currentTimeMillis();
-            PendingIntent alarmIntent = PendingIntent.getBroadcast(CoreService.getContext(), id, newIntent, 0);
+            PendingIntent alarmIntent = PendingIntent.getBroadcast(context, id, newIntent, 0);
             //remember for the future
             alarmIntents.put(scheduledScene.getId(), alarmIntent);
 
@@ -55,15 +57,15 @@ public class ScheduleManager {
             scheduleTime.set(Calendar.SECOND, 0);
 
             //alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, scheduleTime.getTimeInMillis(), AlarmManager.INTERVAL_DAY, alarmIntent);
-            alarmManager.setExact(AlarmManager.RTC_WAKEUP, scheduleTime.getTimeInMillis(), alarmIntent);
+            alarmManager.setExact(AlarmManager.RTC, scheduleTime.getTimeInMillis(), alarmIntent);
             Log.d(TAG, "alarm set up "+scheduledScene.getId()+" at "+scheduleTime.getTime().toString());
         }
     }
 
-    public static synchronized ScheduleManager getInstance() {
+    public static synchronized ScheduleManager getInstance(Context context) {
         if(instance == null)
         {
-            instance = new ScheduleManager();
+            instance = new ScheduleManager(context);
         }
         return instance;
     }
@@ -71,10 +73,10 @@ public class ScheduleManager {
     public void update(ScheduledScene scheduledScene) {
         Log.d(TAG, "update "+scheduledScene.getId());
         alarmManager.cancel(alarmIntents.get(scheduledScene.getId()));
-        Intent newIntent = new Intent(CoreService.getContext(), ScheduleReceiver.class).putExtra(ScheduledScene.EXTRA_ID, scheduledScene.getId()).putExtra(ScheduledScene.EXTRA_SCENE_ID, scheduledScene.getScene()).putExtra(ScheduledScene.EXTRA_HOUR, String.valueOf(scheduledScene.getHour())).putExtra(ScheduledScene.EXTRA_MINUTES, scheduledScene.getMinutes()).putExtra(ScheduledScene.EXTRA_DAYS_OF_WEEK, scheduledScene.getDaysOfWeek()).putExtra(ScheduledScene.EXTRA_CONDITIONS, scheduledScene.getConditions());
+        Intent newIntent = new Intent(context, ScheduleReceiver.class).putExtra(ScheduledScene.EXTRA_ID, scheduledScene.getId()).putExtra(ScheduledScene.EXTRA_SCENE_ID, scheduledScene.getScene()).putExtra(ScheduledScene.EXTRA_HOUR, String.valueOf(scheduledScene.getHour())).putExtra(ScheduledScene.EXTRA_MINUTES, scheduledScene.getMinutes()).putExtra(ScheduledScene.EXTRA_DAYS_OF_WEEK, scheduledScene.getDaysOfWeek()).putExtra(ScheduledScene.EXTRA_CONDITIONS, scheduledScene.getConditions());
 
         final int id = (int) System.currentTimeMillis();
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(CoreService.getContext(), id, newIntent, 0);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(context, id, newIntent, 0);
         //remember for the future
         alarmIntents.put(scheduledScene.getId(), alarmIntent);
 
@@ -91,16 +93,16 @@ public class ScheduleManager {
         scheduleTime.set(Calendar.MINUTE, scheduledScene.getMinutes());
         scheduleTime.set(Calendar.SECOND, 0);
 
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, scheduleTime.getTimeInMillis(), alarmIntent);
+        alarmManager.setExact(AlarmManager.RTC, scheduleTime.getTimeInMillis(), alarmIntent);
         Log.d(TAG, "alarm set up "+scheduledScene.getId()+" at "+scheduleTime.getTime().toString());
     }
 
     public void add(ScheduledScene scheduledScene) {
         Log.d(TAG, "add "+scheduledScene.getId());
-        Intent newIntent = new Intent(CoreService.getContext(), ScheduleReceiver.class).putExtra(ScheduledScene.EXTRA_ID, scheduledScene.getId()).putExtra(ScheduledScene.EXTRA_SCENE_ID, scheduledScene.getScene()).putExtra(ScheduledScene.EXTRA_HOUR, String.valueOf(scheduledScene.getHour())).putExtra(ScheduledScene.EXTRA_MINUTES, scheduledScene.getMinutes()).putExtra(ScheduledScene.EXTRA_DAYS_OF_WEEK, scheduledScene.getDaysOfWeek()).putExtra(ScheduledScene.EXTRA_CONDITIONS, scheduledScene.getConditions());
+        Intent newIntent = new Intent(context, ScheduleReceiver.class).putExtra(ScheduledScene.EXTRA_ID, scheduledScene.getId()).putExtra(ScheduledScene.EXTRA_SCENE_ID, scheduledScene.getScene()).putExtra(ScheduledScene.EXTRA_HOUR, String.valueOf(scheduledScene.getHour())).putExtra(ScheduledScene.EXTRA_MINUTES, scheduledScene.getMinutes()).putExtra(ScheduledScene.EXTRA_DAYS_OF_WEEK, scheduledScene.getDaysOfWeek()).putExtra(ScheduledScene.EXTRA_CONDITIONS, scheduledScene.getConditions());
 
         final int id = (int) System.currentTimeMillis();
-        PendingIntent alarmIntent = PendingIntent.getBroadcast(CoreService.getContext(), id, newIntent, 0);
+        PendingIntent alarmIntent = PendingIntent.getBroadcast(context, id, newIntent, 0);
         //remember for the future
         alarmIntents.put(scheduledScene.getId(), alarmIntent);
 
@@ -117,7 +119,7 @@ public class ScheduleManager {
         scheduleTime.set(Calendar.MINUTE, scheduledScene.getMinutes());
         scheduleTime.set(Calendar.SECOND, 0);
 
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, scheduleTime.getTimeInMillis(), alarmIntent);
+        alarmManager.setExact(AlarmManager.RTC, scheduleTime.getTimeInMillis(), alarmIntent);
         Log.d(TAG, "alarm set up "+scheduledScene.getId()+" at "+scheduleTime.getTime().toString());
     }
 
@@ -133,10 +135,10 @@ public class ScheduleManager {
             if(scheduledScene.getId().equals(scheduledSceneId))
             {
                 alarmManager.cancel(alarmIntents.get(scheduledScene.getId()));
-                Intent newIntent = new Intent(CoreService.getContext(), ScheduleReceiver.class).putExtra(ScheduledScene.EXTRA_ID, scheduledScene.getId()).putExtra(ScheduledScene.EXTRA_SCENE_ID, scheduledScene.getScene()).putExtra(ScheduledScene.EXTRA_HOUR, String.valueOf(scheduledScene.getHour())).putExtra(ScheduledScene.EXTRA_MINUTES, scheduledScene.getMinutes()).putExtra(ScheduledScene.EXTRA_DAYS_OF_WEEK, scheduledScene.getDaysOfWeek()).putExtra(ScheduledScene.EXTRA_CONDITIONS, scheduledScene.getConditions());
+                Intent newIntent = new Intent(context, ScheduleReceiver.class).putExtra(ScheduledScene.EXTRA_ID, scheduledScene.getId()).putExtra(ScheduledScene.EXTRA_SCENE_ID, scheduledScene.getScene()).putExtra(ScheduledScene.EXTRA_HOUR, String.valueOf(scheduledScene.getHour())).putExtra(ScheduledScene.EXTRA_MINUTES, scheduledScene.getMinutes()).putExtra(ScheduledScene.EXTRA_DAYS_OF_WEEK, scheduledScene.getDaysOfWeek()).putExtra(ScheduledScene.EXTRA_CONDITIONS, scheduledScene.getConditions());
 
                 final int id = (int) System.currentTimeMillis();
-                PendingIntent alarmIntent = PendingIntent.getBroadcast(CoreService.getContext(), id, newIntent, 0);
+                PendingIntent alarmIntent = PendingIntent.getBroadcast(context, id, newIntent, 0);
                 //remember for the future
                 alarmIntents.put(scheduledScene.getId(), alarmIntent);
 
@@ -148,7 +150,7 @@ public class ScheduleManager {
                 scheduleTime.set(Calendar.MINUTE, scheduledScene.getMinutes());
                 scheduleTime.set(Calendar.SECOND, 0);
 
-                alarmManager.setExact(AlarmManager.RTC_WAKEUP, scheduleTime.getTimeInMillis(), alarmIntent);
+                alarmManager.setExact(AlarmManager.RTC, scheduleTime.getTimeInMillis(), alarmIntent);
                 Log.d(TAG, "alarm set up "+scheduledScene.getId()+" at "+scheduleTime.getTime().toString());
             }
         }

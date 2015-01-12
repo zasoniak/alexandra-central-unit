@@ -1,6 +1,9 @@
 package com.kms.alexandra.centralunit;
 
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
 import com.firebase.client.Firebase;
 import com.kms.alexandra.data.model.Observer;
 import com.kms.alexandra.data.model.gadgets.Gadget;
@@ -21,7 +24,10 @@ public class FirebaseCurrentStateObserver extends CurrentStateObserver {
 
     private FirebaseCurrentStateObserver() {
 
-        String FIREBASE_ROOT = "https://sizzling-torch-8921.firebaseio.com/currentState/"+String.valueOf(CoreService.getHomeId())+"/";
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(Alexandra.getContext());
+        String homeId = sharedPreferences.getString(MainActivity.HOME_ID, "-JcMyexVThw7PEv2Z2PL");
+
+        String FIREBASE_ROOT = "https://sizzling-torch-8921.firebaseio.com/currentState/"+homeId+"/";
         currentStateReference = new Firebase(FIREBASE_ROOT);
     }
 

@@ -12,7 +12,7 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.GenericTypeIndicator;
 import com.firebase.client.ValueEventListener;
-import com.kms.alexandra.centralunit.CoreService;
+import com.kms.alexandra.centralunit.MainActivity;
 import com.kms.alexandra.data.model.Home;
 import com.kms.alexandra.data.model.Room;
 import com.kms.alexandra.data.model.Scene;
@@ -45,18 +45,18 @@ public class FirebaseSyncService extends SyncService {
     protected void onHandleIntent(Intent intent) {
         Log.d("firebase", "intentservice");
         super.onHandleIntent(intent);
-        final Firebase homeReference = new Firebase("https://sizzling-torch-8921.firebaseio.com/configuration/"+home.getId()+"/");
+        final Firebase homeReference = new Firebase("https://sizzling-torch-8921.firebaseio.com/configuration/"+homeManager.getHome().getId()+"/");
 
         homeReference.child(Home.NAME).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.getValue() != null)
                 {
-                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(CoreService.getContext());
+                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                     SharedPreferences.Editor editor = preferences.edit();
-                    editor.putString(CoreService.HOME_NAME, dataSnapshot.getValue().toString());
+                    editor.putString(MainActivity.HOME_NAME, dataSnapshot.getValue().toString());
                     editor.apply();
-                    home.setName(dataSnapshot.getValue().toString());
+                    homeManager.getHome().setName(dataSnapshot.getValue().toString());
                 }
             }
 
@@ -303,7 +303,7 @@ public class FirebaseSyncService extends SyncService {
                         {
                             String id = dataSnapshot.getKey();
                             String name = dataSnapshot.child(Scene.NAME).getValue().toString();
-                            SceneBuilder builder = new SceneBuilder(home);
+                            SceneBuilder builder = new SceneBuilder(homeManager.getHome());
                             builder.create(id, name);
 
                             /**
@@ -388,7 +388,7 @@ public class FirebaseSyncService extends SyncService {
                         {
                             String id = dataSnapshot.getKey();
                             String name = dataSnapshot.child(Scene.NAME).getValue().toString();
-                            SceneBuilder builder = new SceneBuilder(home);
+                            SceneBuilder builder = new SceneBuilder(homeManager.getHome());
                             builder.create(id, name);
                             List<Trigger> triggers = new ArrayList<Trigger>();
 
@@ -473,7 +473,7 @@ public class FirebaseSyncService extends SyncService {
                         {
                             String id = dataSnapshot.getKey();
                             String name = dataSnapshot.child(Scene.NAME).getValue().toString();
-                            SceneBuilder builder = new SceneBuilder(home);
+                            SceneBuilder builder = new SceneBuilder(homeManager.getHome());
                             builder.create(id, name);
                             List<Trigger> triggers = new ArrayList<Trigger>();
 

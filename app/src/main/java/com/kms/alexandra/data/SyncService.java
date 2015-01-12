@@ -5,9 +5,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.util.Log;
 
-import com.kms.alexandra.centralunit.CoreService;
-import com.kms.alexandra.data.database.HomeRepository;
-import com.kms.alexandra.data.model.Home;
+import com.kms.alexandra.centralunit.Alexandra;
 import com.kms.alexandra.data.model.Room;
 import com.kms.alexandra.data.model.Scene;
 import com.kms.alexandra.data.model.ScheduledScene;
@@ -26,8 +24,6 @@ import com.kms.alexandra.data.model.gadgets.Gadget;
  */
 public class SyncService extends IntentService {
 
-    protected Home home;
-    protected HomeRepository homeRepository;
     protected HomeManager homeManager;
 
     public SyncService() {
@@ -36,9 +32,7 @@ public class SyncService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        home = CoreService.getHome();
-        homeRepository = CoreService.getHomeRepository();
-        homeManager = new LocalHomeManagerDecorator(new HomeManager(CoreService.getHome(), CoreService.getHomeRepository()));
+        homeManager = ((Alexandra) getApplicationContext()).getHomeManager();
     }
 
     protected boolean add(Room room) {

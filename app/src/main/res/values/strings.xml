@@ -2,9 +2,9 @@
 <resources>
 
     <string name="app_name">AlexandraCentralUnit</string>
-    <string name="title_activity_admin">AdminActivity</string>
+    <string name="title_main_activity">Alexandra</string>
     <string name="hello_world">Hello world!</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Setup via Bluetooth</string>
     <string name="welcome">Home system parts:</string>
 
 </resources>

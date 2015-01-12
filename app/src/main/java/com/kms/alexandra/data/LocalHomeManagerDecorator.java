@@ -1,8 +1,6 @@
 package com.kms.alexandra.data;
 
 
-import android.util.Log;
-
 import com.kms.alexandra.centralunit.FirebaseCurrentStateObserver;
 import com.kms.alexandra.centralunit.ScheduleManager;
 import com.kms.alexandra.data.model.Room;
@@ -222,7 +220,7 @@ public class LocalHomeManagerDecorator extends HomeManagerDecorator {
         if(home.getScheduledScene(scheduledscene.getId()) == null)
         {
             home.getSchedule().add(scheduledscene);
-            ScheduleManager.getInstance().add(scheduledscene);
+            ScheduleManager.getInstance(context).add(scheduledscene);
             return homeRepository.add(scheduledscene);
         }
         else
@@ -232,7 +230,7 @@ public class LocalHomeManagerDecorator extends HomeManagerDecorator {
     }
 
     private boolean deleteAndSave(ScheduledScene scheduledscene) {
-        ScheduleManager.getInstance().delete(scheduledscene);
+        ScheduleManager.getInstance(context).delete(scheduledscene);
         home.getSchedule().remove(scheduledscene);
         return homeRepository.delete(scheduledscene);
     }
@@ -240,11 +238,10 @@ public class LocalHomeManagerDecorator extends HomeManagerDecorator {
     private boolean updateAndSave(ScheduledScene scheduledscene) {
         for(ScheduledScene scheduledscene1 : home.getSchedule())
         {
-            Log.d("UpdateAndSave", "ScheduledScene "+scheduledscene.getId());
             if(scheduledscene1.getId().equals(scheduledscene.getId()))
             {
                 scheduledscene1 = scheduledscene;
-                ScheduleManager.getInstance().update(scheduledscene);
+                ScheduleManager.getInstance(context).update(scheduledscene);
                 return homeRepository.update(scheduledscene1);
             }
         }

@@ -4,6 +4,8 @@ package com.kms.alexandra.centralunit;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import com.firebase.client.Firebase;
 
@@ -46,7 +48,10 @@ public class HistorianBroadcastReceiver extends BroadcastReceiver {
     public void onReceive(final Context context, final Intent intent) {
         new Thread(new Runnable() {
             public void run() {
-                Firebase historianReference = new Firebase("https://sizzling-torch-8921.firebaseio.com/historian/"+String.valueOf(CoreService.getHomeId())+"/");
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(Alexandra.getContext());
+                String homeId = sharedPreferences.getString(MainActivity.HOME_ID, "-JcMyexVThw7PEv2Z2PL");
+
+                Firebase historianReference = new Firebase("https://sizzling-torch-8921.firebaseio.com/historian/"+homeId+"/");
                 Map<String, String> historianLog = new HashMap<String, String>();
 
                 switch((LogType) intent.getSerializableExtra(LOG_TYPE))
