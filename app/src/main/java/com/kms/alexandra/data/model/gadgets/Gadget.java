@@ -3,6 +3,7 @@ package com.kms.alexandra.data.model.gadgets;
 
 import android.bluetooth.BluetoothGatt;
 
+import com.kms.alexandra.data.model.Listable;
 import com.kms.alexandra.data.model.Observable;
 import com.kms.alexandra.data.model.Room;
 import com.kms.alexandra.data.model.actions.ActionMessage;
@@ -19,7 +20,7 @@ import java.util.UUID;
  * Gadget - base class for all field devices in system
  * provides common fields, basic functionality and logging mechanism
  */
-public abstract class Gadget extends Observable {
+public abstract class Gadget extends Observable implements Listable {
 
     //gadget types  -> to be defined as list with constant numbers and included in system documentation
     public static final String TYPE = "type";
@@ -173,4 +174,8 @@ public abstract class Gadget extends Observable {
         SetBrightnessChannelTwo
     }
 
+    @Override
+    public String getObjectType() {
+        return getType().name();
+    }
 }

@@ -20,7 +20,7 @@ import java.util.UUID;
  * @author Mateusz Zasoński
  * @version 0.1
  */
-public class Scene implements SceneComponent {
+public class Scene implements SceneComponent, Listable {
 
     public static final String ID = "id";
     public static final String NAME = "name";
@@ -155,5 +155,10 @@ public class Scene implements SceneComponent {
 
     public List<String> getSubscenesList() {
         return subscenesList;
+    }
+
+    @Override
+    public String getObjectType() {
+        return "Scene";
     }
 }

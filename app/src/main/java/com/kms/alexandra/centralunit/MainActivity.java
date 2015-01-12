@@ -132,6 +132,7 @@ public class MainActivity extends Activity {
     BluetoothAdapter bluetoothAdapter;
     private SparseArray<BluetoothDevice> devices;
     private ArrayList<String> partsArrayList;
+    private ArrayAdapter<String> adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -152,7 +153,7 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_admin);
         ListView listView = (ListView) findViewById(R.id.home_parts_list);
         partsArrayList = new ArrayList<String>();
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, partsArrayList);
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, partsArrayList);
         listView.setAdapter(adapter);
     }
 
@@ -191,10 +192,11 @@ public class MainActivity extends Activity {
     private void refresh() {
         if(((Alexandra) getApplicationContext()).getHome() != null)
             for(Gadget gadget : ((Alexandra) getApplicationContext()).getHome().getGadgets())
-        {
-            Log.i(TAG, gadget.getName());
-            partsArrayList.add(gadget.getName());
-        }
+            {
+                Log.i(TAG, gadget.getName());
+                partsArrayList.add(gadget.getName());
+                adapter.notifyDataSetChanged();
+            }
     }
 
     private void loadDefault() {
