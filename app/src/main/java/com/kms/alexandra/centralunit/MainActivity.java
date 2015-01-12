@@ -3,18 +3,23 @@ package com.kms.alexandra.centralunit;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
-import android.bluetooth.BluetoothServerSocket;
-import android.bluetooth.BluetoothSocket;
-import android.content.BroadcastReceiver;
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothGattCallback;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothManager;
+import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
@@ -22,18 +27,16 @@ import android.widget.ListView;
 
 import com.firebase.client.Firebase;
 import com.kms.alexandra.R;
+import com.kms.alexandra.data.FirebaseSyncService;
 import com.kms.alexandra.data.HomeManager;
 import com.kms.alexandra.data.LocalHomeManagerDecorator;
 import com.kms.alexandra.data.database.HomeRepository;
 import com.kms.alexandra.data.database.json.JSONHomeRepository;
 import com.kms.alexandra.data.model.Home;
+import com.kms.alexandra.data.model.gadgets.Gadget;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.UUID;
 
 
@@ -43,17 +46,91 @@ import java.util.UUID;
 public class MainActivity extends Activity {
 
     public static final String TAG = "Alexandra";
+    private final Handler mHandler = new Handler() {
+        // Message types sent from the BluetoothChatService Handler
+        public static final int MESSAGE_STATE_CHANGE = 1;
+        public static final int MESSAGE_READ = 2;
+        public static final int MESSAGE_WRITE = 3;
+        public static final int MESSAGE_DEVICE_NAME = 4;
+        public static final int MESSAGE_TOAST = 5;
+        // Key names received from the BluetoothChatService Handler
+        public static final String DEVICE_NAME = "device_name";
+        public static final String TOAST = "toast";
+
+        @Override
+        public void handleMessage(Message msg) {
+            switch(msg.what)
+            {
+                case MESSAGE_STATE_CHANGE:
+                    Log.i(TAG, "MESSAGE_STATE_CHANGE: "+msg.arg1);
+                    switch(msg.arg1)
+                    {
+                        case BluetoothChatService.STATE_CONNECTED:
+                            Log.i(TAG, "STATE_CONNECTED");
+                            break;
+                        case BluetoothChatService.STATE_CONNECTING:
+                            Log.i(TAG, "STATE_CONNECTING");
+                            break;
+                        case BluetoothChatService.STATE_LISTEN:
+                            Log.i(TAG, "STATE_LISTEN");
+                        case BluetoothChatService.STATE_NONE:
+                            Log.i(TAG, "STATE_NONE");
+                            break;
+                    }
+                    break;
+                case MESSAGE_WRITE:
+                    byte[] writeBuf = (byte[]) msg.obj;
+                    // construct a string from the buffer
+                    String writeMessage = new String(writeBuf);
+                    break;
+                case MESSAGE_READ:
+                    byte[] readBuf = (byte[]) msg.obj;
+                    // construct a string from the valid bytes in the buffer
+                    String readMessage = new String(readBuf, 0, msg.arg1);
+                    StringBuilder builder = new StringBuilder(readMessage);
+
+                    int begining = readMessage.indexOf("<");
+                    int end = readMessage.indexOf(">");
+                    String ssid = readMessage.substring(begining+1, end);
+                    Log.d("SSID", ssid);
+                    builder.setCharAt(begining, '!');
+                    builder.setCharAt(end, '!');
+                    readMessage = builder.toString();
+
+                    begining = readMessage.indexOf("<");
+                    end = readMessage.indexOf(">");
+                    String password = readMessage.substring(begining+1, end);
+                    Log.d("SSID", password);
+                    builder.setCharAt(begining, '!');
+                    builder.setCharAt(end, '!');
+                    readMessage = builder.toString();
+
+                    begining = readMessage.indexOf("<");
+                    end = readMessage.indexOf(">");
+                    String homeId = readMessage.substring(begining+1, end);
+                    Log.d("SSID", homeId);
+                    builder.setCharAt(begining, '!');
+                    builder.setCharAt(end, '!');
+                    readMessage = builder.toString();
+
+                    saveConfiguration(homeId);
+                    connectToWifi(ssid, password);
+
+                    Log.d(TAG, readMessage);
+                    break;
+                case MESSAGE_DEVICE_NAME:
+                    // save the connected device's name
+                    break;
+                case MESSAGE_TOAST:
+                    break;
+            }
+        }
+    };
     public static final String CONFIGURED = "configured";
     public static final String HOME_ID = "home_id";
     public static final String HOME_NAME = "name";
-    private final int DISCOVERY_REQUEST = 14124;
-    private BluetoothSocketListener bluetoothSocketListener;
-    private BluetoothAdapter bluetooth;
-    private BluetoothSocket socket;
-    private UUID uuid = UUID.fromString("498a6920-99dc-11e4-bd06-0800200c9a66");
-    private boolean cancelFlag = true;
-
-    private BroadcastReceiver receiver;
+    BluetoothAdapter bluetoothAdapter;
+    private SparseArray<BluetoothDevice> devices;
     private ArrayList<String> partsArrayList;
 
     @Override
@@ -69,9 +146,9 @@ public class MainActivity extends Activity {
         //        {
         //            (new Setup(getApplicationContext())).start();
         //        }
-        saveConfiguration("-JcMyexVThw7PEv2Z2PL");
-        boolean connectedToWifi = connectToWifi("Livebox-D69B", "2E62120CE85F61E6C402CE9E72");
-
+        // saveConfiguration("-JcMyexVThw7PEv2Z2PL");
+        //  (new Setup(getApplicationContext())).start();
+        //        boolean connectedToWifi = connectToWifi("Livebox-D69B", "2E62120CE85F61E6C402CE9E72");
         setContentView(R.layout.activity_admin);
         ListView listView = (ListView) findViewById(R.id.home_parts_list);
         partsArrayList = new ArrayList<String>();
@@ -101,69 +178,28 @@ public class MainActivity extends Activity {
             case R.id.action_settings:
                 firstRunSetup();
                 return true;
+            case R.id.action_refresh:
+                refresh();
+                return true;
+            case R.id.action_default:
+                loadDefault();
             default:
                 return false;
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        final String BT_TAG = "Bluetooth";
-        if(requestCode == DISCOVERY_REQUEST)
+    private void refresh() {
+        if(((Alexandra) getApplicationContext()).getHome() != null)
+            for(Gadget gadget : ((Alexandra) getApplicationContext()).getHome().getGadgets())
         {
-            boolean isDiscoverable = resultCode > 0;
-            if(isDiscoverable)
-            {
-                final String name = TAG+" central unit";
-                try
-                {
-                    final BluetoothServerSocket bluetoothServerSocket = bluetooth.listenUsingRfcommWithServiceRecord(name, uuid);
-                    AsyncTask<Integer, Void, BluetoothSocket> acceptThread = new AsyncTask<Integer, Void, BluetoothSocket>() {
-                        @Override
-                        protected BluetoothSocket doInBackground(Integer... params) {
-
-                            try
-                            {
-                                socket = bluetoothServerSocket.accept(params[0]*2000);
-                                return socket;
-                            }
-                            catch (IOException e)
-                            {
-                                Log.d(BT_TAG, e.getMessage());
-                            }
-
-                            return null;
-                        }
-
-                        @Override
-                        protected void onPostExecute(BluetoothSocket result) {
-                            if(result != null)
-                            {
-                                bluetoothSocketListener = new BluetoothSocketListener(result);
-                                TimerTask cancel = new TimerTask() {
-                                    @Override
-                                    public void run() {
-                                        cancelFlag = false;
-                                    }
-                                };
-                                Timer cancelTimer = new Timer();
-                                cancelTimer.schedule(cancel, 20000);
-                            }
-                        }
-                    };
-                    acceptThread.execute(resultCode);
-                }
-                catch (IOException e)
-                {
-                    Log.d(BT_TAG, e.getMessage());
-                }
-            }
+            Log.i(TAG, gadget.getName());
+            partsArrayList.add(gadget.getName());
         }
     }
 
-    private void firstRunSetup() {
-        configureBluetooth();
-        ensureDiscoverable();
+    private void loadDefault() {
+        saveConfiguration("-JcMyexVThw7PEv2Z2PL");
+        connectToWifi("Livebox-D69B", "2E62120CE85F61E6C402CE9E72");
     }
 
     private void saveConfiguration(String homeId) {
@@ -174,18 +210,16 @@ public class MainActivity extends Activity {
         editor.apply();
     }
 
-    private void configureBluetooth() {
-        bluetooth = BluetoothAdapter.getDefaultAdapter();
-    }
-
-    private void ensureDiscoverable() {
-        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if(bluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)
+    private void firstRunSetup() {
+        BluetoothAdapter bluetooth = BluetoothAdapter.getDefaultAdapter();
+        if(bluetooth.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)
         {
             Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
             discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 120);
-            startActivityForResult(discoverableIntent, DISCOVERY_REQUEST);
+            startActivity(discoverableIntent);
         }
+        BluetoothChatService bluetoothChatService = new BluetoothChatService(getApplicationContext(), mHandler);
+        bluetoothChatService.start();
     }
 
     /**
@@ -265,40 +299,135 @@ public class MainActivity extends Activity {
         sendBroadcast(intent);
     }
 
-    private class BluetoothSocketListener implements Runnable {
-
-        private BluetoothSocket socket;
-
-        public BluetoothSocketListener(BluetoothSocket socket) {
-            this.socket = socket;
-        }
-
-        public void run() {
-            final int BUFFER_SIZE = 1024;
-            byte[] buffer = new byte[BUFFER_SIZE];
-            int bytes = 0;
-            while(cancelFlag)
-            {
-                try
-                {
-                    InputStream inStream = socket.getInputStream();
-                    bytes = inStream.read(buffer, bytes, BUFFER_SIZE-bytes);
-                    String inputString = new String(buffer);
-                    Log.d("przyszlo:", inputString);
-                    saveConfiguration("rl");
-                    connectToWifi("sd", "asd");
-                }
-                catch (IOException e)
-                {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
-
-    private class Setup extends Thread {
+    private class Setup extends Thread implements BluetoothAdapter.LeScanCallback {
 
         private Context context;
+        private Handler handler;
+        private Runnable mStopRunnable = new Runnable() {
+            @Override
+            public void run() {
+                stopScan();
+            }
+        };
+        private Runnable mStartRunnable = new Runnable() {
+            @Override
+            public void run() {
+                startScan();
+            }
+        };
+        private BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
+            private final UUID WIFI_ACCESS_SERVICE = UUID.fromString("f000aa20-0451-4000-b000-000000000000");
+            private final UUID SSID_CHARACTERISTIC = UUID.fromString("f000aa20-0451-4000-b000-000000000000");
+            private final UUID PASSWORD_CHARACTERISTIC = UUID.fromString("f000aa20-0451-4000-b000-000000000000");
+
+            private String ssid;
+            private String password;
+
+            @Override
+            public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
+                Log.d(TAG, "Connection State Change: "+status+" -> "+connectionState(newState));
+                if(status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_CONNECTED)
+                {
+                /*
+                 * Once successfully connected, we must next discover all the services on the
+                 * device before we can read and write their characteristics.
+                 */
+                    gatt.discoverServices();
+                }
+                else
+                {
+                    if(status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_DISCONNECTED)
+                    {
+                /*
+                 * If at any point we disconnect, send a message to clear the weather values
+                 * out of the UI
+                 */
+                    }
+                    else
+                    {
+                        if(status != BluetoothGatt.GATT_SUCCESS)
+                        {
+                /*
+                 * If there is a failure at any stage, simply disconnect
+                 */
+                            gatt.disconnect();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+                Log.d(TAG, "Services Discovered: "+status);
+            /*
+             * With services discovered, we are going to reset our state machine and start
+             * working through the sensors we need to enable
+             */
+
+                if(gatt.getService(WIFI_ACCESS_SERVICE) != null)
+                {
+                    Log.d(TAG, "SSID read");
+                    readSSID(gatt);
+                }
+
+            }
+
+            @Override
+            public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+                //For each read, pass the data up to the UI thread to update the display
+                if(SSID_CHARACTERISTIC.equals(characteristic.getUuid()))
+                {
+                    if(characteristic.getValue() != null)
+                    {
+                        ssid = characteristic.getStringValue(0);
+                        Log.d(TAG, "Password read");
+                        readPassword(gatt);
+                    }
+                }
+                if(PASSWORD_CHARACTERISTIC.equals(characteristic.getUuid()))
+                {
+                    if(characteristic.getValue() != null)
+                    {
+                        password = characteristic.getStringValue(0);
+                        connectToWifi(ssid, password);
+                    }
+                }
+            }
+
+            @Override
+            public void onReadRemoteRssi(BluetoothGatt gatt, int rssi, int status) {
+                Log.d(TAG, "Remote RSSI: "+rssi);
+            }
+
+            private void readSSID(BluetoothGatt gatt) {
+                BluetoothGattCharacteristic characteristic;
+                characteristic = gatt.getService(WIFI_ACCESS_SERVICE).getCharacteristic(SSID_CHARACTERISTIC);
+                gatt.readCharacteristic(characteristic);
+
+            }
+
+            private void readPassword(BluetoothGatt gatt) {
+                BluetoothGattCharacteristic characteristic;
+                characteristic = gatt.getService(WIFI_ACCESS_SERVICE).getCharacteristic(PASSWORD_CHARACTERISTIC);
+                gatt.readCharacteristic(characteristic);
+            }
+
+            private String connectionState(int status) {
+                switch(status)
+                {
+                    case BluetoothProfile.STATE_CONNECTED:
+                        return "Connected";
+                    case BluetoothProfile.STATE_DISCONNECTED:
+                        return "Disconnected";
+                    case BluetoothProfile.STATE_CONNECTING:
+                        return "Connecting";
+                    case BluetoothProfile.STATE_DISCONNECTING:
+                        return "Disconnecting";
+                    default:
+                        return String.valueOf(status);
+                }
+            }
+        };
 
         public Setup(Context context) {
             this.context = context;
@@ -308,14 +437,17 @@ public class MainActivity extends Activity {
         public void run() {
             loadData();
             initializeConfiguration();
+            connectToBLE();
         }
 
         private void loadData() {
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-            String homeId = sharedPreferences.getString(HOME_ID, "-JcMyexVThw7PEv2Z2PL");
+            String homeId = sharedPreferences.getString(HOME_ID, "0");
             HomeRepository homeRepository = new JSONHomeRepository(context);
             Home home = homeRepository.getHome(homeId);
             ((Alexandra) getApplicationContext()).setHomeManager(new LocalHomeManagerDecorator((new HomeManager(home, homeRepository, context))));
+            Intent syncIntent = new Intent(getApplicationContext(), FirebaseSyncService.class);
+            startService(syncIntent);
         }
 
         private void initializeConfiguration() {
@@ -325,5 +457,31 @@ public class MainActivity extends Activity {
             Intent remoteControlIntent = new Intent(context, FirebaseControlMessageDispatcher.class);
             startService(remoteControlIntent);
         }
+
+        private void connectToBLE() {
+            Log.i("BLE", "setting up");
+            BluetoothManager manager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
+            bluetoothAdapter = manager.getAdapter();
+            devices = new SparseArray<BluetoothDevice>();
+            startScan();
+        }
+
+        private void startScan() {
+            Log.i("BLE", "start scan");
+            bluetoothAdapter.startLeScan(this);
+            //            handler.postDelayed(mStopRunnable, 2500);
+        }
+
+        private void stopScan() {
+            bluetoothAdapter.stopLeScan(this);
+        }
+
+        @Override
+        public void onLeScan(BluetoothDevice bluetoothDevice, int i, byte[] bytes) {
+            Log.d(TAG, "discovered device: "+bluetoothDevice.getName());
+            devices.put(bluetoothDevice.hashCode(), bluetoothDevice);
+            bluetoothDevice.connectGatt(getApplicationContext(), false, gattCallback);
+        }
+
     }
 }

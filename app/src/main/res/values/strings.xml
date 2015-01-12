@@ -5,6 +5,8 @@
     <string name="title_main_activity">Alexandra</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Setup via Bluetooth</string>
+    <string name="action_refresh">Refresh data</string>
     <string name="welcome">Home system parts:</string>
+    <string name="action_default">Default values</string>
 
 </resources>

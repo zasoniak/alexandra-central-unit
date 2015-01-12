@@ -521,6 +521,7 @@ public class BluetoothChatService {
                     bytes = mmInStream.read(buffer);
                     // Send the obtained bytes to the UI Activity
                     mHandler.obtainMessage(MESSAGE_READ, bytes, -1, buffer).sendToTarget();
+                    Log.i(TAG, "messsage obtained");
                 }
                 catch (IOException e)
                 {
