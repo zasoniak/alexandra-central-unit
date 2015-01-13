@@ -28,10 +28,6 @@
             </intent-filter>
         </activity>
 
-        <service
-            android:name="com.kms.alexandra.centralunit.CoreService">
-        </service>
-
         <receiver
             android:name="com.kms.alexandra.centralunit.Autostart"
             android:enabled="true"

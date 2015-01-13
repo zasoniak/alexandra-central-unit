@@ -8,5 +8,6 @@
     <string name="action_refresh">Refresh data</string>
     <string name="welcome">Home system parts:</string>
     <string name="action_default">Default values</string>
+    <string name="action_BLE">Run BLE</string>
 
 </resources>

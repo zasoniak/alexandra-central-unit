@@ -12,6 +12,7 @@ import android.bluetooth.BluetoothProfile;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.firebase.client.Firebase;
 import com.kms.alexandra.R;
@@ -37,7 +39,8 @@ import com.kms.alexandra.data.model.gadgets.Gadget;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.UUID;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 /**
@@ -53,9 +56,6 @@ public class MainActivity extends Activity {
         public static final int MESSAGE_WRITE = 3;
         public static final int MESSAGE_DEVICE_NAME = 4;
         public static final int MESSAGE_TOAST = 5;
-        // Key names received from the BluetoothChatService Handler
-        public static final String DEVICE_NAME = "device_name";
-        public static final String TOAST = "toast";
 
         @Override
         public void handleMessage(Message msg) {
@@ -126,6 +126,86 @@ public class MainActivity extends Activity {
             }
         }
     };
+    private BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
+
+        @Override
+        public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
+            Log.d(TAG, "Connection State Change: "+status+" -> "+connectionState(newState));
+            if(status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_CONNECTED)
+            {
+                /*
+                 * Once successfully connected, we must next discover all the services on the
+                 * device before we can read and write their characteristics.
+                 */
+                gatt.discoverServices();
+            }
+            else
+            {
+                if(status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_DISCONNECTED)
+                {
+                /*
+                 * If at any point we disconnect, send a message to clear the weather values
+                 * out of the UI
+                 */
+                }
+                else
+                {
+                    if(status != BluetoothGatt.GATT_SUCCESS)
+                    {
+                /*
+                 * If there is a failure at any stage, simply disconnect
+                 */
+                        gatt.disconnect();
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+            Log.d(TAG, "Services Discovered: "+status);
+            /*
+             * With services discovered, we are going to reset our state machine and start
+             * working through the sensors we need to enable
+             */
+        }
+
+        @Override
+        public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+            //For each read, pass the data up to the UI thread to update the display
+
+        }
+
+        @Override
+        public void onReadRemoteRssi(BluetoothGatt gatt, int rssi, int status) {
+            Log.d(TAG, "Remote RSSI: "+rssi);
+        }
+
+        private String connectionState(int status) {
+            switch(status)
+            {
+                case BluetoothProfile.STATE_CONNECTED:
+                    return "Connected";
+                case BluetoothProfile.STATE_DISCONNECTED:
+                    return "Disconnected";
+                case BluetoothProfile.STATE_CONNECTING:
+                    return "Connecting";
+                case BluetoothProfile.STATE_DISCONNECTING:
+                    return "Disconnecting";
+                default:
+                    return String.valueOf(status);
+            }
+        }
+    };
+    private BluetoothAdapter.LeScanCallback leScanCallback = new BluetoothAdapter.LeScanCallback() {
+
+        @Override
+        public void onLeScan(BluetoothDevice bluetoothDevice, int i, byte[] bytes) {
+            Log.d(TAG, "discovered device: "+bluetoothDevice.getName());
+            devices.put(bluetoothDevice.hashCode(), bluetoothDevice);
+            bluetoothDevice.connectGatt(getApplicationContext(), false, gattCallback);
+        }
+    };
     public static final String CONFIGURED = "configured";
     public static final String HOME_ID = "home_id";
     public static final String HOME_NAME = "name";
@@ -133,6 +213,16 @@ public class MainActivity extends Activity {
     private SparseArray<BluetoothDevice> devices;
     private ArrayList<String> partsArrayList;
     private ArrayAdapter<String> adapter;
+
+    private void startScan() {
+        Log.i("BLE", "start scan");
+        bluetoothAdapter.startLeScan(leScanCallback);
+    }
+
+    private void stopScan() {
+        Log.i("BLE", "stop scan");
+        bluetoothAdapter.stopLeScan(leScanCallback);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -183,7 +273,13 @@ public class MainActivity extends Activity {
                 refresh();
                 return true;
             case R.id.action_default:
+                if(!getPackageManager().hasSystemFeature(PackageManager.FEATURE_BLUETOOTH_LE))
+                {
+                    Toast.makeText(this, "No LE Support.", Toast.LENGTH_SHORT).show();
+                }
                 loadDefault();
+            case R.id.action_BLE:
+                connectToBLE();
             default:
                 return false;
         }
@@ -191,12 +287,16 @@ public class MainActivity extends Activity {
 
     private void refresh() {
         if(((Alexandra) getApplicationContext()).getHome() != null)
+        {
+            partsArrayList.clear();
+            adapter.notifyDataSetChanged();
             for(Gadget gadget : ((Alexandra) getApplicationContext()).getHome().getGadgets())
             {
                 Log.i(TAG, gadget.getName());
                 partsArrayList.add(gadget.getName());
                 adapter.notifyDataSetChanged();
             }
+        }
     }
 
     private void loadDefault() {
@@ -292,6 +392,31 @@ public class MainActivity extends Activity {
         return completed;
     }
 
+    private void connectToBLE() {
+        BluetoothManager manager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
+        bluetoothAdapter = manager.getAdapter();
+        if(bluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)
+        {
+            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 120);
+            startActivity(discoverableIntent);
+        }
+        Log.i("BLE", "setting up");
+        bluetoothAdapter = manager.getAdapter();
+        devices = new SparseArray<BluetoothDevice>();
+        stopScan();
+        startScan();
+
+        TimerTask scanTimeout = new TimerTask() {
+            @Override
+            public void run() {
+                stopScan();
+            }
+        };
+        Timer scanTimer = new Timer();
+        scanTimer.schedule(scanTimeout, 5000);
+    }
+
     private void logEvent(String type, String message) {
         Intent intent = new Intent(getBaseContext(), HistorianBroadcastReceiver.class);
         intent.putExtra(HistorianBroadcastReceiver.LOG_TYPE, HistorianBroadcastReceiver.LogType.System);
@@ -301,135 +426,9 @@ public class MainActivity extends Activity {
         sendBroadcast(intent);
     }
 
-    private class Setup extends Thread implements BluetoothAdapter.LeScanCallback {
+    private class Setup extends Thread {
 
         private Context context;
-        private Handler handler;
-        private Runnable mStopRunnable = new Runnable() {
-            @Override
-            public void run() {
-                stopScan();
-            }
-        };
-        private Runnable mStartRunnable = new Runnable() {
-            @Override
-            public void run() {
-                startScan();
-            }
-        };
-        private BluetoothGattCallback gattCallback = new BluetoothGattCallback() {
-            private final UUID WIFI_ACCESS_SERVICE = UUID.fromString("f000aa20-0451-4000-b000-000000000000");
-            private final UUID SSID_CHARACTERISTIC = UUID.fromString("f000aa20-0451-4000-b000-000000000000");
-            private final UUID PASSWORD_CHARACTERISTIC = UUID.fromString("f000aa20-0451-4000-b000-000000000000");
-
-            private String ssid;
-            private String password;
-
-            @Override
-            public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
-                Log.d(TAG, "Connection State Change: "+status+" -> "+connectionState(newState));
-                if(status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_CONNECTED)
-                {
-                /*
-                 * Once successfully connected, we must next discover all the services on the
-                 * device before we can read and write their characteristics.
-                 */
-                    gatt.discoverServices();
-                }
-                else
-                {
-                    if(status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_DISCONNECTED)
-                    {
-                /*
-                 * If at any point we disconnect, send a message to clear the weather values
-                 * out of the UI
-                 */
-                    }
-                    else
-                    {
-                        if(status != BluetoothGatt.GATT_SUCCESS)
-                        {
-                /*
-                 * If there is a failure at any stage, simply disconnect
-                 */
-                            gatt.disconnect();
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onServicesDiscovered(BluetoothGatt gatt, int status) {
-                Log.d(TAG, "Services Discovered: "+status);
-            /*
-             * With services discovered, we are going to reset our state machine and start
-             * working through the sensors we need to enable
-             */
-
-                if(gatt.getService(WIFI_ACCESS_SERVICE) != null)
-                {
-                    Log.d(TAG, "SSID read");
-                    readSSID(gatt);
-                }
-
-            }
-
-            @Override
-            public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
-                //For each read, pass the data up to the UI thread to update the display
-                if(SSID_CHARACTERISTIC.equals(characteristic.getUuid()))
-                {
-                    if(characteristic.getValue() != null)
-                    {
-                        ssid = characteristic.getStringValue(0);
-                        Log.d(TAG, "Password read");
-                        readPassword(gatt);
-                    }
-                }
-                if(PASSWORD_CHARACTERISTIC.equals(characteristic.getUuid()))
-                {
-                    if(characteristic.getValue() != null)
-                    {
-                        password = characteristic.getStringValue(0);
-                        connectToWifi(ssid, password);
-                    }
-                }
-            }
-
-            @Override
-            public void onReadRemoteRssi(BluetoothGatt gatt, int rssi, int status) {
-                Log.d(TAG, "Remote RSSI: "+rssi);
-            }
-
-            private void readSSID(BluetoothGatt gatt) {
-                BluetoothGattCharacteristic characteristic;
-                characteristic = gatt.getService(WIFI_ACCESS_SERVICE).getCharacteristic(SSID_CHARACTERISTIC);
-                gatt.readCharacteristic(characteristic);
-
-            }
-
-            private void readPassword(BluetoothGatt gatt) {
-                BluetoothGattCharacteristic characteristic;
-                characteristic = gatt.getService(WIFI_ACCESS_SERVICE).getCharacteristic(PASSWORD_CHARACTERISTIC);
-                gatt.readCharacteristic(characteristic);
-            }
-
-            private String connectionState(int status) {
-                switch(status)
-                {
-                    case BluetoothProfile.STATE_CONNECTED:
-                        return "Connected";
-                    case BluetoothProfile.STATE_DISCONNECTED:
-                        return "Disconnected";
-                    case BluetoothProfile.STATE_CONNECTING:
-                        return "Connecting";
-                    case BluetoothProfile.STATE_DISCONNECTING:
-                        return "Disconnecting";
-                    default:
-                        return String.valueOf(status);
-                }
-            }
-        };
 
         public Setup(Context context) {
             this.context = context;
@@ -460,30 +459,7 @@ public class MainActivity extends Activity {
             startService(remoteControlIntent);
         }
 
-        private void connectToBLE() {
-            Log.i("BLE", "setting up");
-            BluetoothManager manager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
-            bluetoothAdapter = manager.getAdapter();
-            devices = new SparseArray<BluetoothDevice>();
-            startScan();
-        }
 
-        private void startScan() {
-            Log.i("BLE", "start scan");
-            bluetoothAdapter.startLeScan(this);
-            //            handler.postDelayed(mStopRunnable, 2500);
-        }
-
-        private void stopScan() {
-            bluetoothAdapter.stopLeScan(this);
-        }
-
-        @Override
-        public void onLeScan(BluetoothDevice bluetoothDevice, int i, byte[] bytes) {
-            Log.d(TAG, "discovered device: "+bluetoothDevice.getName());
-            devices.put(bluetoothDevice.hashCode(), bluetoothDevice);
-            bluetoothDevice.connectGatt(getApplicationContext(), false, gattCallback);
-        }
 
     }
 }
