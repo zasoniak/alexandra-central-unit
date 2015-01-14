@@ -55,6 +55,7 @@ public class MainActivity extends Activity {
         public static final int MESSAGE_WRITE = 3;
         public static final int MESSAGE_DEVICE_NAME = 4;
         public static final int MESSAGE_TOAST = 5;
+
         @Override
         public void handleMessage(Message msg) {
             switch(msg.what)
@@ -197,16 +198,6 @@ public class MainActivity extends Activity {
             }
         }
     };
-    private BluetoothAdapter.LeScanCallback leScanCallback = new BluetoothAdapter.LeScanCallback() {
-        @Override
-        public void onLeScan(BluetoothDevice bluetoothDevice, int i, byte[] bytes) {
-            Log.d(TAG, "discovered device: "+bluetoothDevice.getName());
-                Log.d(TAG, "trying to connect GATT");
-                devices.add(bluetoothDevice);
-                bluetoothDevice.connectGatt(getApplicationContext(), true, gattCallback);
-        }
-    };
-
     // Create a BroadcastReceiver for ACTION_FOUND
     private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         public void onReceive(Context context, Intent intent) {
@@ -228,7 +219,25 @@ public class MainActivity extends Activity {
             }
         }
     };
-
+    private BluetoothAdapter.LeScanCallback leScanCallback = new BluetoothAdapter.LeScanCallback() {
+        @Override
+        public void onLeScan(BluetoothDevice bluetoothDevice, int i, byte[] bytes) {
+            Log.d(TAG, "discovered device: "+bluetoothDevice.getName());
+            Home home = ((Alexandra) getApplicationContext()).getHome();
+            if(home != null)
+            {
+                for(Gadget gadget : home.getGadgets())
+                {
+                    if(gadget.getMAC().equals(bluetoothDevice.getAddress()))
+                    {
+                        Log.d(TAG, "trying to connect GATT");
+                        gadget.setBluetoothGatt(bluetoothDevice.connectGatt(getApplicationContext(), true, gadget.getBluetoothGattCallback()));
+                        devices.add(bluetoothDevice);
+                    }
+                }
+            }
+        }
+    };
     public static final String CONFIGURED = "configured";
     public static final String HOME_ID = "home_id";
     public static final String HOME_NAME = "name";
@@ -326,16 +335,16 @@ public class MainActivity extends Activity {
                 adapter.notifyDataSetChanged();
             }
 
-//            if(devices != null)
-//            {
-//                Log.i("devices", String.valueOf(devices.size()));
-//                for(BluetoothDevice device : devices)
-//                {
-//                    Log.i("gattCheck", "up to go");
-//                    gattCheck(device.connectGatt(this, true, gattCallback));
-//                }
-//
-//            }
+            //            if(devices != null)
+            //            {
+            //                Log.i("devices", String.valueOf(devices.size()));
+            //                for(BluetoothDevice device : devices)
+            //                {
+            //                    Log.i("gattCheck", "up to go");
+            //                    gattCheck(device.connectGatt(this, true, gattCallback));
+            //                }
+            //
+            //            }
 
         }
     }
@@ -348,8 +357,9 @@ public class MainActivity extends Activity {
         Log.i("write char", "up to go");
         gatt.writeCharacteristic(characteristic);
     }
+
     private void loadDefault() {
-        saveConfiguration("-JcMyexVThw7PEv2Z2PL");
+        saveConfiguration("-JcMyexVThw7PEv2Z2qq");
         connectToWifi("Livebox-D69B", "2E62120CE85F61E6C402CE9E72");
     }
 
@@ -442,39 +452,39 @@ public class MainActivity extends Activity {
         return completed;
     }
 
-        private void connectToBLE() {
-            BluetoothManager manager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
-            bluetoothAdapter = manager.getAdapter();
-            if(bluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)
-            {
-                Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-                discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 120);
-                startActivity(discoverableIntent);
-            }
-            Log.i("BLE", "setting up");
-            bluetoothAdapter = manager.getAdapter();
-            devices = new ArrayList<BluetoothDevice>();
-            stopScan();
-            startScan();
+    private void connectToBLE() {
+        BluetoothManager manager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
+        bluetoothAdapter = manager.getAdapter();
+        if(bluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)
+        {
+            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 120);
+            startActivity(discoverableIntent);
         }
+        Log.i("BLE", "setting up");
+        bluetoothAdapter = manager.getAdapter();
+        devices = new ArrayList<BluetoothDevice>();
+        stopScan();
+        startScan();
+    }
 
-//    private void connectToBLE() {
-//        devices = new ArrayList<BluetoothDevice>();
-//        // Register the BroadcastReceiver
-//        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-//        registerReceiver(mReceiver, filter); // Don't forget to unregister during onDestroy
-//        BluetoothManager manager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
-//        bluetoothAdapter = manager.getAdapter();
-//        if(bluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)
-//        {
-//            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-//            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 120);
-//            startActivity(discoverableIntent);
-//        }
-//        Log.i("discovery", "setting up");
-//        bluetoothAdapter = manager.getAdapter();
-//        bluetoothAdapter.startDiscovery();
-//    }
+    //    private void connectToBLE() {
+    //        devices = new ArrayList<BluetoothDevice>();
+    //        // Register the BroadcastReceiver
+    //        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+    //        registerReceiver(mReceiver, filter); // Don't forget to unregister during onDestroy
+    //        BluetoothManager manager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
+    //        bluetoothAdapter = manager.getAdapter();
+    //        if(bluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)
+    //        {
+    //            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+    //            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 120);
+    //            startActivity(discoverableIntent);
+    //        }
+    //        Log.i("discovery", "setting up");
+    //        bluetoothAdapter = manager.getAdapter();
+    //        bluetoothAdapter.startDiscovery();
+    //    }
 
     private void logEvent(String type, String message) {
         Intent intent = new Intent(getBaseContext(), HistorianBroadcastReceiver.class);
@@ -517,8 +527,6 @@ public class MainActivity extends Activity {
             Intent remoteControlIntent = new Intent(context, FirebaseControlMessageDispatcher.class);
             startService(remoteControlIntent);
         }
-
-
 
     }
 }

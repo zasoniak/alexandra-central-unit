@@ -1,6 +1,10 @@
 package com.kms.alexandra.data.model.gadgets;
 
 
+import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothGattCallback;
+import android.bluetooth.BluetoothGattCharacteristic;
+import android.bluetooth.BluetoothProfile;
 import android.util.Log;
 
 import com.kms.alexandra.data.model.Room;
@@ -28,6 +32,10 @@ import java.util.UUID;
  */
 public class MultiDimmer extends MultiLight {
 
+    public static final String TAG = "MutliDimmer";
+    private static final UUID SERVICE_DIMMER = UUID.fromString("4146d76c-99fa-11e4-89d3-123b93f75cba");
+    private static final UUID CHARACTERISTIC_BRIGHTNESS_VALUE = UUID.fromString("4146db18-99fa-11e4-89d3-123b93f75cba");
+
     private List<Dimmer> channels = new ArrayList<Dimmer>();
 
     public MultiDimmer(UUID id, Room room, String name, String address, GadgetType type, int channelsNumber, boolean installed, int icon, int firmware) {
@@ -38,6 +46,104 @@ public class MultiDimmer extends MultiLight {
             this.channels.add(new Dimmer());
         }
 
+        bluetoothGattCallback = new BluetoothGattCallback() {
+
+            @Override
+            public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
+                Log.d(TAG, "Connection State Change: "+status+" -> "+connectionState(newState));
+                if(status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_CONNECTED)
+                {
+                    Log.d(TAG, "Połączyło się! Powinien pójść service discovery");
+                    bluetoothGatt = gatt;
+
+                /*
+                 * Once successfully connected, we must next discover all the services on the
+                 * device before we can read and write their characteristics.
+                 */
+                    gatt.discoverServices();
+                }
+                else
+                {
+                    if(status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_DISCONNECTED)
+                    {
+                /*
+                 * If at any point we disconnect, send a message to clear the weather values
+                 * out of the UI
+                 */
+                    }
+                    else
+                    {
+                        if(status != BluetoothGatt.GATT_SUCCESS)
+                        {
+                /*
+                 * If there is a failure at any stage, simply disconnect
+                 */
+                            gatt.disconnect();
+                        }
+                    }
+                }
+            }
+
+            private String connectionState(int status) {
+                switch(status)
+                {
+                    case BluetoothProfile.STATE_CONNECTED:
+                        return "Connected";
+                    case BluetoothProfile.STATE_DISCONNECTED:
+                        return "Disconnected";
+                    case BluetoothProfile.STATE_CONNECTING:
+                        return "Connecting";
+                    case BluetoothProfile.STATE_DISCONNECTING:
+                        return "Disconnecting";
+                    default:
+                        return String.valueOf(status);
+                }
+            }
+
+            @Override
+            public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+                Log.d(TAG, "Services Discovered: "+status);
+                state = GadgetState.OK;
+            /*
+             * With services discovered, we are going to reset our state machine and start
+             * working through the sensors we need to enable
+             */
+                gattCheck(gatt);
+            }
+
+            @Override
+            public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+                if(characteristic.getUuid().equals(CHARACTERISTIC_BRIGHTNESS_VALUE))
+                {
+                    setChannelBrightness(0, characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 0));
+                }
+                //For each read, pass the data up to the UI thread to update the display
+
+            }
+
+            @Override
+            public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+                if(characteristic.getUuid().equals(CHARACTERISTIC_BRIGHTNESS_VALUE))
+                {
+                    setChannelBrightness(0, characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 0));
+                }
+            }
+
+            @Override
+            public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
+                if(characteristic.getUuid().equals(CHARACTERISTIC_BRIGHTNESS_VALUE))
+                {
+                    setChannelBrightness(0, characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 0));
+                }
+            }
+
+            @Override
+            public void onReadRemoteRssi(BluetoothGatt gatt, int rssi, int status) {
+                Log.d(TAG, "Remote RSSI: "+rssi);
+            }
+
+        };
+
     }
 
     public MultiDimmer(UUID id, String temporaryRoomId, String name, String address, GadgetType type, int socketNumber, boolean installed, int icon, int firmware) {
@@ -47,6 +153,100 @@ public class MultiDimmer extends MultiLight {
         {
             this.channels.add(new Dimmer());
         }
+        bluetoothGattCallback = new BluetoothGattCallback() {
+
+            private String connectionState(int status) {
+                switch(status)
+                {
+                    case BluetoothProfile.STATE_CONNECTED:
+                        return "Connected";
+                    case BluetoothProfile.STATE_DISCONNECTED:
+                        return "Disconnected";
+                    case BluetoothProfile.STATE_CONNECTING:
+                        return "Connecting";
+                    case BluetoothProfile.STATE_DISCONNECTING:
+                        return "Disconnecting";
+                    default:
+                        return String.valueOf(status);
+                }
+            }
+
+            @Override
+            public void onConnectionStateChange(BluetoothGatt gatt, int status, int newState) {
+                Log.d(TAG, "Connection State Change: "+status+" -> "+connectionState(newState));
+                if(status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_CONNECTED)
+                {
+                    Log.d(TAG, "Połączyło się! Powinien pójść service discovery");
+                    bluetoothGatt = gatt;
+                /*
+                 * Once successfully connected, we must next discover all the services on the
+                 * device before we can read and write their characteristics.
+                 */
+                    gatt.discoverServices();
+                }
+                else
+                {
+                    if(status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_DISCONNECTED)
+                    {
+                /*
+                 * If at any point we disconnect, send a message to clear the weather values
+                 * out of the UI
+                 */
+                    }
+                    else
+                    {
+                        if(status != BluetoothGatt.GATT_SUCCESS)
+                        {
+                /*
+                 * If there is a failure at any stage, simply disconnect
+                 */
+                            gatt.disconnect();
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onServicesDiscovered(BluetoothGatt gatt, int status) {
+                Log.d(TAG, "Services Discovered: "+status);
+            /*
+             * With services discovered, we are going to reset our state machine and start
+             * working through the sensors we need to enable
+             */
+            }
+
+            @Override
+            public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+                if(characteristic.getUuid().equals(CHARACTERISTIC_BRIGHTNESS_VALUE))
+                {
+                    setChannelBrightness(0, characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 0));
+                }
+                //For each read, pass the data up to the UI thread to update the display
+
+            }
+
+            @Override
+            public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
+                if(characteristic.getUuid().equals(CHARACTERISTIC_BRIGHTNESS_VALUE))
+                {
+                    setChannelBrightness(0, characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 0));
+                }
+            }
+
+            @Override
+            public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
+                if(characteristic.getUuid().equals(CHARACTERISTIC_BRIGHTNESS_VALUE))
+                {
+                    setChannelBrightness(0, characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 0));
+                }
+            }
+
+            @Override
+            public void onReadRemoteRssi(BluetoothGatt gatt, int rssi, int status) {
+                Log.d(TAG, "Remote RSSI: "+rssi);
+            }
+
+        };
     }
 
     @Override
@@ -99,38 +299,47 @@ public class MultiDimmer extends MultiLight {
             case SwitchAll:
                 Log.d("przygotowano", "SwitchAll");
                 setOn(Boolean.parseBoolean(actionMessage.parameter));
-                return new ActionSwitchAll(this.id, this.gatt, actionMessage.parameter);
+                return new ActionSwitchAll(this.id, this.bluetoothGatt, actionMessage.parameter);
             case SwitchChannelOne:
                 Log.d("przygotowano", "SwitchChannelOne");
                 setChannelOn(0, Boolean.parseBoolean(actionMessage.parameter));
-                return new ActionSwitchChannelOne(this.id, this.gatt, actionMessage.parameter);
+                return new ActionSwitchChannelOne(this.id, this.bluetoothGatt, actionMessage.parameter);
             case SwitchChannelTwo:
                 if(channelsNumber >= 2)
                 {
                     Log.d("przygotowano", "SwitchChannelTwo");
                     setChannelOn(1, Boolean.parseBoolean(actionMessage.parameter));
-                    return new ActionSwitchChannelTwo(this.id, this.gatt, actionMessage.parameter);
+                    return new ActionSwitchChannelTwo(this.id, this.bluetoothGatt, actionMessage.parameter);
                 }
                 return null;
             case SetBrightness:
                 Log.d("przygotowano", "SetBrightness");
                 setBrightness(Integer.parseInt(actionMessage.parameter));
-                return new ActionSetBrightness(this.id, this.gatt, actionMessage.parameter);
+                return new ActionSetBrightness(this.id, this.bluetoothGatt, actionMessage.parameter);
             case SetBrightnessChannelOne:
                 Log.d("przygotowano", "SetBrightnessChannelOne");
                 setChannelBrightness(0, Integer.parseInt(actionMessage.parameter));
-                return new ActionSetBrightnessChannelOne(this.id, this.gatt, actionMessage.parameter);
+                return new ActionSetBrightnessChannelOne(this.id, this.bluetoothGatt, actionMessage.parameter);
             case SetBrightnessChannelTwo:
                 if(channelsNumber >= 2)
                 {
                     Log.d("przygotowano", "SetBrightnessChannelTwo");
                     setChannelBrightness(1, Integer.parseInt(actionMessage.parameter));
-                    return new ActionSetBrightnessChannelTwo(this.id, this.gatt, actionMessage.parameter);
+                    return new ActionSetBrightnessChannelTwo(this.id, this.bluetoothGatt, actionMessage.parameter);
                 }
                 return null;
             default:
                 return null;
         }
+    }
+
+    private void gattCheck(BluetoothGatt gatt) {
+        UUID serviceID = UUID.fromString("4146d76c-99fa-11e4-89d3-123b93f75cba");
+        UUID characteristicID = UUID.fromString("4146db18-99fa-11e4-89d3-123b93f75cba");
+        BluetoothGattCharacteristic characteristic = gatt.getService(serviceID).getCharacteristic(characteristicID);
+        characteristic.setValue(40, BluetoothGattCharacteristic.FORMAT_SINT8, 0);
+        Log.i("write char", "up to go");
+        gatt.writeCharacteristic(characteristic);
     }
 
     public void setBrightness(int brightness) {

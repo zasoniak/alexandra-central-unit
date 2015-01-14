@@ -2,6 +2,7 @@ package com.kms.alexandra.data.model.gadgets;
 
 
 import android.bluetooth.BluetoothGatt;
+import android.bluetooth.BluetoothGattCallback;
 
 import com.kms.alexandra.data.model.Listable;
 import com.kms.alexandra.data.model.Observable;
@@ -38,7 +39,8 @@ public abstract class Gadget extends Observable implements Listable {
 
     protected GadgetType type;
     protected GadgetState state;
-    protected BluetoothGatt gatt;
+    protected BluetoothGatt bluetoothGatt;
+    protected BluetoothGattCallback bluetoothGattCallback;
     protected UUID id;
     protected Room room;
     protected String temporaryRoomId;
@@ -149,6 +151,27 @@ public abstract class Gadget extends Observable implements Listable {
 
     public abstract BaseAction prepare(ActionMessage actionMessage);
 
+    public BluetoothGattCallback getBluetoothGattCallback() {
+        return bluetoothGattCallback;
+    }
+
+    public void setBluetoothGattCallback(BluetoothGattCallback bluetoothGattCallback) {
+        this.bluetoothGattCallback = bluetoothGattCallback;
+    }
+
+    public BluetoothGatt getBluetoothGatt() {
+        return bluetoothGatt;
+    }
+
+    public void setBluetoothGatt(BluetoothGatt bluetoothGatt) {
+        this.bluetoothGatt = bluetoothGatt;
+    }
+
+    @Override
+    public String getObjectType() {
+        return getType().name();
+    }
+
     public static enum GadgetType {
         WallSocket,
         ExtensionCord,
@@ -172,10 +195,5 @@ public abstract class Gadget extends Observable implements Listable {
         SetBrightness,
         SetBrightnessChannelOne,
         SetBrightnessChannelTwo
-    }
-
-    @Override
-    public String getObjectType() {
-        return getType().name();
     }
 }
