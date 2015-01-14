@@ -12,7 +12,6 @@ import android.bluetooth.BluetoothProfile;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.wifi.WifiConfiguration;
@@ -164,6 +163,7 @@ public class MainActivity extends Activity {
         @Override
         public void onServicesDiscovered(BluetoothGatt gatt, int status) {
             Log.d(TAG, "Services Discovered: "+status);
+            gattCheck(gatt);
             /*
              * With services discovered, we are going to reset our state machine and start
              * working through the sensors we need to enable
@@ -201,8 +201,9 @@ public class MainActivity extends Activity {
         @Override
         public void onLeScan(BluetoothDevice bluetoothDevice, int i, byte[] bytes) {
             Log.d(TAG, "discovered device: "+bluetoothDevice.getName());
-            devices.add(bluetoothDevice);
-            bluetoothDevice.connectGatt(getApplicationContext(), false, gattCallback);
+                Log.d(TAG, "trying to connect GATT");
+                devices.add(bluetoothDevice);
+                bluetoothDevice.connectGatt(getApplicationContext(), true, gattCallback);
         }
     };
 
@@ -325,16 +326,16 @@ public class MainActivity extends Activity {
                 adapter.notifyDataSetChanged();
             }
 
-            if(devices != null)
-            {
-                Log.i("devices", String.valueOf(devices.size()));
-                for(BluetoothDevice device : devices)
-                {
-                    Log.i("gattCheck", "up to go");
-                    gattCheck(device.connectGatt(this, true, gattCallback));
-                }
-
-            }
+//            if(devices != null)
+//            {
+//                Log.i("devices", String.valueOf(devices.size()));
+//                for(BluetoothDevice device : devices)
+//                {
+//                    Log.i("gattCheck", "up to go");
+//                    gattCheck(device.connectGatt(this, true, gattCallback));
+//                }
+//
+//            }
 
         }
     }
@@ -441,39 +442,39 @@ public class MainActivity extends Activity {
         return completed;
     }
 
-    //    private void connectToBLE() {
-    //        BluetoothManager manager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
-    //        bluetoothAdapter = manager.getAdapter();
-    //        if(bluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)
-    //        {
-    //            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-    //            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 120);
-    //            startActivity(discoverableIntent);
-    //        }
-    //        Log.i("BLE", "setting up");
-    //        bluetoothAdapter = manager.getAdapter();
-    //        devices = new SparseArray<BluetoothDevice>();
-    //        stopScan();
-    //        startScan();
-    //    }
-
-    private void connectToBLE() {
-        devices = new ArrayList<BluetoothDevice>();
-        // Register the BroadcastReceiver
-        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-        registerReceiver(mReceiver, filter); // Don't forget to unregister during onDestroy
-        BluetoothManager manager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
-        bluetoothAdapter = manager.getAdapter();
-        if(bluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)
-        {
-            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
-            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 120);
-            startActivity(discoverableIntent);
+        private void connectToBLE() {
+            BluetoothManager manager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
+            bluetoothAdapter = manager.getAdapter();
+            if(bluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)
+            {
+                Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+                discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 120);
+                startActivity(discoverableIntent);
+            }
+            Log.i("BLE", "setting up");
+            bluetoothAdapter = manager.getAdapter();
+            devices = new ArrayList<BluetoothDevice>();
+            stopScan();
+            startScan();
         }
-        Log.i("discovery", "setting up");
-        bluetoothAdapter = manager.getAdapter();
-        bluetoothAdapter.startDiscovery();
-    }
+
+//    private void connectToBLE() {
+//        devices = new ArrayList<BluetoothDevice>();
+//        // Register the BroadcastReceiver
+//        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+//        registerReceiver(mReceiver, filter); // Don't forget to unregister during onDestroy
+//        BluetoothManager manager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
+//        bluetoothAdapter = manager.getAdapter();
+//        if(bluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)
+//        {
+//            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+//            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 120);
+//            startActivity(discoverableIntent);
+//        }
+//        Log.i("discovery", "setting up");
+//        bluetoothAdapter = manager.getAdapter();
+//        bluetoothAdapter.startDiscovery();
+//    }
 
     private void logEvent(String type, String message) {
         Intent intent = new Intent(getBaseContext(), HistorianBroadcastReceiver.class);
