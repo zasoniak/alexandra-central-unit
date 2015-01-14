@@ -9,8 +9,10 @@ import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothManager;
 import android.bluetooth.BluetoothProfile;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.wifi.WifiConfiguration;
@@ -20,7 +22,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ArrayAdapter;
@@ -39,8 +40,7 @@ import com.kms.alexandra.data.model.gadgets.Gadget;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.UUID;
 
 
 /**
@@ -56,7 +56,6 @@ public class MainActivity extends Activity {
         public static final int MESSAGE_WRITE = 3;
         public static final int MESSAGE_DEVICE_NAME = 4;
         public static final int MESSAGE_TOAST = 5;
-
         @Override
         public void handleMessage(Message msg) {
             switch(msg.what)
@@ -133,6 +132,7 @@ public class MainActivity extends Activity {
             Log.d(TAG, "Connection State Change: "+status+" -> "+connectionState(newState));
             if(status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_CONNECTED)
             {
+                Log.d(TAG, "Połączyło się! Powinien pójść service discovery");
                 /*
                  * Once successfully connected, we must next discover all the services on the
                  * device before we can read and write their characteristics.
@@ -198,19 +198,41 @@ public class MainActivity extends Activity {
         }
     };
     private BluetoothAdapter.LeScanCallback leScanCallback = new BluetoothAdapter.LeScanCallback() {
-
         @Override
         public void onLeScan(BluetoothDevice bluetoothDevice, int i, byte[] bytes) {
             Log.d(TAG, "discovered device: "+bluetoothDevice.getName());
-            devices.put(bluetoothDevice.hashCode(), bluetoothDevice);
+            devices.add(bluetoothDevice);
             bluetoothDevice.connectGatt(getApplicationContext(), false, gattCallback);
         }
     };
+
+    // Create a BroadcastReceiver for ACTION_FOUND
+    private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            // When discovery finds a device
+            if(BluetoothDevice.ACTION_FOUND.equals(action))
+            {
+                // Get the BluetoothDevice object from the Intent
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                // Add the name and address to an array adapter to show in a ListView
+                partsArrayList.add(device.getName()+"\n"+device.getAddress());
+                adapter.notifyDataSetChanged();
+
+                if(device.getAddress().equals("00:1A:7D:DA:71:04") && !(devices.contains(device)))
+                {
+                    device.connectGatt(getApplicationContext(), true, gattCallback);
+                    devices.add(device);
+                }
+            }
+        }
+    };
+
     public static final String CONFIGURED = "configured";
     public static final String HOME_ID = "home_id";
     public static final String HOME_NAME = "name";
     BluetoothAdapter bluetoothAdapter;
-    private SparseArray<BluetoothDevice> devices;
+    private ArrayList<BluetoothDevice> devices;
     private ArrayList<String> partsArrayList;
     private ArrayAdapter<String> adapter;
 
@@ -253,6 +275,11 @@ public class MainActivity extends Activity {
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.admin, menu);
@@ -289,6 +316,7 @@ public class MainActivity extends Activity {
         if(((Alexandra) getApplicationContext()).getHome() != null)
         {
             partsArrayList.clear();
+            partsArrayList.add(((Alexandra) getApplicationContext()).getHome().getName());
             adapter.notifyDataSetChanged();
             for(Gadget gadget : ((Alexandra) getApplicationContext()).getHome().getGadgets())
             {
@@ -296,9 +324,29 @@ public class MainActivity extends Activity {
                 partsArrayList.add(gadget.getName());
                 adapter.notifyDataSetChanged();
             }
+
+            if(devices != null)
+            {
+                Log.i("devices", String.valueOf(devices.size()));
+                for(BluetoothDevice device : devices)
+                {
+                    Log.i("gattCheck", "up to go");
+                    gattCheck(device.connectGatt(this, true, gattCallback));
+                }
+
+            }
+
         }
     }
 
+    private void gattCheck(BluetoothGatt gatt) {
+        UUID serviceID = UUID.fromString("4146d76c-99fa-11e4-89d3-123b93f75cba");
+        UUID characteristicID = UUID.fromString("4146db18-99fa-11e4-89d3-123b93f75cba");
+        BluetoothGattCharacteristic characteristic = gatt.getService(serviceID).getCharacteristic(characteristicID);
+        characteristic.setValue(40, BluetoothGattCharacteristic.FORMAT_SINT8, 0);
+        Log.i("write char", "up to go");
+        gatt.writeCharacteristic(characteristic);
+    }
     private void loadDefault() {
         saveConfiguration("-JcMyexVThw7PEv2Z2PL");
         connectToWifi("Livebox-D69B", "2E62120CE85F61E6C402CE9E72");
@@ -313,8 +361,9 @@ public class MainActivity extends Activity {
     }
 
     private void firstRunSetup() {
-        BluetoothAdapter bluetooth = BluetoothAdapter.getDefaultAdapter();
-        if(bluetooth.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)
+        BluetoothManager manager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
+        bluetoothAdapter = manager.getAdapter();
+        if(bluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)
         {
             Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
             discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 120);
@@ -392,7 +441,27 @@ public class MainActivity extends Activity {
         return completed;
     }
 
+    //    private void connectToBLE() {
+    //        BluetoothManager manager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
+    //        bluetoothAdapter = manager.getAdapter();
+    //        if(bluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)
+    //        {
+    //            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+    //            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 120);
+    //            startActivity(discoverableIntent);
+    //        }
+    //        Log.i("BLE", "setting up");
+    //        bluetoothAdapter = manager.getAdapter();
+    //        devices = new SparseArray<BluetoothDevice>();
+    //        stopScan();
+    //        startScan();
+    //    }
+
     private void connectToBLE() {
+        devices = new ArrayList<BluetoothDevice>();
+        // Register the BroadcastReceiver
+        IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+        registerReceiver(mReceiver, filter); // Don't forget to unregister during onDestroy
         BluetoothManager manager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
         bluetoothAdapter = manager.getAdapter();
         if(bluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)
@@ -401,20 +470,9 @@ public class MainActivity extends Activity {
             discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 120);
             startActivity(discoverableIntent);
         }
-        Log.i("BLE", "setting up");
+        Log.i("discovery", "setting up");
         bluetoothAdapter = manager.getAdapter();
-        devices = new SparseArray<BluetoothDevice>();
-        stopScan();
-        startScan();
-
-        TimerTask scanTimeout = new TimerTask() {
-            @Override
-            public void run() {
-                stopScan();
-            }
-        };
-        Timer scanTimer = new Timer();
-        scanTimer.schedule(scanTimeout, 5000);
+        bluetoothAdapter.startDiscovery();
     }
 
     private void logEvent(String type, String message) {

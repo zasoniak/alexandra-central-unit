@@ -2,8 +2,11 @@ package com.kms.alexandra.data.database.json;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.kms.alexandra.centralunit.MainActivity;
 import com.kms.alexandra.data.HomeBuilder;
 import com.kms.alexandra.data.database.GadgetRepository;
 import com.kms.alexandra.data.database.HomeRepository;
@@ -36,8 +39,10 @@ public class JSONHomeRepository implements HomeRepository {
     private SceneRepository sceneRepository;
     private ScheduleRepository scheduleRepository;
     private UserRepository userRepository;
+    private Context context;
 
     public JSONHomeRepository(Context context) {
+        this.context = context;
         roomRepository = new JSONRoomRepository(context);
         gadgetRepository = new JSONGadgetRepository(context);
         sceneRepository = new JSONSceneRepository(context);
@@ -47,7 +52,6 @@ public class JSONHomeRepository implements HomeRepository {
 
     @Override
     public Home getHome(String id, String name) {
-
         Home home;
         HomeBuilder builder = new HomeBuilder();
         builder.create(id, name);
@@ -75,10 +79,11 @@ public class JSONHomeRepository implements HomeRepository {
 
     @Override
     public Home getHome(String id) {
-
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+        String homeId = sharedPreferences.getString(MainActivity.HOME_NAME, "dom");
         Home home;
         HomeBuilder builder = new HomeBuilder();
-        builder.create(id, "dom");
+        builder.create(id, homeId);
         ArrayList<Room> rooms = new ArrayList<Room>();
         rooms.addAll(roomRepository.getAll());
         Log.d("rooms baza", String.valueOf(rooms.size()));
