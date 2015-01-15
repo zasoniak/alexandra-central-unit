@@ -9,12 +9,6 @@ import android.util.Log;
 
 import com.kms.alexandra.data.model.Room;
 import com.kms.alexandra.data.model.actions.ActionMessage;
-import com.kms.alexandra.data.model.actions.ActionSetBrightness;
-import com.kms.alexandra.data.model.actions.ActionSetBrightnessChannelOne;
-import com.kms.alexandra.data.model.actions.ActionSetBrightnessChannelTwo;
-import com.kms.alexandra.data.model.actions.ActionSwitchAll;
-import com.kms.alexandra.data.model.actions.ActionSwitchChannelOne;
-import com.kms.alexandra.data.model.actions.ActionSwitchChannelTwo;
 import com.kms.alexandra.data.model.actions.BaseAction;
 
 import org.json.JSONException;
@@ -34,6 +28,7 @@ public class MultiDimmer extends MultiLight {
 
     public static final String TAG = "MutliDimmer";
     private static final UUID SERVICE_DIMMER = UUID.fromString("4146d76c-99fa-11e4-89d3-123b93f75cba");
+    private static final UUID CHARACTERISTIC_STATE = UUID.fromString("4146d9ba-99fa-11e4-89d3-123b93f75cba");
     private static final UUID CHARACTERISTIC_BRIGHTNESS_VALUE = UUID.fromString("4146db18-99fa-11e4-89d3-123b93f75cba");
 
     private List<Dimmer> channels = new ArrayList<Dimmer>();
@@ -60,12 +55,14 @@ public class MultiDimmer extends MultiLight {
                  * Once successfully connected, we must next discover all the services on the
                  * device before we can read and write their characteristics.
                  */
+
                     gatt.discoverServices();
                 }
                 else
                 {
                     if(status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_DISCONNECTED)
                     {
+                        state = GadgetState.Offline;
                 /*
                  * If at any point we disconnect, send a message to clear the weather values
                  * out of the UI
@@ -75,6 +72,7 @@ public class MultiDimmer extends MultiLight {
                     {
                         if(status != BluetoothGatt.GATT_SUCCESS)
                         {
+                            state = GadgetState.Error;
                 /*
                  * If there is a failure at any stage, simply disconnect
                  */
@@ -104,11 +102,12 @@ public class MultiDimmer extends MultiLight {
             public void onServicesDiscovered(BluetoothGatt gatt, int status) {
                 Log.d(TAG, "Services Discovered: "+status);
                 state = GadgetState.OK;
+                gattCheck(gatt);
             /*
              * With services discovered, we are going to reset our state machine and start
              * working through the sensors we need to enable
              */
-                gattCheck(gatt);
+                //  gattCheck(gatt);
             }
 
             @Override
@@ -178,16 +177,19 @@ public class MultiDimmer extends MultiLight {
                 {
                     Log.d(TAG, "Połączyło się! Powinien pójść service discovery");
                     bluetoothGatt = gatt;
+
                 /*
                  * Once successfully connected, we must next discover all the services on the
                  * device before we can read and write their characteristics.
                  */
+
                     gatt.discoverServices();
                 }
                 else
                 {
                     if(status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_DISCONNECTED)
                     {
+                        state = GadgetState.Offline;
                 /*
                  * If at any point we disconnect, send a message to clear the weather values
                  * out of the UI
@@ -197,6 +199,7 @@ public class MultiDimmer extends MultiLight {
                     {
                         if(status != BluetoothGatt.GATT_SUCCESS)
                         {
+                            state = GadgetState.Error;
                 /*
                  * If there is a failure at any stage, simply disconnect
                  */
@@ -209,10 +212,13 @@ public class MultiDimmer extends MultiLight {
             @Override
             public void onServicesDiscovered(BluetoothGatt gatt, int status) {
                 Log.d(TAG, "Services Discovered: "+status);
+                state = GadgetState.OK;
+                gattCheck(gatt);
             /*
              * With services discovered, we are going to reset our state machine and start
              * working through the sensors we need to enable
              */
+                //  gattCheck(gatt);
             }
 
             @Override
@@ -297,35 +303,31 @@ public class MultiDimmer extends MultiLight {
         switch(ActionType.valueOf(actionMessage.action))
         {
             case SwitchAll:
-                Log.d("przygotowano", "SwitchAll");
-                setOn(Boolean.parseBoolean(actionMessage.parameter));
-                return new ActionSwitchAll(this.id, this.bluetoothGatt, actionMessage.parameter);
+                Log.d("przygotowano", "swichtAll");
+                return new BaseAction(this, actionMessage.action, this.bluetoothGatt, actionMessage.parameter, actionMessage.delay, SERVICE_DIMMER, CHARACTERISTIC_STATE);
             case SwitchChannelOne:
-                Log.d("przygotowano", "SwitchChannelOne");
-                setChannelOn(0, Boolean.parseBoolean(actionMessage.parameter));
-                return new ActionSwitchChannelOne(this.id, this.bluetoothGatt, actionMessage.parameter);
+                Log.d("przygotowano", "switch channel one");
+                return new BaseAction(this, actionMessage.action, this.bluetoothGatt, actionMessage.parameter, actionMessage.delay, SERVICE_DIMMER, CHARACTERISTIC_STATE);
             case SwitchChannelTwo:
                 if(channelsNumber >= 2)
                 {
-                    Log.d("przygotowano", "SwitchChannelTwo");
-                    setChannelOn(1, Boolean.parseBoolean(actionMessage.parameter));
-                    return new ActionSwitchChannelTwo(this.id, this.bluetoothGatt, actionMessage.parameter);
+                    Log.d("przygotowano", "switch channel two");
+                    return new BaseAction(this, actionMessage.action, this.bluetoothGatt, actionMessage.parameter, actionMessage.delay, SERVICE_DIMMER, CHARACTERISTIC_STATE);
                 }
                 return null;
             case SetBrightness:
                 Log.d("przygotowano", "SetBrightness");
-                setBrightness(Integer.parseInt(actionMessage.parameter));
-                return new ActionSetBrightness(this.id, this.bluetoothGatt, actionMessage.parameter);
+                return new BaseAction(this, actionMessage.action, this.bluetoothGatt, actionMessage.parameter, actionMessage.delay, SERVICE_DIMMER, CHARACTERISTIC_BRIGHTNESS_VALUE);
+
             case SetBrightnessChannelOne:
                 Log.d("przygotowano", "SetBrightnessChannelOne");
-                setChannelBrightness(0, Integer.parseInt(actionMessage.parameter));
-                return new ActionSetBrightnessChannelOne(this.id, this.bluetoothGatt, actionMessage.parameter);
+                return new BaseAction(this, actionMessage.action, this.bluetoothGatt, actionMessage.parameter, actionMessage.delay, SERVICE_DIMMER, CHARACTERISTIC_BRIGHTNESS_VALUE);
+
             case SetBrightnessChannelTwo:
                 if(channelsNumber >= 2)
                 {
                     Log.d("przygotowano", "SetBrightnessChannelTwo");
-                    setChannelBrightness(1, Integer.parseInt(actionMessage.parameter));
-                    return new ActionSetBrightnessChannelTwo(this.id, this.bluetoothGatt, actionMessage.parameter);
+                    return new BaseAction(this, actionMessage.action, this.bluetoothGatt, actionMessage.parameter, actionMessage.delay, SERVICE_DIMMER, CHARACTERISTIC_BRIGHTNESS_VALUE);
                 }
                 return null;
             default:

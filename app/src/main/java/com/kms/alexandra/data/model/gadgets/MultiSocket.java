@@ -6,9 +6,6 @@ import android.util.Log;
 import com.kms.alexandra.data.model.Room;
 import com.kms.alexandra.data.model.Switchable;
 import com.kms.alexandra.data.model.actions.ActionMessage;
-import com.kms.alexandra.data.model.actions.ActionSwitchAll;
-import com.kms.alexandra.data.model.actions.ActionSwitchChannelOne;
-import com.kms.alexandra.data.model.actions.ActionSwitchChannelTwo;
 import com.kms.alexandra.data.model.actions.BaseAction;
 
 import org.json.JSONException;
@@ -29,6 +26,10 @@ import java.util.UUID;
  * @version 0.1
  */
 public class MultiSocket extends Gadget implements Switchable {
+
+    public static final UUID SERVICE_SOCKET = UUID.fromString("1f77b020-82d5-11e4-b4a9-0800200c9a66");
+    public static final UUID CHARACTERISTIC_CURRENT_VALUE = UUID.fromString("1f77b021-82d5-11e4-b4a9-0800200c9a66");
+    public static final UUID CHARACTERISTIC_STATE = UUID.fromString("1f77b022-82d5-11e4-b4a9-0800200c9a66");
 
     protected int channelsNumber;
     protected List<Socket> channels = new ArrayList<Socket>();
@@ -97,6 +98,32 @@ public class MultiSocket extends Gadget implements Switchable {
                              "SwitchChannelSix"};
     }
 
+    //    @Override
+    //    public BaseAction prepare(ActionMessage actionMessage) {
+    //
+    //        switch(ActionType.valueOf(actionMessage.action))
+    //        {
+    //            case SwitchAll:
+    //                Log.d("przygotowano", "swichtAll");
+    //                setOn(Boolean.parseBoolean(actionMessage.parameter));
+    //                return new ActionSwitchAll(this, this.bluetoothGatt, actionMessage.parameter);
+    //            case SwitchChannelOne:
+    //                Log.d("przygotowano", "switch channel one");
+    //                setChannelOn(0, Boolean.parseBoolean(actionMessage.parameter));
+    //                return new ActionSwitchChannelOne(this, this.bluetoothGatt, actionMessage.parameter);
+    //            case SwitchChannelTwo:
+    //                if(channelsNumber >= 2)
+    //                {
+    //                    Log.d("przygotowano", "switch channel two");
+    //                    setChannelOn(1, Boolean.parseBoolean(actionMessage.parameter));
+    //                    return new ActionSwitchChannelTwo(this, this.bluetoothGatt, actionMessage.parameter);
+    //                }
+    //            default:
+    //                return null;
+    //        }
+    //    }
+
+
     @Override
     public BaseAction prepare(ActionMessage actionMessage) {
 
@@ -104,18 +131,15 @@ public class MultiSocket extends Gadget implements Switchable {
         {
             case SwitchAll:
                 Log.d("przygotowano", "swichtAll");
-                setOn(Boolean.parseBoolean(actionMessage.parameter));
-                return new ActionSwitchAll(this.id, this.bluetoothGatt, actionMessage.parameter);
+                return new BaseAction(this, actionMessage.action, this.bluetoothGatt, actionMessage.parameter, actionMessage.delay, SERVICE_SOCKET, CHARACTERISTIC_STATE);
             case SwitchChannelOne:
                 Log.d("przygotowano", "switch channel one");
-                setChannelOn(0, Boolean.parseBoolean(actionMessage.parameter));
-                return new ActionSwitchChannelOne(this.id, this.bluetoothGatt, actionMessage.parameter);
+                return new BaseAction(this, actionMessage.action, this.bluetoothGatt, actionMessage.parameter, actionMessage.delay, SERVICE_SOCKET, CHARACTERISTIC_STATE);
             case SwitchChannelTwo:
                 if(channelsNumber >= 2)
                 {
                     Log.d("przygotowano", "switch channel two");
-                    setChannelOn(1, Boolean.parseBoolean(actionMessage.parameter));
-                    return new ActionSwitchChannelTwo(this.id, this.bluetoothGatt, actionMessage.parameter);
+                    return new BaseAction(this, actionMessage.action, this.bluetoothGatt, actionMessage.parameter, actionMessage.delay, SERVICE_SOCKET, CHARACTERISTIC_STATE);
                 }
             default:
                 return null;

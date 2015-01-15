@@ -35,6 +35,9 @@ import com.kms.alexandra.data.LocalHomeManagerDecorator;
 import com.kms.alexandra.data.database.HomeRepository;
 import com.kms.alexandra.data.database.json.JSONHomeRepository;
 import com.kms.alexandra.data.model.Home;
+import com.kms.alexandra.data.model.Room;
+import com.kms.alexandra.data.model.Scene;
+import com.kms.alexandra.data.model.ScheduledScene;
 import com.kms.alexandra.data.model.gadgets.Gadget;
 
 import java.util.ArrayList;
@@ -315,38 +318,45 @@ public class MainActivity extends Activity {
                     Toast.makeText(this, "No LE Support.", Toast.LENGTH_SHORT).show();
                 }
                 loadDefault();
+                return true;
             case R.id.action_BLE:
                 connectToBLE();
+                return true;
             default:
                 return false;
         }
     }
 
     private void refresh() {
+        partsArrayList.clear();
         if(((Alexandra) getApplicationContext()).getHome() != null)
         {
             partsArrayList.clear();
             partsArrayList.add(((Alexandra) getApplicationContext()).getHome().getName());
-            adapter.notifyDataSetChanged();
+            partsArrayList.add("GADGETS:");
             for(Gadget gadget : ((Alexandra) getApplicationContext()).getHome().getGadgets())
             {
                 Log.i(TAG, gadget.getName());
-                partsArrayList.add(gadget.getName());
-                adapter.notifyDataSetChanged();
+
+                partsArrayList.add(gadget.getName()+" stan: "+gadget.getState().toString());
             }
-
-            //            if(devices != null)
-            //            {
-            //                Log.i("devices", String.valueOf(devices.size()));
-            //                for(BluetoothDevice device : devices)
-            //                {
-            //                    Log.i("gattCheck", "up to go");
-            //                    gattCheck(device.connectGatt(this, true, gattCallback));
-            //                }
-            //
-            //            }
-
+            partsArrayList.add("ROOMS:");
+            for(Room room : ((Alexandra) getApplicationContext()).getHome().getRooms())
+            {
+                partsArrayList.add(room.getName());
+            }
+            partsArrayList.add("SCENES:");
+            for(Scene scene : ((Alexandra) getApplicationContext()).getHome().getScenes())
+            {
+                partsArrayList.add(scene.getName());
+            }
+            partsArrayList.add("SCHEDULES:");
+            for(ScheduledScene schedule : ((Alexandra) getApplicationContext()).getHome().getSchedule())
+            {
+                partsArrayList.add(schedule.getScene()+" -> "+schedule.getHour()+":"+schedule.getMinutes());
+            }
         }
+        adapter.notifyDataSetChanged();
     }
 
     private void gattCheck(BluetoothGatt gatt) {
@@ -507,7 +517,7 @@ public class MainActivity extends Activity {
         public void run() {
             loadData();
             initializeConfiguration();
-            connectToBLE();
+            //connectToBLE();
         }
 
         private void loadData() {

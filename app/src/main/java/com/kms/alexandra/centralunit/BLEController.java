@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.kms.alexandra.data.model.Controller;
 import com.kms.alexandra.data.model.actions.BaseAction;
+import com.kms.alexandra.data.model.gadgets.Gadget;
 
 import java.util.concurrent.DelayQueue;
 import java.util.concurrent.TimeUnit;
@@ -49,12 +50,20 @@ public class BLEController implements Controller {
                 BaseAction action = actionQueue.poll();
                 if(action != null)
                 {
-                    Log.d("BLEController, akcja: ", action.getService().toString());
-                    if(action.getGatt() != null)
+                    if(action.getGadget().getState().equals(Gadget.GadgetState.OK))
                     {
-                        BluetoothGattCharacteristic characteristic = action.getGatt().getService(action.getService()).getCharacteristic(action.getCharacteristic());
-                        characteristic.setValue(action.getParameter());
-                        action.getGatt().writeCharacteristic(characteristic);
+                        Log.d("BLEController, akcja: ", action.getService().toString());
+                        if(action.getGatt() != null)
+                        {
+                            BluetoothGattCharacteristic characteristic = action.getGatt().getService(action.getService()).getCharacteristic(action.getCharacteristic());
+                            characteristic.setValue(Integer.parseInt(action.getParameter()), BluetoothGattCharacteristic.FORMAT_UINT8, 0);
+                            action.getGatt().writeCharacteristic(characteristic);
+                        }
+                    }
+                    else
+                    {
+                        action.setSubmissionTime(System.currentTimeMillis());
+                        actionQueue.put(action);
                     }
                 }
                 try

@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothGatt;
 
 import com.kms.alexandra.data.model.Controller;
 import com.kms.alexandra.data.model.SceneComponent;
+import com.kms.alexandra.data.model.gadgets.Gadget;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -29,13 +30,29 @@ public class BaseAction implements SceneComponent, BLEAction, Delayed {
     public static final String ACTION = "action";
     public static final String PARAMETER = "parameter";
     public static final String DELAY = "delay";
-    protected UUID gadgetID;
+    protected Gadget gadget;
 
     protected String action;
     protected BluetoothGatt gatt;
     protected String parameter;
     protected long delay = 0;
     protected long submissionTime = 0;
+    protected UUID service;
+    protected UUID characteristic;
+
+    public BaseAction() {
+
+    }
+
+    public BaseAction(Gadget gadget, String action, BluetoothGatt gatt, String parameter, long delay, UUID service, UUID characteristic) {
+        this.gadget = gadget;
+        this.action = action;
+        this.gatt = gatt;
+        this.parameter = parameter;
+        this.delay = delay;
+        this.service = service;
+        this.characteristic = characteristic;
+    }
 
     public void setSubmissionTime(long submissionTime) {
         this.submissionTime = submissionTime;
@@ -48,17 +65,25 @@ public class BaseAction implements SceneComponent, BLEAction, Delayed {
 
     @Override
     public UUID getService() {
-        return null;
+        return this.service;
     }
 
     @Override
     public UUID getCharacteristic() {
-        return null;
+        return this.characteristic;
     }
 
     @Override
     public String getParameter() {
         return this.parameter;
+    }
+
+    public void setParameter(String parameter) {
+        this.parameter = parameter;
+    }
+
+    public void setGatt(BluetoothGatt gatt) {
+        this.gatt = gatt;
     }
 
     @Override
@@ -74,12 +99,24 @@ public class BaseAction implements SceneComponent, BLEAction, Delayed {
     @Override
     public List<UUID> getGadgetsID() {
         ArrayList<UUID> ids = new ArrayList<UUID>();
-        ids.add(gadgetID);
+        ids.add(gadget.getId());
         return ids;
+    }
+
+    public Gadget getGadget() {
+        return this.gadget;
+    }
+
+    public void setGadget(Gadget gadget) {
+        this.gadget = gadget;
     }
 
     public String getAction() {
         return action;
+    }
+
+    public void setAction(String action) {
+        this.action = action;
     }
 
     public long getDelay() {
@@ -91,7 +128,7 @@ public class BaseAction implements SceneComponent, BLEAction, Delayed {
     }
 
     public UUID getGadgetID() {
-        return gadgetID;
+        return gadget.getId();
     }
 
     @Override
@@ -113,7 +150,7 @@ public class BaseAction implements SceneComponent, BLEAction, Delayed {
         JSONObject result = new JSONObject();
         try
         {
-            result.put(BaseAction.GADGET_ID, this.gadgetID.toString());
+            result.put(BaseAction.GADGET_ID, this.gadget.getId().toString());
             result.put(BaseAction.ACTION, this.action);
             result.put(BaseAction.DELAY, this.delay);
             result.put(BaseAction.PARAMETER, this.parameter);
@@ -122,7 +159,6 @@ public class BaseAction implements SceneComponent, BLEAction, Delayed {
         {
             e.printStackTrace();
         }
-
         return result;
     }
 }

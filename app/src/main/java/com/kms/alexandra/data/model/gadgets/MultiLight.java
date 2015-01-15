@@ -6,9 +6,6 @@ import android.util.Log;
 import com.kms.alexandra.data.model.Room;
 import com.kms.alexandra.data.model.Switchable;
 import com.kms.alexandra.data.model.actions.ActionMessage;
-import com.kms.alexandra.data.model.actions.ActionSwitchAll;
-import com.kms.alexandra.data.model.actions.ActionSwitchChannelOne;
-import com.kms.alexandra.data.model.actions.ActionSwitchChannelTwo;
 import com.kms.alexandra.data.model.actions.BaseAction;
 
 import org.json.JSONException;
@@ -25,6 +22,11 @@ import java.util.UUID;
  * @author Mateusz Zasoński
  */
 public class MultiLight extends Gadget implements Switchable {
+
+    public static final String TAG = "MutliDimmer";
+    private static final UUID SERVICE_DIMMER = UUID.fromString("4146d76c-99fa-11e4-89d3-123b93f75cba");
+    private static final UUID CHARACTERISTIC_STATE = UUID.fromString("4146d9ba-99fa-11e4-89d3-123b93f75cba");
+    private static final UUID CHARACTERISTIC_BRIGHTNESS_VALUE = UUID.fromString("4146db18-99fa-11e4-89d3-123b93f75cba");
 
     protected int channelsNumber;
     protected boolean on;
@@ -98,18 +100,17 @@ public class MultiLight extends Gadget implements Switchable {
         {
             case SwitchAll:
                 Log.d("przygotowano", "SwitchAll");
-                setOn(Boolean.parseBoolean(actionMessage.parameter));
-                return new ActionSwitchAll(this.id, this.bluetoothGatt, actionMessage.parameter);
+                return new BaseAction(this, actionMessage.action, this.bluetoothGatt, actionMessage.parameter, actionMessage.delay, SERVICE_DIMMER, CHARACTERISTIC_BRIGHTNESS_VALUE);
+
             case SwitchChannelOne:
                 Log.d("przygotowano", "SwitchChannelOne");
-                setChannelOn(0, Boolean.parseBoolean(actionMessage.parameter));
-                return new ActionSwitchChannelOne(this.id, this.bluetoothGatt, actionMessage.parameter);
+                return new BaseAction(this, actionMessage.action, this.bluetoothGatt, actionMessage.parameter, actionMessage.delay, SERVICE_DIMMER, CHARACTERISTIC_BRIGHTNESS_VALUE);
+
             case SwitchChannelTwo:
                 if(channelsNumber >= 2)
                 {
                     Log.d("przygotowano", "SwitchChannelTwo");
-                    setChannelOn(1, Boolean.parseBoolean(actionMessage.parameter));
-                    return new ActionSwitchChannelTwo(this.id, this.bluetoothGatt, actionMessage.parameter);
+                    return new BaseAction(this, actionMessage.action, this.bluetoothGatt, actionMessage.parameter, actionMessage.delay, SERVICE_DIMMER, CHARACTERISTIC_BRIGHTNESS_VALUE);
                 }
                 return null;
             default:
