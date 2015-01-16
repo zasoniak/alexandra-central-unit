@@ -20,10 +20,10 @@ import java.util.concurrent.TimeUnit;
  */
 public class BLEController implements Controller {
 
+    public static final String TAG = "BLEController";
     private static final long MESSAGE_INTERVAL = 50;
     private DelayQueue<BaseAction> actionQueue = new DelayQueue<BaseAction>();
 
-    //TODO: sprawdzic czy nie wyrzuca go w międzyczasie z jakis względów
     private volatile boolean isRunning;
 
     public BLEController() {
@@ -37,8 +37,7 @@ public class BLEController implements Controller {
     public synchronized void queue(BaseAction action) {
         action.setSubmissionTime(System.currentTimeMillis());
         actionQueue.put(action);
-        long delay = action.getDelay(TimeUnit.MILLISECONDS);
-        Log.d("BLEController", "zakolejkowano akcje "+action.getParameter()+" czas: "+String.valueOf(action.getDelay(TimeUnit.MILLISECONDS)));
+        Log.d(TAG, "zakolejkowano akcje "+action.getAction()+": "+action.getParameter()+", czas: "+String.valueOf(action.getDelay(TimeUnit.MILLISECONDS)));
     }
 
     private class BLEMessenger extends Thread {
@@ -52,18 +51,13 @@ public class BLEController implements Controller {
                 {
                     if(action.getGadget().getState().equals(Gadget.GadgetState.OK))
                     {
-                        Log.d("BLEController, akcja: ", action.getService().toString());
                         if(action.getGatt() != null)
                         {
+                            Log.i(TAG, "rusza akcja: "+action.getService().toString());
                             BluetoothGattCharacteristic characteristic = action.getGatt().getService(action.getService()).getCharacteristic(action.getCharacteristic());
                             characteristic.setValue(Integer.parseInt(action.getParameter()), BluetoothGattCharacteristic.FORMAT_UINT8, 0);
                             action.getGatt().writeCharacteristic(characteristic);
                         }
-                    }
-                    else
-                    {
-                        action.setSubmissionTime(System.currentTimeMillis());
-                        actionQueue.put(action);
                     }
                 }
                 try

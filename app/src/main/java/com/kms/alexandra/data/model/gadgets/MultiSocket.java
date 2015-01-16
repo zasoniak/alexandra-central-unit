@@ -98,32 +98,6 @@ public class MultiSocket extends Gadget implements Switchable {
                              "SwitchChannelSix"};
     }
 
-    //    @Override
-    //    public BaseAction prepare(ActionMessage actionMessage) {
-    //
-    //        switch(ActionType.valueOf(actionMessage.action))
-    //        {
-    //            case SwitchAll:
-    //                Log.d("przygotowano", "swichtAll");
-    //                setOn(Boolean.parseBoolean(actionMessage.parameter));
-    //                return new ActionSwitchAll(this, this.bluetoothGatt, actionMessage.parameter);
-    //            case SwitchChannelOne:
-    //                Log.d("przygotowano", "switch channel one");
-    //                setChannelOn(0, Boolean.parseBoolean(actionMessage.parameter));
-    //                return new ActionSwitchChannelOne(this, this.bluetoothGatt, actionMessage.parameter);
-    //            case SwitchChannelTwo:
-    //                if(channelsNumber >= 2)
-    //                {
-    //                    Log.d("przygotowano", "switch channel two");
-    //                    setChannelOn(1, Boolean.parseBoolean(actionMessage.parameter));
-    //                    return new ActionSwitchChannelTwo(this, this.bluetoothGatt, actionMessage.parameter);
-    //                }
-    //            default:
-    //                return null;
-    //        }
-    //    }
-
-
     @Override
     public BaseAction prepare(ActionMessage actionMessage) {
 

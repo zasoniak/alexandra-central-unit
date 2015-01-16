@@ -41,6 +41,8 @@
         </service>
         <service android:name="com.kms.alexandra.data.FirebaseSyncService">
         </service>
+        <service android:name="com.kms.alexandra.data.FirebaseSyncService2">
+        </service>
 
 
         <service android:name="com.kms.alexandra.centralunit.ScheduleService">
