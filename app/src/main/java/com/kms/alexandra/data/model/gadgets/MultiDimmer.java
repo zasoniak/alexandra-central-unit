@@ -5,8 +5,16 @@ import android.bluetooth.BluetoothGatt;
 import android.bluetooth.BluetoothGattCallback;
 import android.bluetooth.BluetoothGattCharacteristic;
 import android.bluetooth.BluetoothProfile;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.firebase.client.ChildEventListener;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.kms.alexandra.centralunit.Alexandra;
+import com.kms.alexandra.centralunit.MainActivity;
 import com.kms.alexandra.data.model.Room;
 import com.kms.alexandra.data.model.actions.ActionMessage;
 import com.kms.alexandra.data.model.actions.BaseAction;
@@ -40,7 +48,6 @@ public class MultiDimmer extends MultiLight {
         {
             this.channels.add(new Dimmer());
         }
-
         bluetoothGattCallback = new BluetoothGattCallback() {
 
             @Override
@@ -50,12 +57,10 @@ public class MultiDimmer extends MultiLight {
                 {
                     Log.d(TAG, "Połączyło się! Powinien pójść service discovery");
                     bluetoothGatt = gatt;
-
                 /*
                  * Once successfully connected, we must next discover all the services on the
                  * device before we can read and write their characteristics.
                  */
-
                     gatt.discoverServices();
                 }
                 else
@@ -63,19 +68,12 @@ public class MultiDimmer extends MultiLight {
                     if(status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_DISCONNECTED)
                     {
                         state = GadgetState.Offline;
-                /*
-                 * If at any point we disconnect, send a message to clear the weather values
-                 * out of the UI
-                 */
                     }
                     else
                     {
                         if(status != BluetoothGatt.GATT_SUCCESS)
                         {
                             state = GadgetState.Error;
-                /*
-                 * If there is a failure at any stage, simply disconnect
-                 */
                             gatt.disconnect();
                         }
                     }
@@ -102,21 +100,15 @@ public class MultiDimmer extends MultiLight {
             public void onServicesDiscovered(BluetoothGatt gatt, int status) {
                 Log.d(TAG, "Services Discovered: "+status);
                 state = GadgetState.OK;
-                gattCheck(gatt);
-            /*
-             * With services discovered, we are going to reset our state machine and start
-             * working through the sensors we need to enable
-             */
-                //  gattCheck(gatt);
             }
 
             @Override
             public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
                 if(characteristic.getUuid().equals(CHARACTERISTIC_BRIGHTNESS_VALUE))
                 {
+                    int n = (int) Long.parseLong(characteristic.getStringValue(0), 16);
                     setChannelBrightness(0, characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 0));
                 }
-                //For each read, pass the data up to the UI thread to update the display
 
             }
 
@@ -142,7 +134,6 @@ public class MultiDimmer extends MultiLight {
             }
 
         };
-
     }
 
     public MultiDimmer(UUID id, String temporaryRoomId, String name, String address, GadgetType type, int socketNumber, boolean installed, int icon, int firmware) {
@@ -177,12 +168,10 @@ public class MultiDimmer extends MultiLight {
                 {
                     Log.d(TAG, "Połączyło się! Powinien pójść service discovery");
                     bluetoothGatt = gatt;
-
                 /*
                  * Once successfully connected, we must next discover all the services on the
                  * device before we can read and write their characteristics.
                  */
-
                     gatt.discoverServices();
                 }
                 else
@@ -190,19 +179,12 @@ public class MultiDimmer extends MultiLight {
                     if(status == BluetoothGatt.GATT_SUCCESS && newState == BluetoothProfile.STATE_DISCONNECTED)
                     {
                         state = GadgetState.Offline;
-                /*
-                 * If at any point we disconnect, send a message to clear the weather values
-                 * out of the UI
-                 */
                     }
                     else
                     {
                         if(status != BluetoothGatt.GATT_SUCCESS)
                         {
                             state = GadgetState.Error;
-                /*
-                 * If there is a failure at any stage, simply disconnect
-                 */
                             gatt.disconnect();
                         }
                     }
@@ -213,21 +195,15 @@ public class MultiDimmer extends MultiLight {
             public void onServicesDiscovered(BluetoothGatt gatt, int status) {
                 Log.d(TAG, "Services Discovered: "+status);
                 state = GadgetState.OK;
-                gattCheck(gatt);
-            /*
-             * With services discovered, we are going to reset our state machine and start
-             * working through the sensors we need to enable
-             */
-                //  gattCheck(gatt);
             }
 
             @Override
             public void onCharacteristicRead(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
                 if(characteristic.getUuid().equals(CHARACTERISTIC_BRIGHTNESS_VALUE))
                 {
-                    setChannelBrightness(0, characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 0));
+                    int n = (int) Long.parseLong(characteristic.getStringValue(0), 16);
+                    setChannelBrightness(0, Integer.parseInt(characteristic.getStringValue(0), 16));
                 }
-                //For each read, pass the data up to the UI thread to update the display
 
             }
 
@@ -235,7 +211,7 @@ public class MultiDimmer extends MultiLight {
             public void onCharacteristicWrite(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic, int status) {
                 if(characteristic.getUuid().equals(CHARACTERISTIC_BRIGHTNESS_VALUE))
                 {
-                    setChannelBrightness(0, characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 0));
+                    setChannelBrightness(0, Integer.parseInt(characteristic.getStringValue(0), 16));
                 }
             }
 
@@ -243,7 +219,7 @@ public class MultiDimmer extends MultiLight {
             public void onCharacteristicChanged(BluetoothGatt gatt, BluetoothGattCharacteristic characteristic) {
                 if(characteristic.getUuid().equals(CHARACTERISTIC_BRIGHTNESS_VALUE))
                 {
-                    setChannelBrightness(0, characteristic.getIntValue(BluetoothGattCharacteristic.FORMAT_UINT8, 0));
+                    setChannelBrightness(0, Integer.parseInt(characteristic.getStringValue(0), 16));
                 }
             }
 
@@ -363,6 +339,99 @@ public class MultiDimmer extends MultiLight {
             return channels.get(channel).getBrightness();
         }
         return 0;
+    }
+
+    private class FirebaseCurrentStateListener {
+
+        public static final String STATE = "state";
+        public static final String BRIGHTNESS = "brightness";
+        public static final String ON = "on";
+
+        private FirebaseCurrentStateListener() {
+
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(Alexandra.getContext());
+            String homeId = sharedPreferences.getString(MainActivity.HOME_ID, "-JcMyexVThw7PEv2Z2PL");
+
+            Firebase stateListener = new Firebase("https://sizzling-torch-8921.firebaseio.com/currentState/"+homeId+"/"+id.toString()+"/");
+            stateListener.addChildEventListener(new ChildEventListener() {
+                @Override
+                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                    if(dataSnapshot.getKey().equals(STATE))
+                    {
+                        state = GadgetState.valueOf(dataSnapshot.getValue().toString());
+                    }
+                    else
+                    {
+                        if(dataSnapshot.getKey().equals(ON))
+                        {
+                            setOn(Boolean.parseBoolean(dataSnapshot.getValue().toString()));
+                        }
+                        else
+                        {
+                            if(dataSnapshot.getKey().equals("0"))
+                            {
+                                setChannelBrightness(0, Integer.parseInt(dataSnapshot.child(BRIGHTNESS).getValue().toString()));
+                                setChannelOn(0, Boolean.parseBoolean(dataSnapshot.child(ON).getValue().toString()));
+                            }
+                            else
+                            {
+                                if(dataSnapshot.getKey().equals("1"))
+                                {
+                                    setChannelBrightness(1, Integer.parseInt(dataSnapshot.child(BRIGHTNESS).getValue().toString()));
+                                    setChannelOn(1, Boolean.parseBoolean(dataSnapshot.child(ON).getValue().toString()));
+                                }
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                    if(dataSnapshot.getKey().equals(STATE))
+                    {
+                        state = GadgetState.valueOf(dataSnapshot.getValue().toString());
+                    }
+                    else
+                    {
+                        if(dataSnapshot.getKey().equals(ON))
+                        {
+                            setOn(Boolean.parseBoolean(dataSnapshot.getValue().toString()));
+                        }
+                        else
+                        {
+                            if(dataSnapshot.getKey().equals("0"))
+                            {
+                                setChannelBrightness(0, Integer.parseInt(dataSnapshot.child(BRIGHTNESS).getValue().toString()));
+                                setChannelOn(0, Boolean.parseBoolean(dataSnapshot.child(ON).getValue().toString()));
+                            }
+                            else
+                            {
+                                if(dataSnapshot.getKey().equals("1"))
+                                {
+                                    setChannelBrightness(1, Integer.parseInt(dataSnapshot.child(BRIGHTNESS).getValue().toString()));
+                                    setChannelOn(1, Boolean.parseBoolean(dataSnapshot.child(ON).getValue().toString()));
+                                }
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                }
+
+                @Override
+                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+
+                }
+            });
+        }
     }
 
 

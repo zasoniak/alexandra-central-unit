@@ -55,7 +55,7 @@ public class BLEController implements Controller {
                         {
                             Log.i(TAG, "rusza akcja: "+action.getService().toString());
                             BluetoothGattCharacteristic characteristic = action.getGatt().getService(action.getService()).getCharacteristic(action.getCharacteristic());
-                            characteristic.setValue(Integer.parseInt(action.getParameter()), BluetoothGattCharacteristic.FORMAT_UINT8, 0);
+                            characteristic.setValue(action.getParameter().getBytes());
                             action.getGatt().writeCharacteristic(characteristic);
                         }
                     }

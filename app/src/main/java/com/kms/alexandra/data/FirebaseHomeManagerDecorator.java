@@ -161,12 +161,14 @@ public class FirebaseHomeManagerDecorator extends HomeManagerDecorator {
         Firebase gadgetsRoot = firebaseRoot.child("gadgets");
         Firebase gadgetRef = gadgetsRoot.child(gadget.getId().toString());
         Map<String, Object> hashMap = new HashMap<String, Object>();
-        hashMap.put(Gadget.ROOM_ID, gadget.getRoom());
+        hashMap.put(Gadget.ROOM_ID, gadget.getRoom().getId());
         hashMap.put(Gadget.NAME, gadget.getName());
         hashMap.put(Gadget.MAC_ADDRESS, gadget.getMAC());
         hashMap.put(Gadget.TYPE, gadget.getType().toString());
         hashMap.put(Gadget.CHANNELS, gadget.getChannels());
         hashMap.put(Gadget.INSTALLED, gadget.isInstalled());
+        hashMap.put(Gadget.CHANNELS, gadget.getChannels());
+        hashMap.put(Gadget.FIRMWARE, gadget.getFirmware());
         gadgetRef.setValue(hashMap);
         Log.d("newGadgetSynced", gadgetRef.getKey());
         return true;
@@ -181,12 +183,14 @@ public class FirebaseHomeManagerDecorator extends HomeManagerDecorator {
         Firebase gadgetsRoot = firebaseRoot.child("gadgets");
         Firebase gadgetRef = gadgetsRoot.child(gadget.getId().toString());
         Map<String, Object> hashMap = new HashMap<String, Object>();
-        hashMap.put(Gadget.ROOM_ID, gadget.getRoom());
+        hashMap.put(Gadget.ROOM_ID, gadget.getRoom().getId());
         hashMap.put(Gadget.NAME, gadget.getName());
         hashMap.put(Gadget.MAC_ADDRESS, gadget.getMAC());
         hashMap.put(Gadget.TYPE, gadget.getType().toString());
         hashMap.put(Gadget.CHANNELS, gadget.getChannels());
         hashMap.put(Gadget.INSTALLED, gadget.isInstalled());
+        hashMap.put(Gadget.CHANNELS, gadget.getChannels());
+        hashMap.put(Gadget.FIRMWARE, gadget.getFirmware());
         gadgetRef.setValue(hashMap);
         return true;
     }

@@ -92,6 +92,7 @@ public class FirebaseSyncService extends SyncService {
         homeReference.child(Home.ROOMS).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Log.i("room", "added");
                 if(dataSnapshot.hasChild(Room.NAME) && dataSnapshot.hasChild(Room.COLOR))
                 {
                     String id = dataSnapshot.getKey();
@@ -122,6 +123,7 @@ public class FirebaseSyncService extends SyncService {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                Log.i("room", "changed");
                 if(dataSnapshot.hasChild(Room.NAME) && dataSnapshot.hasChild(Room.COLOR))
                 {
                     String id = dataSnapshot.getKey();
@@ -152,6 +154,7 @@ public class FirebaseSyncService extends SyncService {
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Log.i("room", "removed");
                 if(dataSnapshot.hasChild(Room.NAME) && dataSnapshot.hasChild(Room.COLOR))
                 {
                     String id = dataSnapshot.getKey();
@@ -195,6 +198,7 @@ public class FirebaseSyncService extends SyncService {
                 homeReference.child(Home.GADGETS).addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        Log.i("gadget", "added");
                         if(dataSnapshot.hasChild(Gadget.ROOM_ID) && dataSnapshot.hasChild(Gadget.NAME) && dataSnapshot.hasChild(Gadget.MAC_ADDRESS) && dataSnapshot.hasChild(Gadget.TYPE) && dataSnapshot.hasChild(Gadget.CHANNELS) && dataSnapshot.hasChild(Gadget.INSTALLED) && dataSnapshot.hasChild(Gadget.ICON) && dataSnapshot.hasChild(Gadget.FIRMWARE))
                         {
                             try
@@ -224,6 +228,7 @@ public class FirebaseSyncService extends SyncService {
 
                     @Override
                     public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                        Log.i("gadget", "changed");
                         if(dataSnapshot.hasChild(Gadget.ROOM_ID) && dataSnapshot.hasChild(Gadget.NAME) && dataSnapshot.hasChild(Gadget.MAC_ADDRESS) && dataSnapshot.hasChild(Gadget.TYPE) && dataSnapshot.hasChild(Gadget.CHANNELS) && dataSnapshot.hasChild(Gadget.INSTALLED) && dataSnapshot.hasChild(Gadget.ICON) && dataSnapshot.hasChild(Gadget.FIRMWARE))
                         {
                             try
@@ -253,6 +258,7 @@ public class FirebaseSyncService extends SyncService {
 
                     @Override
                     public void onChildRemoved(DataSnapshot dataSnapshot) {
+                        Log.i("gadget", "removed");
                         if(dataSnapshot.hasChild(Gadget.ROOM_ID) && dataSnapshot.hasChild(Gadget.NAME) && dataSnapshot.hasChild(Gadget.MAC_ADDRESS) && dataSnapshot.hasChild(Gadget.TYPE) && dataSnapshot.hasChild(Gadget.CHANNELS) && dataSnapshot.hasChild(Gadget.INSTALLED) && dataSnapshot.hasChild(Gadget.ICON) && dataSnapshot.hasChild(Gadget.FIRMWARE))
                         {
                             try
@@ -299,6 +305,7 @@ public class FirebaseSyncService extends SyncService {
                 homeReference.child(Home.SCENES).addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        Log.i("scene", "added");
                         if(dataSnapshot.hasChild(Scene.NAME) && (dataSnapshot.hasChild(Scene.SUBSCENES) || dataSnapshot.hasChild(Scene.ACTIONS)))
                         {
                             String id = dataSnapshot.getKey();
@@ -384,6 +391,7 @@ public class FirebaseSyncService extends SyncService {
 
                     @Override
                     public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                        Log.i("scene", "changed");
                         if(dataSnapshot.hasChild(Scene.NAME) && (dataSnapshot.hasChild(Scene.SUBSCENES) || dataSnapshot.hasChild(Scene.ACTIONS)))
                         {
                             String id = dataSnapshot.getKey();
@@ -469,6 +477,7 @@ public class FirebaseSyncService extends SyncService {
 
                     @Override
                     public void onChildRemoved(DataSnapshot dataSnapshot) {
+                        Log.i("scene", "removed");
                         if(dataSnapshot.hasChild(Scene.NAME) && (dataSnapshot.hasChild(Scene.SUBSCENES) || dataSnapshot.hasChild(Scene.ACTIONS)))
                         {
                             String id = dataSnapshot.getKey();
@@ -570,6 +579,7 @@ public class FirebaseSyncService extends SyncService {
                 homeReference.child(Home.SCHEDULE).addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        Log.i("schedule", "added");
                         if(dataSnapshot.hasChild(ScheduledScene.SCENE) && dataSnapshot.hasChild(ScheduledScene.HOUR) && dataSnapshot.hasChild(ScheduledScene.MINUTES) && dataSnapshot.hasChild(ScheduledScene.DAYS_OF_WEEK))
                         {
                             try
@@ -616,6 +626,7 @@ public class FirebaseSyncService extends SyncService {
 
                     @Override
                     public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                        Log.i("schedule", "changed");
                         Log.d(TAG, "scheduled changed "+dataSnapshot.getKey());
                         if(dataSnapshot.hasChild(ScheduledScene.SCENE) && dataSnapshot.hasChild(ScheduledScene.HOUR) && dataSnapshot.hasChild(ScheduledScene.MINUTES) && dataSnapshot.hasChild(ScheduledScene.DAYS_OF_WEEK))
                         {
@@ -663,6 +674,7 @@ public class FirebaseSyncService extends SyncService {
 
                     @Override
                     public void onChildRemoved(DataSnapshot dataSnapshot) {
+                        Log.i("schedule", "removed");
                         if(dataSnapshot.hasChild(ScheduledScene.SCENE) && dataSnapshot.hasChild(ScheduledScene.HOUR) && dataSnapshot.hasChild(ScheduledScene.MINUTES) && dataSnapshot.hasChild(ScheduledScene.DAYS_OF_WEEK))
                         {
                             try

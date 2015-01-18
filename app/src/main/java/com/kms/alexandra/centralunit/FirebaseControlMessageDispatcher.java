@@ -26,6 +26,7 @@ import java.util.UUID;
  */
 public class FirebaseControlMessageDispatcher extends ControlMessageDispatcher {
 
+    public static final String TAG = "FirebaseControlMessageDispatcher";
     private static final String SCENES = "scenes";
     private static final String ACTIONS = "actions";
 
@@ -46,6 +47,7 @@ public class FirebaseControlMessageDispatcher extends ControlMessageDispatcher {
         remoteControlReference.child(SCENES).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Log.i(TAG, "scene to run");
                 if(dataSnapshot.hasChild(Scene.ID))
                 {
                     control.run(dataSnapshot.child(Scene.ID).getValue().toString());
@@ -77,6 +79,7 @@ public class FirebaseControlMessageDispatcher extends ControlMessageDispatcher {
         remoteControlReference.child(ACTIONS).addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Log.i(TAG, "action to run");
                 if(dataSnapshot.hasChild(ActionMessage.GADGET) && dataSnapshot.hasChild(ActionMessage.ACTION) && dataSnapshot.hasChild(ActionMessage.PARAMETER))
                 {
                     ActionMessage message;

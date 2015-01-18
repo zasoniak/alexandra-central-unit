@@ -209,9 +209,9 @@ public class LocalHomeManagerDecorator extends HomeManagerDecorator {
         if(scene != null)
         {
             scene.unregisterTriggers(home);
-            scene = newScene;
-            scene.registerTriggers(home);
-            return homeRepository.update(scene);
+            home.getScenes().set(home.getScenes().indexOf(scene), newScene);
+            newScene.registerTriggers(home);
+            return homeRepository.update(newScene);
         }
         return false;
     }
@@ -236,15 +236,21 @@ public class LocalHomeManagerDecorator extends HomeManagerDecorator {
     }
 
     private boolean updateAndSave(ScheduledScene scheduledscene) {
-        for(ScheduledScene scheduledscene1 : home.getSchedule())
+        if(home.getScheduledScene(scheduledscene.getId()) != null)
         {
-            if(scheduledscene1.getId().equals(scheduledscene.getId()))
-            {
-                scheduledscene1 = scheduledscene;
-                ScheduleManager.getInstance(context).update(scheduledscene);
-                return homeRepository.update(scheduledscene1);
-            }
+            home.getSchedule().set(home.getSchedule().indexOf(home.getScheduledScene(scheduledscene.getId())), scheduledscene);
+            ScheduleManager.getInstance(context).update(scheduledscene);
+            return homeRepository.update(scheduledscene);
         }
+        //        for(ScheduledScene scheduledscene1 : home.getSchedule())
+        //        {
+        //            if(scheduledscene1.getId().equals(scheduledscene.getId()))
+        //            {
+        //                scheduledscene1 = scheduledscene;
+        //                ScheduleManager.getInstance(context).update(scheduledscene);
+        //                return homeRepository.update(scheduledscene1);
+        //            }
+        //        }
         return false;
     }
 

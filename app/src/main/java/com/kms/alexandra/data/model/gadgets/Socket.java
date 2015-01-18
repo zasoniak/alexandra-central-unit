@@ -15,7 +15,6 @@ import java.util.Map;
 public class Socket extends Switch {
 
     public static final String POWER_CONSUMPTION = "powerConsumption";
-
     protected double powerConsumption;
 
     public Socket() {
@@ -24,6 +23,10 @@ public class Socket extends Switch {
 
     public double getPowerConsumption() {
         return powerConsumption;
+    }
+
+    public void setPowerConsumption(double powerConsumption) {
+        this.powerConsumption = powerConsumption;
     }
 
     @Override
