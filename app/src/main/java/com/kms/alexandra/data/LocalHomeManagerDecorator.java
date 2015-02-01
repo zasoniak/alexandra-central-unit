@@ -131,16 +131,13 @@ public class LocalHomeManagerDecorator extends HomeManagerDecorator {
         return false;
     }
 
-    private boolean updateAndSave(Room room) {
-        for(Room room1 : home.getRooms())
-        {
-            if(room1.getId().equals(room.getId()))
-            {
-                room1.setColor(room.getColor());
-                room1.setName(room.getName());
-                room1.setGadgets(room.getGadgets());
-                return homeRepository.update(room1);
-            }
+    private boolean updateAndSave(Room updatedRoom) {
+        Room room = home.getRoom(updatedRoom.getId());
+        if (room != null) {
+            room.setColor(updatedRoom.getColor());
+            room.setName(updatedRoom.getName());
+            room.setGadgets(updatedRoom.getGadgets());
+            return homeRepository.update(room);
         }
         return false;
     }
@@ -236,21 +233,11 @@ public class LocalHomeManagerDecorator extends HomeManagerDecorator {
     }
 
     private boolean updateAndSave(ScheduledScene scheduledscene) {
-        if(home.getScheduledScene(scheduledscene.getId()) != null)
-        {
-            home.getSchedule().set(home.getSchedule().indexOf(home.getScheduledScene(scheduledscene.getId())), scheduledscene);
-            ScheduleManager.getInstance(context).update(scheduledscene);
+        int index = home.getSchedule().indexOf(home.getScheduledScene(scheduledscene.getId()));
+        if (index != -1) {
+            home.getSchedule().set(index, scheduledscene);
             return homeRepository.update(scheduledscene);
         }
-        //        for(ScheduledScene scheduledscene1 : home.getSchedule())
-        //        {
-        //            if(scheduledscene1.getId().equals(scheduledscene.getId()))
-        //            {
-        //                scheduledscene1 = scheduledscene;
-        //                ScheduleManager.getInstance(context).update(scheduledscene);
-        //                return homeRepository.update(scheduledscene1);
-        //            }
-        //        }
         return false;
     }
 
