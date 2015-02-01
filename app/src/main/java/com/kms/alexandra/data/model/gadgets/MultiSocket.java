@@ -1,16 +1,10 @@
 package com.kms.alexandra.data.model.gadgets;
 
+//import android.content.SharedPreferences;
+//import android.preference.PreferenceManager;
 
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.firebase.client.ChildEventListener;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.kms.alexandra.centralunit.Alexandra;
-import com.kms.alexandra.centralunit.MainActivity;
 import com.kms.alexandra.data.model.Room;
 import com.kms.alexandra.data.model.Switchable;
 import com.kms.alexandra.data.model.actions.ActionMessage;
@@ -25,6 +19,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+//import com.firebase.client.ChildEventListener;
+//import com.firebase.client.DataSnapshot;
+//import com.firebase.client.Firebase;
+//import com.firebase.client.FirebaseError;
+//import com.kms.alexandra.centralunit.Alexandra;
+//import com.kms.alexandra.centralunit.MainActivity;
 
 /**
  * Created by Mateusz Zasoński on 2014-11-17.
@@ -180,96 +180,96 @@ public class MultiSocket extends Gadget implements Switchable {
         }
     }
 
-    private class FirebaseCurrentStateListener {
-
-        public static final String STATE = "state";
-        public static final String POWER_CONSUMPTION = "powerConsumption";
-        public static final String ON = "on";
-
-        private FirebaseCurrentStateListener() {
-
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(Alexandra.getContext());
-            String homeId = sharedPreferences.getString(MainActivity.HOME_ID, "-JcMyexVThw7PEv2Z2PL");
-
-            Firebase stateListener = new Firebase("https://sizzling-torch-8921.firebaseio.com/currentState/"+homeId+"/"+id.toString()+"/");
-            stateListener.addChildEventListener(new ChildEventListener() {
-                @Override
-                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                    if(dataSnapshot.getKey().equals(STATE))
-                    {
-                        state = GadgetState.valueOf(dataSnapshot.getValue().toString());
-                    }
-                    else
-                    {
-                        if(dataSnapshot.getKey().equals(ON))
-                        {
-                            setOn(Boolean.parseBoolean(dataSnapshot.getValue().toString()));
-                        }
-                        else
-                        {
-                            if(dataSnapshot.getKey().equals("0"))
-                            {
-                                setChannelPowerConsuption(0, Double.parseDouble(dataSnapshot.child(POWER_CONSUMPTION).getValue().toString()));
-                                setChannelOn(0, Boolean.parseBoolean(dataSnapshot.child(ON).getValue().toString()));
-                            }
-                            else
-                            {
-                                if(dataSnapshot.getKey().equals("1"))
-                                {
-                                    setChannelPowerConsuption(1, Double.parseDouble(dataSnapshot.child(POWER_CONSUMPTION).getValue().toString()));
-                                    setChannelOn(1, Boolean.parseBoolean(dataSnapshot.child(ON).getValue().toString()));
-                                }
-                            }
-                        }
-                    }
-                }
-
-                @Override
-                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-                    if(dataSnapshot.getKey().equals(STATE))
-                    {
-                        state = GadgetState.valueOf(dataSnapshot.getValue().toString());
-                    }
-                    else
-                    {
-                        if(dataSnapshot.getKey().equals(ON))
-                        {
-                            setOn(Boolean.parseBoolean(dataSnapshot.getValue().toString()));
-                        }
-                        else
-                        {
-                            if(dataSnapshot.getKey().equals("0"))
-                            {
-                                setChannelPowerConsuption(0, Double.parseDouble(dataSnapshot.child(POWER_CONSUMPTION).getValue().toString()));
-                                setChannelOn(0, Boolean.parseBoolean(dataSnapshot.child(ON).getValue().toString()));
-                            }
-                            else
-                            {
-                                if(dataSnapshot.getKey().equals("1"))
-                                {
-                                    setChannelPowerConsuption(1, Double.parseDouble(dataSnapshot.child(POWER_CONSUMPTION).getValue().toString()));
-                                    setChannelOn(1, Boolean.parseBoolean(dataSnapshot.child(ON).getValue().toString()));
-                                }
-                            }
-                        }
-                    }
-                }
-
-                @Override
-                public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                }
-
-                @Override
-                public void onCancelled(FirebaseError firebaseError) {
-
-                }
-            });
-        }
-    }
+    //    private class FirebaseCurrentStateListener {
+    //
+    //        public static final String STATE = "state";
+    //        public static final String POWER_CONSUMPTION = "powerConsumption";
+    //        public static final String ON = "on";
+    //
+    //        private FirebaseCurrentStateListener() {
+    //
+    //            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(Alexandra.getContext());
+    //            String homeId = sharedPreferences.getString(MainActivity.HOME_ID, "-JcMyexVThw7PEv2Z2PL");
+    //
+    //            Firebase stateListener = new Firebase("https://sizzling-torch-8921.firebaseio.com/currentState/"+homeId+"/"+id.toString()+"/");
+    //            stateListener.addChildEventListener(new ChildEventListener() {
+    //                @Override
+    //                public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+    //                    if(dataSnapshot.getKey().equals(STATE))
+    //                    {
+    //                        state = GadgetState.valueOf(dataSnapshot.getValue().toString());
+    //                    }
+    //                    else
+    //                    {
+    //                        if(dataSnapshot.getKey().equals(ON))
+    //                        {
+    //                            setOn(Boolean.parseBoolean(dataSnapshot.getValue().toString()));
+    //                        }
+    //                        else
+    //                        {
+    //                            if(dataSnapshot.getKey().equals("0"))
+    //                            {
+    //                                setChannelPowerConsuption(0, Double.parseDouble(dataSnapshot.child(POWER_CONSUMPTION).getValue().toString()));
+    //                                setChannelOn(0, Boolean.parseBoolean(dataSnapshot.child(ON).getValue().toString()));
+    //                            }
+    //                            else
+    //                            {
+    //                                if(dataSnapshot.getKey().equals("1"))
+    //                                {
+    //                                    setChannelPowerConsuption(1, Double.parseDouble(dataSnapshot.child(POWER_CONSUMPTION).getValue().toString()));
+    //                                    setChannelOn(1, Boolean.parseBoolean(dataSnapshot.child(ON).getValue().toString()));
+    //                                }
+    //                            }
+    //                        }
+    //                    }
+    //                }
+    //
+    //                @Override
+    //                public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+    //                    if(dataSnapshot.getKey().equals(STATE))
+    //                    {
+    //                        state = GadgetState.valueOf(dataSnapshot.getValue().toString());
+    //                    }
+    //                    else
+    //                    {
+    //                        if(dataSnapshot.getKey().equals(ON))
+    //                        {
+    //                            setOn(Boolean.parseBoolean(dataSnapshot.getValue().toString()));
+    //                        }
+    //                        else
+    //                        {
+    //                            if(dataSnapshot.getKey().equals("0"))
+    //                            {
+    //                                setChannelPowerConsuption(0, Double.parseDouble(dataSnapshot.child(POWER_CONSUMPTION).getValue().toString()));
+    //                                setChannelOn(0, Boolean.parseBoolean(dataSnapshot.child(ON).getValue().toString()));
+    //                            }
+    //                            else
+    //                            {
+    //                                if(dataSnapshot.getKey().equals("1"))
+    //                                {
+    //                                    setChannelPowerConsuption(1, Double.parseDouble(dataSnapshot.child(POWER_CONSUMPTION).getValue().toString()));
+    //                                    setChannelOn(1, Boolean.parseBoolean(dataSnapshot.child(ON).getValue().toString()));
+    //                                }
+    //                            }
+    //                        }
+    //                    }
+    //                }
+    //
+    //                @Override
+    //                public void onChildRemoved(DataSnapshot dataSnapshot) {
+    //
+    //                }
+    //
+    //                @Override
+    //                public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+    //
+    //                }
+    //
+    //                @Override
+    //                public void onCancelled(FirebaseError firebaseError) {
+    //
+    //                }
+    //            });
+    //        }
+    //    }
 }

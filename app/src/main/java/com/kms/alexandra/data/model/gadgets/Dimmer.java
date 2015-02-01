@@ -1,6 +1,8 @@
 package com.kms.alexandra.data.model.gadgets;
 
 
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -29,8 +31,15 @@ public class Dimmer extends Light {
         this.brightness = brightness;
     }
 
+    @Override
+    public void setOn(boolean state) {
+        this.on = state;
+    }
+
     public Map<String, Object> getCurrentState() {
         Map<String, Object> currentState = new HashMap<String, Object>();
+        Log.d("dimmer", String.valueOf(this.on));
+        Log.d("dimmer", String.valueOf(this.brightness));
         currentState.put(ON, this.on);
         currentState.put(BRIGHTNESS, this.brightness);
         return currentState;

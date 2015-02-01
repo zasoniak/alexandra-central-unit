@@ -59,6 +59,7 @@ public class FirebaseCurrentStateObserver extends CurrentStateObserver {
         }
 
         public void pushCurrentState() {
+
             currentStateReference.child(gadgetReference.getId().toString()).setValue(gadgetReference.getCurrentState());
         }
 

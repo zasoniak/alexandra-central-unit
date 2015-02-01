@@ -134,9 +134,10 @@ public class MultiLight extends Gadget implements Switchable {
 
     @Override
     public void setOn(boolean state) {
-        for(Light light : channels)
+        Log.d(TAG, "setOn "+String.valueOf(state));
+        for(int i = 0; i < channelsNumber; i++)
         {
-            light.setOn(state);
+            setChannelOn(i, state);
         }
         notifyObservers("isOn", String.valueOf(isOn()));
     }
@@ -147,8 +148,8 @@ public class MultiLight extends Gadget implements Switchable {
 
     public void setChannelOn(int channel, boolean state) {
         channels.get(channel).setOn(state);
-        isOn();
-        notifyObservers("isOnChannel"+String.valueOf(channel), String.valueOf(channels.get(channel).isOn()));
+        // isOn();
+        notifyObservers("isOnChannel"+String.valueOf(channel), String.valueOf(state));
     }
 
     public boolean getChannelOn(int channel) {

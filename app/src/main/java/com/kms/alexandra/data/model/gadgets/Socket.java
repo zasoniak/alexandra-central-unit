@@ -1,6 +1,8 @@
 package com.kms.alexandra.data.model.gadgets;
 
 
+import android.util.Log;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -46,6 +48,7 @@ public class Socket extends Switch {
 
     public Map<String, Object> getCurrentState() {
         Map<String, Object> currentState = new HashMap<String, Object>();
+        Log.d("socket", String.valueOf(this.on));
         currentState.put(ON, this.on);
         currentState.put(POWER_CONSUMPTION, this.powerConsumption);
         return currentState;

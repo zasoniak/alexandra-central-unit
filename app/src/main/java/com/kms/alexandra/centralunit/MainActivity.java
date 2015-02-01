@@ -37,6 +37,7 @@ import com.kms.alexandra.data.model.gadgets.Gadget;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.UUID;
 
 
 /**
@@ -44,6 +45,7 @@ import java.util.Calendar;
  */
 public class MainActivity extends Activity {
 
+    public static final UUID ID = UUID.fromString("f1e1ddd0-a547-11e4-bcd8-0800200c9a66");
     public static final String TAG = "Alexandra";
     private final Handler mHandler = new Handler() {
         // Message types sent from the BluetoothChatService Handler
@@ -126,11 +128,14 @@ public class MainActivity extends Activity {
         @Override
         public void onLeScan(BluetoothDevice bluetoothDevice, int i, byte[] bytes) {
             Log.d(TAG, "discovered device: "+bluetoothDevice.getName());
+            Log.d(TAG, "device MAC: "+bluetoothDevice.getAddress());
             Home home = ((Alexandra) getApplicationContext()).getHome();
             if(home != null)
             {
                 for(Gadget gadget : home.getGadgets())
                 {
+                    Log.d(TAG, "gadget MAC: "+gadget.getMAC());
+
                     if(gadget.getMAC().equals(bluetoothDevice.getAddress()))
                     {
                         Log.d(TAG, "trying to connect GATT");
@@ -162,15 +167,16 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Firebase.setAndroidContext(getApplicationContext());
-        //        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        //        if(!(sharedPreferences.getBoolean(CONFIGURED, false)))
-        //        {
-        //            firstRunSetup();
-        //        }
-        //        else
-        //        {
-        //            (new Setup(getApplicationContext())).start();
-        //        }
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        if((sharedPreferences.getBoolean(CONFIGURED, false)))
+        {
+            //firstRunSetup();
+            (new Setup(getApplicationContext())).start();
+        }
+        //                else
+        //                {
+        //                    (new Setup(getApplicationContext())).start();
+        //                }
         // saveConfiguration("-JcMyexVThw7PEv2Z2PL");
         //  (new Setup(getApplicationContext())).start();
         //        boolean connectedToWifi = connectToWifi("Livebox-D69B", "2E62120CE85F61E6C402CE9E72");
@@ -276,6 +282,7 @@ public class MainActivity extends Activity {
     private void firstRunSetup() {
         BluetoothManager manager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
         bluetoothAdapter = manager.getAdapter();
+        bluetoothAdapter.setName("Alexandra-f1e1ddd0");
         if(bluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)
         {
             Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);

@@ -1,6 +1,8 @@
 package com.kms.alexandra.data.model.gadgets;
 
 
+import android.util.Log;
+
 import com.kms.alexandra.data.model.Switchable;
 
 import org.json.JSONException;
@@ -27,6 +29,7 @@ public class Switch implements Switchable {
 
     @Override
     public void setOn(boolean state) {
+        Log.d("socket", String.valueOf(state));
         this.on = state;
     }
 

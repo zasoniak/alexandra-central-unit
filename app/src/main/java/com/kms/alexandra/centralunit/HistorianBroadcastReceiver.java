@@ -51,7 +51,8 @@ public class HistorianBroadcastReceiver extends BroadcastReceiver {
                 SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(Alexandra.getContext());
                 String homeId = sharedPreferences.getString(MainActivity.HOME_ID, "-JcMyexVThw7PEv2Z2PL");
 
-                Firebase historianReference = new Firebase("https://sizzling-torch-8921.firebaseio.com/historian/"+homeId+"/");
+                //Firebase historianReference = new Firebase("https://sizzling-torch-8921.firebaseio.com/historian/"+homeId+"/");
+                Firebase historianReference = new Firebase("https://sizzling-torch-8921.firebaseio.com/historian/-JcMyexVThw7PEv2Z2qq/");
                 Map<String, String> historianLog = new HashMap<String, String>();
 
                 switch((LogType) intent.getSerializableExtra(LOG_TYPE))
