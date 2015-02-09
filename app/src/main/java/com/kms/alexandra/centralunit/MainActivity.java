@@ -5,6 +5,11 @@ import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothManager;
+import android.bluetooth.le.BluetoothLeScanner;
+import android.bluetooth.le.ScanCallback;
+import android.bluetooth.le.ScanFilter;
+import android.bluetooth.le.ScanResult;
+import android.bluetooth.le.ScanSettings;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -37,6 +42,7 @@ import com.kms.alexandra.data.model.gadgets.Gadget;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -124,6 +130,31 @@ public class MainActivity extends Activity {
             }
         }
     };
+
+    private ScanCallback scanCallback = new ScanCallback() {
+        @Override
+        public void onScanResult(int callbackType, ScanResult result) {
+
+            BluetoothDevice bluetoothDevice = result.getDevice();
+            Log.d(TAG, "discovered device: "+bluetoothDevice.getName());
+            Log.d(TAG, "device MAC: "+bluetoothDevice.getAddress());
+            Home home = ((Alexandra) getApplicationContext()).getHome();
+            if(home != null)
+            {
+                for(Gadget gadget : home.getGadgets())
+                {
+                    Log.d(TAG, "gadget MAC: "+gadget.getMAC());
+
+                    if(gadget.getMAC().equals(bluetoothDevice.getAddress()))
+                    {
+                        Log.d(TAG, "trying to connect GATT");
+                        gadget.setBluetoothGatt(bluetoothDevice.connectGatt(getApplicationContext(), true, gadget.getBluetoothGattCallback()));
+                    }
+                }
+            }
+
+        }
+    };
     private BluetoothAdapter.LeScanCallback leScanCallback = new BluetoothAdapter.LeScanCallback() {
         @Override
         public void onLeScan(BluetoothDevice bluetoothDevice, int i, byte[] bytes) {
@@ -155,12 +186,16 @@ public class MainActivity extends Activity {
 
     private void startScan() {
         Log.i("BLE", "start scan");
-        bluetoothAdapter.startLeScan(leScanCallback);
+        BluetoothLeScanner scanner = bluetoothAdapter.getBluetoothLeScanner();
+        ScanSettings settings = new ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_POWER).build();
+        List<ScanFilter> filters = new ArrayList<ScanFilter>();
+        scanner.startScan(filters, settings, scanCallback);
     }
 
     private void stopScan() {
         Log.i("BLE", "stop scan");
-        bluetoothAdapter.stopLeScan(leScanCallback);
+        BluetoothLeScanner scanner = bluetoothAdapter.getBluetoothLeScanner();
+        scanner.stopScan(scanCallback);
     }
 
     @Override
@@ -266,7 +301,8 @@ public class MainActivity extends Activity {
 
     private void loadDefault() {
         //saveConfiguration("-JcMyexVThw7PEv2Z2PL");
-        saveConfiguration("-JcMyexVThw7PEv2Z2qq");
+        // saveConfiguration("-JcMyexVThw7PEv2Z2qq");
+        saveConfiguration("-Jg_uD_kB2NLYkOA6nIo");
         connectToWifi("Livebox-D69B", "2E62120CE85F61E6C402CE9E72");
     }
 
@@ -381,6 +417,22 @@ public class MainActivity extends Activity {
         stopScan();
         startScan();
     }
+
+    //    private void connectToBLE() {
+    //        BluetoothManager manager = (BluetoothManager) getSystemService(BLUETOOTH_SERVICE);
+    //        bluetoothAdapter = manager.getAdapter();
+    //        if(bluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE)
+    //        {
+    //            Intent discoverableIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+    //            discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 120);
+    //            startActivity(discoverableIntent);
+    //        }
+    //        Log.i("BLE", "setting up");
+    //        logEvent(CONFIGURATION_TAG, "setting up BLE");
+    //        bluetoothAdapter = manager.getAdapter();
+    //        stopScan();
+    //        startScan();
+    //    }
 
     private void logEvent(String type, String message) {
         Intent intent = new Intent(getBaseContext(), HistorianBroadcastReceiver.class);
