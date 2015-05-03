@@ -62,6 +62,9 @@
             android:name="com.kms.alexandra.centralunit.FirebaseControlMessageDispatcher">
         </service>
         <service
+            android:name="com.kms.alexandra.centralunit.SocketIOControlMessageDispatcher">
+        </service>
+        <service
             android:name="com.kms.alexandra.centralunit.BluetoothControlMessageDispatcher">
         </service>
     </application>

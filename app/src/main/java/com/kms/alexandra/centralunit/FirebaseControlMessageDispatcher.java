@@ -26,11 +26,11 @@ import java.util.UUID;
  */
 public class FirebaseControlMessageDispatcher extends ControlMessageDispatcher {
 
-    public static final String TAG = "FirebaseControlMessageDispatcher";
-    private static final String SCENES = "scenes";
-    private static final String ACTIONS = "actions";
+    public static final String TAG = "FirebaseDispatcher";
+        private static final String SCENES = "scenes";
+        private static final String ACTIONS = "actions";
 
-    public FirebaseControlMessageDispatcher() {
+        public FirebaseControlMessageDispatcher() {
         super();
 
     }

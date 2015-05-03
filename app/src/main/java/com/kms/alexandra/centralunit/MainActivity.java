@@ -187,7 +187,7 @@ public class MainActivity extends Activity {
     private void startScan() {
         Log.i("BLE", "start scan");
         BluetoothLeScanner scanner = bluetoothAdapter.getBluetoothLeScanner();
-        ScanSettings settings = new ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_POWER).build();
+        ScanSettings settings = new ScanSettings.Builder().setScanMode(ScanSettings.SCAN_MODE_LOW_LATENCY).build();
         List<ScanFilter> filters = new ArrayList<ScanFilter>();
         scanner.startScan(filters, settings, scanCallback);
     }
@@ -474,6 +474,8 @@ public class MainActivity extends Activity {
 
             Intent remoteControlIntent = new Intent(context, FirebaseControlMessageDispatcher.class);
             startService(remoteControlIntent);
+            Intent remoteControlIntent2 = new Intent(context, SocketIOControlMessageDispatcher.class);
+            startService(remoteControlIntent2);
         }
 
     }
